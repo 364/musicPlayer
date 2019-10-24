@@ -1,0 +1,170 @@
+{
+  "id": "1471464",
+  "name": "player",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "217344",
+      "name": "video",
+      "font_class": "video",
+      "unicode": "e630",
+      "unicode_decimal": 58928
+    },
+    {
+      "icon_id": "372151",
+      "name": "cc-download",
+      "font_class": "cc-download",
+      "unicode": "e639",
+      "unicode_decimal": 58937
+    },
+    {
+      "icon_id": "392061",
+      "name": "HEART",
+      "font_class": "heart",
+      "unicode": "e656",
+      "unicode_decimal": 58966
+    },
+    {
+      "icon_id": "448696",
+      "name": "heart",
+      "font_class": "heart1",
+      "unicode": "e61f",
+      "unicode_decimal": 58911
+    },
+    {
+      "icon_id": "611331",
+      "name": "play",
+      "font_class": "play",
+      "unicode": "e624",
+      "unicode_decimal": 58916
+    },
+    {
+      "icon_id": "631275",
+      "name": "music",
+      "font_class": "music",
+      "unicode": "e685",
+      "unicode_decimal": 59013
+    },
+    {
+      "icon_id": "1029987",
+      "name": "download",
+      "font_class": "download",
+      "unicode": "e766",
+      "unicode_decimal": 59238
+    },
+    {
+      "icon_id": "1203859",
+      "name": "play",
+      "font_class": "play1",
+      "unicode": "e63a",
+      "unicode_decimal": 58938
+    },
+    {
+      "icon_id": "1433866",
+      "name": "user",
+      "font_class": "user",
+      "unicode": "e66f",
+      "unicode_decimal": 58991
+    },
+    {
+      "icon_id": "2206528",
+      "name": "icon-music-note",
+      "font_class": "music-note",
+      "unicode": "e634",
+      "unicode_decimal": 58932
+    },
+    {
+      "icon_id": "3852150",
+      "name": "logout",
+      "font_class": "logout",
+      "unicode": "e698",
+      "unicode_decimal": 59032
+    },
+    {
+      "icon_id": "3852160",
+      "name": "music",
+      "font_class": "music1",
+      "unicode": "e6a0",
+      "unicode_decimal": 59040
+    },
+    {
+      "icon_id": "4472504",
+      "name": "listen",
+      "font_class": "listen",
+      "unicode": "e721",
+      "unicode_decimal": 59169
+    },
+    {
+      "icon_id": "5326810",
+      "name": "play",
+      "font_class": "play2",
+      "unicode": "e628",
+      "unicode_decimal": 58920
+    },
+    {
+      "icon_id": "6419924",
+      "name": "Music",
+      "font_class": "Music",
+      "unicode": "e63e",
+      "unicode_decimal": 58942
+    },
+    {
+      "icon_id": "6889493",
+      "name": "ios-radio",
+      "font_class": "ios-radio",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "7009036",
+      "name": "video",
+      "font_class": "video1",
+      "unicode": "e73b",
+      "unicode_decimal": 59195
+    },
+    {
+      "icon_id": "7417079",
+      "name": "试听",
+      "font_class": "shiting",
+      "unicode": "e602",
+      "unicode_decimal": 58882
+    },
+    {
+      "icon_id": "7594058",
+      "name": "24gl-playlistHeart4",
+      "font_class": "24gl-playlistHeart4",
+      "unicode": "ea71",
+      "unicode_decimal": 60017
+    },
+    {
+      "icon_id": "7594061",
+      "name": "24gl-playlistMusic4",
+      "font_class": "24gl-playlistMusic4",
+      "unicode": "ea72",
+      "unicode_decimal": 60018
+    },
+    {
+      "icon_id": "8327015",
+      "name": "Play",
+      "font_class": "Play",
+      "unicode": "e655",
+      "unicode_decimal": 58965
+    },
+    {
+      "icon_id": "9266624",
+      "name": "list",
+      "font_class": "list",
+      "unicode": "e607",
+      "unicode_decimal": 58887
+    },
+    {
+      "icon_id": "9566554",
+      "name": "play-list-line",
+      "font_class": "play-list-line",
+      "unicode": "e890",
+      "unicode_decimal": 59536
+    }
+  ]
+}
