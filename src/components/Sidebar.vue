@@ -18,7 +18,6 @@
             v-for="cItem in item.content"
             :key="cItem.route"
             :to="cItem.route"
-            :class="{active:$route.path == cItem.route}"
           >
             <div>
               <i :class="['iconfont',cItem.icon]"></i>
@@ -33,11 +32,11 @@
 </template>
 
 <script>
-import Login from './Login'
-import { mapGetters } from 'vuex'
+import Login from "./Login";
+import { mapGetters } from "vuex";
 export default {
-  name: 'sidebar',
-  components:{
+  name: "sidebar",
+  components: {
     Login
   },
   data() {
@@ -49,11 +48,9 @@ export default {
     ...mapGetters(["menuList"])
   },
   methods: {
-    toLogin(){
-      
-    }
+    toLogin() {}
   }
-}
+};
 </script>
 
 <style lang="less" scoped>
@@ -75,7 +72,7 @@ export default {
       justify-content: center;
       align-items: center;
       font-weight: @base-weight;
-      &:hover{
+      &:hover {
         text-decoration: underline;
       }
       div {
@@ -121,7 +118,7 @@ export default {
             width: 30px;
             margin-right: 20px;
           }
-          &.active {
+          &.router-link-active {
             position: relative;
             background: linear-gradient(
               to right,

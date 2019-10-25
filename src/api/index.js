@@ -14,5 +14,9 @@ function api(url = "", data = {}, method = "GET", ...options) {
 export const login = (params = {}) => api("/login", params, "post", { withCredentials: true });
 // banner
 export const banner = (params = {}) => api("/banner", params);
-// 歌单
-export const playlist = (params = {}) => api("/top/playlist", params);
+// 推荐歌单
+export const playlist = (params = {}) => api("/personalized", params);
+// 推荐音乐
+export const newsong = (params = {}) => api("/personalized/newsong", params);
+// 推荐mv
+export const mv = (params = {}) => api("/personalized/mv", params);

@@ -58,6 +58,7 @@ export default {
       border-radius: 0 @box-radius @box-radius 0;
       > div {
         padding-bottom: @footer-height;
+        box-sizing: border-box;
       }
     }
   }
