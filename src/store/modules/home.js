@@ -4,13 +4,13 @@ const home = {
   state: {
     banners: [],
     playlist: [],
+    songList: [],
+    mvList: [],
     navList: [
       { title: "推荐", route: "/home/recommend" },
       { title: "歌手", route: "/home/singer" },
       { title: "歌单", route: "/home/song" }
     ],
-    songList: [],
-    mvList: []
   },
   getters: {},
   mutations: {

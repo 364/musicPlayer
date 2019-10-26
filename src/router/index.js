@@ -3,6 +3,8 @@ import Router from 'vue-router'
 import Layout from '@/views/Layout'
 import Home from '@/views/Home'
 import Recommend from '@/views/Recommend'
+import Singer from '@/views/Singer'
+import SongList from '@/views/SongList'
 
 Vue.use(Router)
 
@@ -27,11 +29,11 @@ export default new Router({
           {
             path: '/home/singer',
             name: 'Home',
-            component: Recommend,
+            component: Singer,
           },{
             path: '/home/song',
             name: 'Home',
-            component: Recommend,
+            component: SongList,
           }
         ]
       }]

@@ -20,3 +20,7 @@ export const playlist = (params = {}) => api("/personalized", params);
 export const newsong = (params = {}) => api("/personalized/newsong", params);
 // 推荐mv
 export const mv = (params = {}) => api("/personalized/mv", params);
+// 歌手榜（热门歌手）
+export const topArtist = (params = {}) => api("/toplist/artist", params);
+// 全部歌手 cat 类型 initial 字母
+export const artistList = (params = {}) => api("/artist/list", params);
