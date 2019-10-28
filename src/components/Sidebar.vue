@@ -60,6 +60,9 @@ export default {
   box-sizing: border-box;
   width: @sidebar-width;
   padding-bottom: @footer-height;
+  @media screen and (max-width:1200px){
+    width: @sidebar-small-width;
+  }
   .user {
     font-size: @small-size;
     cursor: pointer;

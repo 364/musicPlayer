@@ -1,5 +1,6 @@
 import Axios from "axios";
 // import store from "@/store";
+import { Message } from 'element-ui'
 
 const baseURL = "http://localhost:5000";
 
@@ -44,6 +45,11 @@ axios.interceptors.response.use(
       if (!window.navigator.onLine) {
         // store.commit("changeNetwork", false);
       } else {
+        console.log()
+        if(err.message != window.err){
+          Message.error(err.message);
+          window.err = err.message
+        }
         return Promise.reject(err);
       }
     }

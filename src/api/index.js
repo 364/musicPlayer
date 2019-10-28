@@ -23,4 +23,4 @@ export const mv = (params = {}) => api("/personalized/mv", params);
 // 歌手榜（热门歌手）
 export const topArtist = (params = {}) => api("/toplist/artist", params);
 // 全部歌手 cat 类型 initial 字母
-export const artistList = (params = {}) => api("/artist/list", params);
+export const singerList = (params = {}) => api("/artist/list", params);

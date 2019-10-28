@@ -48,6 +48,9 @@ export default {
   position: relative;
   background: fade(#fff, 40%);
   box-shadow: 0 0 15px fade(#000, 10%);
+  @media screen and (max-width:1200px){
+    width: @box-small-width;
+  }
   .content {
     display: flex;
     height: 100%;

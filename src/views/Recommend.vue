@@ -2,9 +2,9 @@
 <template>
   <div class="recommend">
     <!-- banner -->
-    <Banner :carousel="carousel" :banners="banners" />
+    <Banner :carousel="carousel" :banners="banners" v-show="banners.length" />
     <!-- 推荐歌单 -->
-    <div class="songList playList">
+    <div class="songList playList" v-show="playlist.length">
       <div class="title">
         <div>
           <h2>推荐歌单</h2>
@@ -18,7 +18,7 @@
       <ul>
         <li v-for="item in playlist" :key="item.id">
           <div class="img">
-            <img :src="item.picUrl" />
+            <img v-lazy="item.picUrl" />
             <span class="count">
               <i class="el-icon-headset"></i>
               {{ item.playCount | playCount}}
@@ -29,7 +29,7 @@
       </ul>
     </div>
     <!-- 推荐mv -->
-    <div class="songList mvList">
+    <div class="songList mvList" v-show="mvList.length">
       <div class="title">
         <div>
           <h2>推荐MV</h2>
@@ -39,7 +39,7 @@
       <ul>
         <li v-for="item in mvList" :key="item.id">
           <div class="img">
-            <img :src="item.picUrl" />
+            <img v-lazy="item.picUrl" />
             <span class="count">
               <i class="el-icon-video-camera"></i>
               {{ item.playCount | playCount}}
@@ -50,7 +50,7 @@
       </ul>
     </div>
     <!-- 最新音乐 -->
-    <div class="musicList">
+    <div class="musicList" v-show="songList.length">
       <div class="title">
         <div>
           <h2>最新音乐</h2>
@@ -60,7 +60,7 @@
       <ul>
         <li v-for="item in songList" :key="item.id">
           <div class="img">
-            <img :src="item.song.album.picUrl" />
+            <img v-lazy="item.song.album.picUrl" />
           </div>
           <div class="album">
             <h5>{{ getSongName(item.name,item.song.album.alias) }}</h5>
@@ -108,8 +108,8 @@ export default {
   created() {
     this[TYPES.ACTIONS_GET_BANNER]();
     this[TYPES.ACTIONS_GET_PLAYLIST](this.param.playList);
-    this[TYPES.ACTIONS_GET_NEWSONG](this.param.songList);
-    this[TYPES.ACTIONS_GET_MV](this.param.mvList);
+    this[TYPES.ACTIONS_GET_NEWSONG]();
+    this[TYPES.ACTIONS_GET_MV]();
   },
   methods: {
     ...mapActions([
@@ -160,7 +160,7 @@ export default {
 }
 .recommend {
   overflow-y: auto;
-  height: calc(100% - @footer-height);
+  height: @auto-height;
   .title {
     display: flex;
     justify-content: space-between;
@@ -259,6 +259,7 @@ export default {
           justify-content: center;
           flex-direction: column;
           margin-left: 10px;
+          flex: 1;
           h5 {
             margin: 0;
           }
