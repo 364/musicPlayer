@@ -159,6 +159,7 @@ export default {
   font-size: 50px;
 }
 .recommend {
+  padding: 0 20px;
   overflow-y: auto;
   height: @auto-height;
   .title {

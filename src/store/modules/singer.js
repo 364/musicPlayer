@@ -29,17 +29,23 @@ const category = [
 const singer = {
   state: {
     category,
+    navigation: {
+      page: 2,
+      pageSize: 30
+    },
     singerList: []
   },
   getters: {
     [TYPES.GETTERS_GET_SINGER_PARAM](state) {
+      const { category, navigation } = state;
       let str = "";
-      for (let i in state.category) {
-        state.category[i]["content"].forEach(item =>
+      for (let i in category) {
+        category[i]["content"].forEach(item =>
           item.active ? (str += item.code) : ""
         );
       }
       return {
+        limit: navigation.page * navigation.pageSize,
         cat: str.match(/\d+/g) ? str.match(/\d+/g)[0] : 1001,
         initial: str.match(/[a-zA-Z#]+/g) ? str.match(/[a-zA-Z#]+/g)[0] : ""
       };

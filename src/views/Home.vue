@@ -2,8 +2,10 @@
 <template>
   <div class="home">
     <!-- 导航 -->
-    <Nav />
-    <router-view />
+    <Nav class="nav" />
+    <keep-alive>
+      <router-view />
+    </keep-alive>
   </div>
 </template>
 
@@ -27,7 +29,7 @@ export default {
   background-position: top right;
   box-shadow: 0 0 50px 30px #ffffff inset;
   padding-top: @margin-t;
-  > div {
+  .nav{
     padding: 0 20px;
   }
 }
