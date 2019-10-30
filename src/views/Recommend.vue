@@ -2,7 +2,7 @@
 <template>
   <div class="recommend">
     <!-- banner -->
-    <Banner :carousel="carousel" :banners="banners" v-show="banners.length" />
+    <banner :carousel="carousel" :banners="banners" v-show="banners.length" />
     <!-- 推荐歌单 -->
     <div class="songList playList" v-show="playlist.length">
       <div class="title">
@@ -10,7 +10,7 @@
           <h2>推荐歌单</h2>
           <h3>RECOMMEND THE PLAYLIST</h3>
         </div>
-        <router-link to="/home/song" class="more">
+        <router-link to="/home/playlist" class="more">
           更多
           <i class="el-icon-d-arrow-right"></i>
         </router-link>

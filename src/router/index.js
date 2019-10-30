@@ -4,7 +4,7 @@ import Layout from '@/views/Layout'
 import Home from '@/views/Home'
 import Recommend from '@/views/Recommend'
 import Singer from '@/views/Singer'
-import SongList from '@/views/SongList'
+import PlayList from '@/views/PlayList'
 
 Vue.use(Router)
 
@@ -31,9 +31,9 @@ export default new Router({
             name: 'Home',
             component: Singer,
           },{
-            path: '/home/song',
+            path: '/home/playlist',
             name: 'Home',
-            component: SongList,
+            component: PlayList,
           }
         ]
       }]

@@ -4,24 +4,27 @@ import * as API from "@/api";
 const category = [
   {
     title: "语种",
+    active: "10",
     content: [
-      { name: "华语", code: "10", active: true },
-      { name: "欧美", code: "20", active: false },
-      { name: "日本", code: "60", active: false },
-      { name: "韩国", code: "70", active: false },
-      { name: "其他", code: "40", active: false }
+      { name: "华语", code: "10"},
+      { name: "欧美", code: "20" },
+      { name: "日本", code: "60" },
+      { name: "韩国", code: "70" },
+      { name: "其他", code: "40" }
     ]
   },
   {
     title: "分类",
+    active: "01",
     content: [
-      { name: "男歌手", code: "01", active: true },
-      { name: "女歌手", code: "02", active: false },
-      { name: "组合/乐队", code: "03", active: false }
+      { name: "男歌手", code: "01"},
+      { name: "女歌手", code: "02" },
+      { name: "组合/乐队", code: "03"}
     ]
   },
   {
     title: "筛选",
+    active: "",
     content: getLetter()
   }
 ];
@@ -30,22 +33,27 @@ const singer = {
   state: {
     category,
     navigation: {
-      page: 2,
+      page: 1,
       pageSize: 30
+    },
+    load: {
+      showLoad: true,
+      finish: false,
+      loading: false
     },
     singerList: []
   },
   getters: {
     [TYPES.GETTERS_GET_SINGER_PARAM](state) {
+      // 获取请求参数
       const { category, navigation } = state;
       let str = "";
       for (let i in category) {
-        category[i]["content"].forEach(item =>
-          item.active ? (str += item.code) : ""
-        );
+        str += category[i]["active"];
       }
       return {
-        limit: navigation.page * navigation.pageSize,
+        limit: navigation.pageSize,
+        offset: (navigation.page - 1) * navigation.pageSize,
         cat: str.match(/\d+/g) ? str.match(/\d+/g)[0] : 1001,
         initial: str.match(/[a-zA-Z#]+/g) ? str.match(/[a-zA-Z#]+/g)[0] : ""
       };
@@ -53,27 +61,49 @@ const singer = {
   },
   mutations: {
     [TYPES.MUTATIONS_GET_SINGER_LIST](state, data) {
-      state.singerList = data;
+      // 歌手列表
+      let list = [].concat(state.singerList);
+      list.push(...data);
+      state.singerList = list;
+    },
+    [TYPES.MUTATIONS_GET_SINGER_LOAD](state, data = {}) {
+      state.load = Object.assign({}, state.load, data);
+    },
+    [TYPES.MUTATIONS_CHANGE_SINGER_PAGE](state) {
+      state.navigation.page++;
     },
     [TYPES.MUTATIONS_CHANGE_SINGER_LIST](state, data) {
-      const { idx } = data;
+      const { code, idx } = data;
       const index = idx.split("-");
       if (index.length) {
-        let arr = state.category[index[0]]["content"];
-        for (let i = 0; i < arr.length; i++) {
-          arr[i].active = false;
-          if (i == index[1] * 1) {
-            arr[i].active = true;
-          }
-        }
+        state.category[index[0]]["active"] = code;
+        // 初始化
+        state.singerList = [];
+        state.navigation = {
+          page: 1,
+          pageSize: 30
+        };
+        state.load = {
+          showLoad: true,
+          finish: false,
+          loading: false
+        };
       }
     }
   },
   actions: {
     [TYPES.ACTIONS_GET_SINGER_LIST]({ commit, getters }) {
       const param = getters[TYPES.GETTERS_GET_SINGER_PARAM];
+      // console.log(param);
       API.singerList(param).then(res => {
-        commit(TYPES.MUTATIONS_GET_SINGER_LIST, res.artists);
+        if (res.more) {
+          commit(TYPES.MUTATIONS_GET_SINGER_LIST, res.artists);
+          commit(TYPES.MUTATIONS_GET_SINGER_LOAD, { loading: false });
+        } else {
+          commit(TYPES.MUTATIONS_GET_SINGER_LOAD, {
+            finish: true
+          });
+        }
       });
     }
   }

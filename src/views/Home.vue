@@ -2,7 +2,7 @@
 <template>
   <div class="home">
     <!-- 导航 -->
-    <Nav class="nav" />
+    <nav-bar class="nav" />
     <keep-alive>
       <router-view />
     </keep-alive>
@@ -10,11 +10,11 @@
 </template>
 
 <script>
-import Nav from "@/components/Nav";
+import NavBar from "@/components/NavBar";
 export default {
   name: "home",
   components: {
-    Nav,
+    NavBar,
   }
 };
 </script>

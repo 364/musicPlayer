@@ -14,9 +14,7 @@
 
 <script>
 export default {
-  name: "",
-  components: {
-  },
+  name: "login",
   data() {
     return {
       labelPosition: "top",

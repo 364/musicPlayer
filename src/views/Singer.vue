@@ -2,30 +2,17 @@
 <template>
   <div class="singer">
     <!-- 筛选条件 -->
-    <div class="filter">
-      <div v-for="(item,index) in category" :key="item.title">
-        <div class="title">{{ item.title + '：'}}</div>
-        <ul>
-          <li
-            v-for="(cItem,cIndex) in item.content"
-            :key="cItem.code"
-            :data-idx="index+'-'+cIndex"
-            :class="{'active':cItem.active}"
-            @click="handleChange"
-          >{{ cItem.name }}</li>
-        </ul>
-      </div>
-    </div>
+    <filter-cat :category="category" @handleChange="handleChange" />
     <!-- 筛选结果 -->
-    <div class="list" ref="list">
-      <LoadMore :load="load">
-        <ul ref="scroll">
+    <div class="list" ref="scroll">
+      <load-more :load="load">
+        <ul ref="list">
           <li v-for="item in singerList" :key="item.id">
             <img v-lazy="item.picUrl" />
             <div>{{ item.name }}</div>
           </li>
         </ul>
-      </LoadMore>
+      </load-more>
     </div>
   </div>
 </template>
@@ -34,28 +21,23 @@
 import { mapActions, mapMutations, mapState } from "vuex";
 import * as TYPES from "@/store/types";
 import LoadMore from "@/components/LoadMore";
+import FilterCat from "@/components/FilterCat";
+
 export default {
   name: "singer",
   components: {
-    LoadMore
+    LoadMore,
+    FilterCat
   },
   data() {
     return {
-      load: {
-        showLoad: true,
-        finish: false,
-        clientH: 0,
-      }
+      box: null,
+      scroll: null
     };
-  },
-  mounted() {
-    this.clientH = this.$refs.list.clientHeight
-    this.$refs.scroll.addEventListener('scroll', this.handleScroll)
-    console.log('可视区域',this.$refs.list.clientHeight)
-    console.log('滚动的元素',this.$refs.scroll)
   },
   computed: {
     ...mapState({
+      load: state => state.singer.load,
       category: state => state.singer.category,
       singerList: state => state.singer.singerList
     })
@@ -63,10 +45,45 @@ export default {
   created() {
     this[TYPES.ACTIONS_GET_SINGER_LIST]();
   },
+  mounted() {
+    this.box = this.$refs.list;
+    this.scroll = this.$refs.scroll;
+    this.scroll.addEventListener("scroll", this.handleScroll);
+    this.handleBottom();
+  },
   methods: {
-    handleScroll(){
+    handleBottom() {
+      // 是否满一屏
+      this.$nextTick(() => {
+        const clientH = this.box.clientHeight;
+        const scrollH = this.scroll.scrollTop + this.scroll.clientHeight;
+        if (scrollH > clientH) {
+          this[TYPES.MUTATIONS_GET_SINGER_LOAD]({ showLoad: true });
+        } else {
+          if (!this.finish) {
+            this[TYPES.MUTATIONS_GET_SINGER_LOAD]({ showLoad: true });
+            this.handleMore();
+          } else {
+            this[TYPES.MUTATIONS_GET_SINGER_LOAD]({ showLoad: false });
+          }
+        }
+      });
+    },
+    handleScroll() {
       // 滚动
-      console.log('滚动距离',this.$refs.scroll.scrollTop)
+      const { finish, loading } = this.load;
+      const clientH = this.box.clientHeight;
+      const scrollH = this.scroll.scrollTop + this.scroll.clientHeight;
+      if (scrollH - clientH > 50 && !finish && !loading) {
+        // 加载中
+        this[TYPES.MUTATIONS_GET_SINGER_LOAD]({ loading: true });
+        this.handleMore();
+      }
+    },
+    handleMore() {
+      // 加载下一页
+      this[TYPES.MUTATIONS_CHANGE_SINGER_PAGE]();
+      this[TYPES.ACTIONS_GET_SINGER_LIST]();
     },
     handleChange(e) {
       // 改变筛选条件
@@ -75,10 +92,14 @@ export default {
       this[TYPES.ACTIONS_GET_SINGER_LIST]();
     },
     ...mapActions([TYPES.ACTIONS_GET_SINGER_LIST]),
-    ...mapMutations([TYPES.MUTATIONS_CHANGE_SINGER_LIST])
+    ...mapMutations([
+      TYPES.MUTATIONS_GET_SINGER_LOAD,
+      TYPES.MUTATIONS_CHANGE_SINGER_LIST,
+      TYPES.MUTATIONS_CHANGE_SINGER_PAGE
+    ])
   },
-  beforeDestroy(){
-    this.$refs.scroll.removeEventListener('scroll', this.handleScroll)
+  beforeDestroy() {
+    this.scroll.removeEventListener("scroll", this.handleScroll);
   }
 };
 </script>
@@ -88,38 +109,6 @@ export default {
   height: @auto-height;
   & > div {
     padding: 0 20px;
-  }
-  .filter {
-    margin-bottom: 30px;
-    & > div {
-      display: flex;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    li {
-      display: inline-block;
-      cursor: pointer;
-      padding: 5px;
-      margin: 0 8px;
-      position: relative;
-      font-size: 12px;
-      &.active {
-        background: #f1f1f1;
-      }
-      &:not(:last-child) {
-        &::after {
-          content: "|";
-          position: absolute;
-          right: -8px;
-          top: 50%;
-          transform: translateY(-50%);
-          color: #aaa;
-        }
-      }
-      &:not(.active):hover {
-        color: @theme-color;
-      }
-    }
   }
   .list {
     height: 82%;
@@ -132,11 +121,15 @@ export default {
         margin: 5px;
         padding: 10px;
         display: flex;
+        cursor: pointer;
         align-items: center;
         overflow: hidden;
         border-radius: 10px;
         box-sizing: border-box;
         box-shadow: 0 0 15px fade(#000, 5%);
+        &:hover{
+          box-shadow: 0 0 15px fade(#000, 12%);
+        }
         img {
           width: 40%;
           margin-right: 10px;
