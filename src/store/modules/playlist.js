@@ -14,9 +14,22 @@ const title = {
   }
 };
 
+const navigation = {
+  page: 1,
+  pageSize: 40
+};
+
+const load = {
+  showLoad: true,
+  finish: false,
+  loading: false
+};
+
 const singer = {
   state: {
+    load,
     title,
+    navigation,
     category: {
       tag: title.filter.active,
       active: "",
@@ -25,19 +38,11 @@ const singer = {
         all: []
       }
     },
-    navigation: {
-      page: 1,
-      pageSize: 30
-    },
-    load: {
-      showLoad: true,
-      finish: false,
-      loading: false
-    },
     playList: []
   },
   getters: {
     [TYPES.GETTERS_GET_PLAYLIST_PARAM](state) {
+      // 获取请求参数
       const { navigation, category, title } = state;
       return {
         limit: navigation.pageSize,
@@ -77,7 +82,7 @@ const singer = {
       state.category.content.hot = arr;
     },
     [TYPES.MUTATIONS_CHANGE_PALYLIST_TITLE](state, data) {
-      // 条件改变
+      // 标题条件改变
       const key = Object.keys(data)[0];
       state.title[key]["active"] = data[key];
       if (key === "filter") {
@@ -99,7 +104,21 @@ const singer = {
     },
     // 歌单列表
     [TYPES.MUTATIONS_GET_PLAY_LIST](state, data) {
-      state.playList = data
+      let list = [].concat(state.playList);
+      list.push(...data);
+      state.playList = list;
+    },
+    [TYPES.MUTATIONS_SET_PLAYLIST_INIT](state) {
+      // 初始化
+      state.playList = [];
+      state.navigation = navigation;
+      state.load = load;
+    },
+    [TYPES.MUTATIONS_SET_PLAYLIST_LOAD](state, data = {}) {
+      state.load = Object.assign({}, state.load, data);
+    },
+    [TYPES.MUTATIONS_CHANGE_PLAYLIST_PAGE](state) {
+      state.navigation.page++;
     }
   },
   actions: {
@@ -114,8 +133,16 @@ const singer = {
     },
     [TYPES.ACTIONS_GET_PLAY_LIST]({ commit, getters }) {
       const param = getters[TYPES.GETTERS_GET_PLAYLIST_PARAM];
+
       API.playlistAll(param).then(res => {
-        commit(TYPES.MUTATIONS_GET_PLAY_LIST, res.playlists);
+        if (res.more) {
+          commit(TYPES.MUTATIONS_GET_PLAY_LIST, res.playlists);
+          commit(TYPES.MUTATIONS_SET_PLAYLIST_LOAD, { loading: false });
+        } else {
+          commit(TYPES.MUTATIONS_SET_PLAYLIST_LOAD, {
+            finish: true
+          });
+        }
       });
     }
   }

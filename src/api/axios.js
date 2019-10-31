@@ -1,16 +1,17 @@
 import Axios from "axios";
 // import store from "@/store";
-import { Message } from 'element-ui'
+import { Message } from "element-ui";
 
 const baseURL = "http://localhost:5000";
-
-const axios = Axios.create({
+const config = {
   baseURL,
-  timeout: 1000 * 3,
+  timeout: 1000 * 6,
   headers: {
     "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
   }
-});
+};
+
+const axios = Axios.create(config);
 const tip = (code, msg) => {
   if (code >= 400) {
     Message.error(msg);
@@ -45,10 +46,22 @@ axios.interceptors.response.use(
       if (!window.navigator.onLine) {
         // store.commit("changeNetwork", false);
       } else {
-        console.log()
-        if(err.message != window.err){
-          Message.error(err.message);
-          window.err = err.message
+        const { code, message } = err;
+        var originalRequest = err.config;
+        if (
+          (code === "ECONNABORTED" || message.includes("timeout")) &&
+          !originalRequest._retry &&
+          message != window.err
+        ) {
+          // 请求超时
+          originalRequest._retry = true;
+          Message.error("请求超时，重新请求");
+          window.err = message;
+          return axios.request(originalRequest);
+        }
+        if (message != window.err) {
+          Message.error(message);
+          window.err = message;
         }
         return Promise.reject(err);
       }

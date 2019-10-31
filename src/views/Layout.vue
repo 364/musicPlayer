@@ -4,6 +4,8 @@
     <div class="content">
       <sidebar />
       <div class="detail">
+        <!-- 导航 -->
+        <nav-bar class="nav" />
         <keep-alive>
           <router-view />
         </keep-alive>
@@ -16,9 +18,12 @@
 <script>
 import Sidebar from "@/components/Sidebar";
 import PlayerBar from "@/components/PlayerBar";
+import NavBar from "@/components/NavBar";
+
 export default {
   name: "layout",
   components: {
+    NavBar,
     Sidebar,
     PlayerBar
   },
@@ -59,7 +64,10 @@ export default {
       overflow: hidden;
       background: fade(#fff, 90%);
       border-radius: 0 @box-radius @box-radius 0;
-      > div {
+      .nav{
+        padding: 20px 20px 0;
+      }
+      > div:not(.nav) {
         padding-bottom: @footer-height;
         box-sizing: border-box;
       }

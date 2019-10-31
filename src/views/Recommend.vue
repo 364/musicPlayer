@@ -16,13 +16,23 @@
         </router-link>
       </div>
       <ul>
-        <li v-for="item in playlist" :key="item.id">
+        <li
+          v-for="(item,index) in playlist"
+          :key="item.id"
+          @mouseover="isHover = 'playlist'+index"
+          @mouseleave="isHover = null"
+        >
           <div class="img">
             <img v-lazy="item.picUrl" />
             <span class="count">
               <i class="el-icon-headset"></i>
               {{ item.playCount | playCount}}
             </span>
+            <transition name="fade">
+              <div class="mask" v-show="isHover == 'playlist'+index">
+                <i class="el-icon-video-play"></i>
+              </div>
+            </transition>
           </div>
           <div class="name">{{ item.name }}</div>
         </li>
@@ -37,13 +47,23 @@
         </div>
       </div>
       <ul>
-        <li v-for="item in mvList" :key="item.id">
+        <li
+          v-for="(item,index) in mvList"
+          :key="item.id"
+          @mouseover="isHover = 'mv'+index"
+          @mouseleave="isHover = null"
+        >
           <div class="img">
             <img v-lazy="item.picUrl" />
             <span class="count">
               <i class="el-icon-video-camera"></i>
               {{ item.playCount | playCount}}
             </span>
+            <transition name="fade">
+              <div class="mask" v-show="isHover == 'mv'+index">
+                <i class="el-icon-video-play"></i>
+              </div>
+            </transition>
           </div>
           <div class="name">{{ item.name }}</div>
         </li>
@@ -61,6 +81,9 @@
         <li v-for="item in songList" :key="item.id">
           <div class="img">
             <img v-lazy="item.song.album.picUrl" />
+            <div class="mask">
+              <i class="el-icon-video-play"></i>
+            </div>
           </div>
           <div class="album">
             <h5>{{ getSongName(item.name,item.song.album.alias) }}</h5>
@@ -83,6 +106,7 @@ export default {
   },
   data() {
     return {
+      isHover: null,
       carousel: {
         height: "200px",
         interval: 5000,
@@ -128,24 +152,12 @@ export default {
       }
       return artists.length && artists.join(" / ");
     }
-  },
-  filters: {
-    playCount(value) {
-      if (value > 10 ** 4) {
-        let numStr = (value / 10 ** 4).toString();
-        let len = numStr.indexOf(".");
-        return (len > 0 ? numStr.slice(0, len + 3) : numStr) + "万";
-      }
-      return value;
-    }
   }
 };
 </script>
 <style lang='less' scoped>
 @import "~@/assets/style/variable.less";
 .playIcon {
-  font-family: element-icons !important;
-  content: "\E7C0";
   position: absolute;
   width: 100%;
   height: 100%;
@@ -168,6 +180,9 @@ export default {
     align-items: center;
     .more {
       color: #999;
+      &:hover {
+        color: #888;
+      }
     }
     h3 {
       font-weight: 400;
@@ -205,17 +220,13 @@ export default {
             box-sizing: border-box;
             color: #fff;
             font-size: 12px;
-            text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.5);
+            text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
           }
           img {
             width: 100%;
           }
-        }
-        &:hover {
-          .img {
-            &:after {
-              &:extend(.playIcon);
-            }
+          .mask {
+            &:extend(.playIcon);
           }
         }
         &:last-child {
@@ -235,7 +246,7 @@ export default {
       grid-template-columns: repeat(3, 32%);
       li {
         display: inline-block;
-        box-shadow: 0 0 15px fade(#000, 10%);
+        box-shadow: 0 0 15px fade(#000, 5%);
         display: flex;
         box-sizing: border-box;
         cursor: pointer;
@@ -243,16 +254,19 @@ export default {
         margin-bottom: 20px;
         overflow: hidden;
         background: fade(#fff, 90%);
+        &:hover {
+          box-shadow: 0 0 15px fade(#000, 12%);
+        }
         .img {
           position: relative;
           width: 20%;
           img {
             width: 100%;
           }
-          &:after {
+          .mask {
             &:extend(.playIcon);
             color: fade(#fff, 80%);
-            font-size: 26px;
+            font-size: 30px;
           }
         }
         .album {
@@ -272,5 +286,13 @@ export default {
       }
     }
   }
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

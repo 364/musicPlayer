@@ -4,7 +4,7 @@
     <!-- 筛选条件 -->
     <filter-cat :category="category" @handleChange="handleChange" />
     <!-- 筛选结果 -->
-    <div class="list" ref="scroll">
+    <div class="list" ref="scroll" v-show="singerList.length">
       <load-more :load="load">
         <ul ref="list">
           <li v-for="item in singerList" :key="item.id">
@@ -32,7 +32,8 @@ export default {
   data() {
     return {
       box: null,
-      scroll: null
+      scroll: null,
+      scrollH: 0
     };
   },
   computed: {
@@ -58,13 +59,13 @@ export default {
         const clientH = this.box.clientHeight;
         const scrollH = this.scroll.scrollTop + this.scroll.clientHeight;
         if (scrollH > clientH) {
-          this[TYPES.MUTATIONS_GET_SINGER_LOAD]({ showLoad: true });
+          this[TYPES.MUTATIONS_SET_SINGER_LOAD]({ showLoad: true });
         } else {
           if (!this.finish) {
-            this[TYPES.MUTATIONS_GET_SINGER_LOAD]({ showLoad: true });
+            this[TYPES.MUTATIONS_SET_SINGER_LOAD]({ showLoad: true });
             this.handleMore();
           } else {
-            this[TYPES.MUTATIONS_GET_SINGER_LOAD]({ showLoad: false });
+            this[TYPES.MUTATIONS_SET_SINGER_LOAD]({ showLoad: false });
           }
         }
       });
@@ -76,9 +77,10 @@ export default {
       const scrollH = this.scroll.scrollTop + this.scroll.clientHeight;
       if (scrollH - clientH > 50 && !finish && !loading) {
         // 加载中
-        this[TYPES.MUTATIONS_GET_SINGER_LOAD]({ loading: true });
+        this[TYPES.MUTATIONS_SET_SINGER_LOAD]({ loading: true });
         this.handleMore();
       }
+      this.scrollH = this.scroll.scrollTop 
     },
     handleMore() {
       // 加载下一页
@@ -89,14 +91,24 @@ export default {
       // 改变筛选条件
       const { dataset } = e.target;
       this[TYPES.MUTATIONS_CHANGE_SINGER_LIST](dataset);
+      this[TYPES.MUTATIONS_SET_SINGER_INIT]();
       this[TYPES.ACTIONS_GET_SINGER_LIST]();
     },
     ...mapActions([TYPES.ACTIONS_GET_SINGER_LIST]),
     ...mapMutations([
-      TYPES.MUTATIONS_GET_SINGER_LOAD,
+      TYPES.MUTATIONS_SET_SINGER_INIT,
+      TYPES.MUTATIONS_SET_SINGER_LOAD,
       TYPES.MUTATIONS_CHANGE_SINGER_LIST,
       TYPES.MUTATIONS_CHANGE_SINGER_PAGE
     ])
+  },
+  activated() {
+    if (this.scrollH > 0) {
+      this.scroll.scrollTo(0, this.scrollH);
+    }
+  },
+  deactivated() {
+    this.scroll.removeEventListener("scroll", this.handleScroll);
   },
   beforeDestroy() {
     this.scroll.removeEventListener("scroll", this.handleScroll);
@@ -117,7 +129,7 @@ export default {
       display: flex;
       flex-wrap: wrap;
       li {
-        width: 18%;
+        width: 19%;
         margin: 5px;
         padding: 10px;
         display: flex;
@@ -127,7 +139,7 @@ export default {
         border-radius: 10px;
         box-sizing: border-box;
         box-shadow: 0 0 15px fade(#000, 5%);
-        &:hover{
+        &:hover {
           box-shadow: 0 0 15px fade(#000, 12%);
         }
         img {

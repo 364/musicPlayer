@@ -1,8 +1,6 @@
 <!-- 首页 -->
 <template>
   <div class="home">
-    <!-- 导航 -->
-    <nav-bar class="nav" />
     <keep-alive>
       <router-view />
     </keep-alive>
@@ -10,11 +8,9 @@
 </template>
 
 <script>
-import NavBar from "@/components/NavBar";
 export default {
   name: "home",
   components: {
-    NavBar,
   }
 };
 </script>

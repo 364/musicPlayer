@@ -2,7 +2,7 @@
 <template>
   <div class="songList">
     <!-- 筛选条件 -->
-    <div class="category">
+    <div class="category" v-show="category.content[category.tag].length">
       <div class="title">
         <div>{{title.filter.title}}</div>
         <ul>
@@ -29,16 +29,30 @@
           >{{item.name}}</li>
         </ul>
       </div>
-    </div>
-    <div class="list" ref="scroll">
-      <load-more :load="load">
-        <ul ref="list">
-          <li v-for="item in playList" :key="item.id">
-            <img v-lazy="item.coverImgUrl" />
-            <div>{{ item.name }}</div>
-          </li>
-        </ul>
-      </load-more>
+      <div class="list" ref="scroll" v-show="playList.length">
+        <load-more :load="load">
+          <ul ref="list">
+            <li
+              v-for="(item,index) in playList"
+              :key="item.id+item.createTime"
+              @mouseenter="isHover=index"
+              @mouseleave="isHover=null"
+            >
+              <!-- <img v-lazy="item.coverImgUrl" /> -->
+              <div class="coverImg" v-lazy:background-image="item.coverImgUrl">
+                <span class="count">
+                  <i class="el-icon-headset"></i>
+                  {{item.playCount | playCount}}
+                </span>
+                <transition name="fade">
+                  <i class="el-icon-video-play" v-show="isHover==index"></i>
+                </transition>
+              </div>
+              <div>{{ item.name }}</div>
+            </li>
+          </ul>
+        </load-more>
+      </div>
     </div>
   </div>
 </template>
@@ -53,10 +67,15 @@ export default {
   name: "songList",
   components: {
     LoadMore,
-    FilterCat,
+    FilterCat
   },
   data() {
-    return {};
+    return {
+      isHover: null,
+      box: null,
+      scroll: null,
+      scrollH: 0
+    };
   },
   computed: {
     ...mapState({
@@ -66,48 +85,103 @@ export default {
       category: state => state.playlist.category
     })
   },
+  watch: {
+    playList(val) {
+      if (val.length) {
+        this.handleChangeImgH();
+      }
+    }
+  },
   created() {
     this[TYPES.ACTIONS_GET_PLAY_LIST]();
     this[TYPES.ACTIONS_GET_PLAYLIST_CATEGORY]();
+    window.addEventListener("resize", this.handleChangeImgH);
   },
-  watch: {},
+  mounted() {
+    this.box = this.$refs.list;
+    this.scroll = this.$refs.scroll;
+    this.scroll.addEventListener("scroll", this.handleScroll);
+  },
   methods: {
+    handleScroll() {
+      // 滚动
+      const { finish, loading } = this.load;
+      const clientH = this.box.clientHeight;
+      const scrollH = this.scroll.scrollTop + this.scroll.clientHeight;
+      if (scrollH - clientH > 50 && !finish && !loading) {
+        // 加载中
+        this[TYPES.MUTATIONS_SET_PLAYLIST_LOAD]({ loading: true });
+        this.handleMore(true);
+      }
+      this.scrollH = this.scroll.scrollTop;
+    },
+    handleMore(tag) {
+      // 加载下一页
+      tag
+        ? this[TYPES.MUTATIONS_CHANGE_PLAYLIST_PAGE]()
+        : this[TYPES.MUTATIONS_SET_PLAYLIST_INIT]();
+      this[TYPES.ACTIONS_GET_PLAY_LIST]();
+      tag ? null : (this.scroll.scrollTop = 0);
+    },
     handleChange(e) {
+      // 改变分类
       const { dataset } = e.target;
       this[TYPES.MUTATIONS_CHANGE_PALYLIST_TAG](dataset);
+      this.handleMore();
     },
     handleChangeTag(obj) {
+      // 改变标题
       this[TYPES.MUTATIONS_CHANGE_PALYLIST_TITLE](obj);
+      if (Object.keys(obj)[0] == "list") {
+        this.handleMore();
+      }
+    },
+    handleChangeImgH() {
+      this.$nextTick(() => {
+        const node = this.$refs.list.querySelectorAll(".coverImg");
+        if (node && node.length) {
+          const coverImgW = node[0].clientWidth;
+          node.forEach(item => {
+            item.style.height = coverImgW + "px";
+          });
+          // console.log(node,coverImgW);
+        }
+      });
     },
     ...mapActions([
       TYPES.ACTIONS_GET_PLAY_LIST,
       TYPES.ACTIONS_GET_PLAYLIST_CATEGORY
     ]),
     ...mapMutations([
+      TYPES.MUTATIONS_SET_PLAYLIST_INIT,
       TYPES.MUTATIONS_CHANGE_PALYLIST_TITLE,
-      TYPES.MUTATIONS_CHANGE_PALYLIST_TAG
+      TYPES.MUTATIONS_CHANGE_PALYLIST_TAG,
+      TYPES.MUTATIONS_SET_PLAYLIST_LOAD,
+      TYPES.MUTATIONS_CHANGE_PLAYLIST_PAGE
     ])
   },
-  mounted() {},
-  beforeCreate() {}, //生命周期 - 创建之前
-  beforeMount() {}, //生命周期 - 挂载之前
-  beforeUpdate() {}, //生命周期 - 更新之前
-  updated() {}, //生命周期 - 更新之后
-  beforeDestroy() {}, //生命周期 - 销毁之前
-  destroyed() {}, //生命周期 - 销毁完成
-  activated() {} //如果页面有keep-alive缓存功能，这个函数会触发
+  activated() {
+    if (this.scrollH > 0) {
+      this.scroll.scrollTo(0, this.scrollH);
+    }
+  },
+  deactivated() {
+    window.removeEventListener("resize", this.handleChangeImgH);
+  },
+  beforeDestroy() {
+    window.removeEventListener("resize", this.handleChangeImgH);
+  }
 };
 </script>
 <style lang='less' scoped>
 @import "~@/assets/style/variable.less";
 .songList {
-  padding: 0 20px;
   height: @auto-height;
   .title {
     display: flex;
     justify-content: space-between;
     font-size: 16px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     ul {
       li {
         cursor: pointer;
@@ -120,30 +194,62 @@ export default {
       }
     }
   }
-  .list {
-    height: 82%;
-    overflow-y: auto;
-    ul {
-      display: flex;
-      flex-wrap: wrap;
-      li {
-        width: 18%;
-        margin: 5px;
-        padding: 10px;
-        cursor: pointer;
-        overflow: hidden;
-        border-radius: 10px;
-        box-sizing: border-box;
-        box-shadow: 0 0 15px fade(#000, 5%);
-        &:hover{
-          box-shadow: 0 0 15px fade(#000, 12%);
-        }
-        img {
-          width: 100%;
-          margin-right: 10px;
+  .category {
+    padding: 0 20px;
+  }
+  .playlist {
+    height: @auto-height;
+    overflow: hidden;
+    .title {
+      padding: 0 20px;
+    }
+    .list {
+      padding: 10px 20px;
+      height: 90%;
+      overflow-y: auto;
+      ul {
+        display: flex;
+        flex-wrap: wrap;
+        li {
+          width: 19%;
+          margin: 5px;
+          padding: 10px;
+          cursor: pointer;
+          overflow: hidden;
+          border-radius: 10px;
+          box-sizing: border-box;
+          box-shadow: 0 0 15px fade(#000, 5%);
+          font-size: 13px;
+          &:hover {
+            box-shadow: 0 0 15px fade(#000, 12%);
+          }
+          .coverImg {
+            margin-bottom: 10px;
+            background-repeat: no-repeat;
+            background-size: cover;
+            color: #fff;
+            font-size: 12px;
+            text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+            box-sizing: border-box;
+            padding: 5px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            & > i {
+              font-size: 30px;
+            }
+          }
         }
       }
     }
   }
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
