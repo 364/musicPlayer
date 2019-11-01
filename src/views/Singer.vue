@@ -22,6 +22,7 @@ import { mapActions, mapMutations, mapState } from "vuex";
 import * as TYPES from "@/store/types";
 import LoadMore from "@/components/LoadMore";
 import FilterCat from "@/components/FilterCat";
+import _ from 'lodash'
 
 export default {
   name: "singer",
@@ -49,7 +50,7 @@ export default {
   mounted() {
     this.box = this.$refs.list;
     this.scroll = this.$refs.scroll;
-    this.scroll.addEventListener("scroll", this.handleScroll);
+    this.scroll.addEventListener("scroll", _.debounce(this.handleScroll,1000));
     this.handleBottom();
   },
   methods: {

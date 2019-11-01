@@ -13,12 +13,7 @@
       <li v-for="item in menuList" :key="item.title">
         <div class="title">{{ item.title }}</div>
         <ul v-if="item.content&&item.content.length" class="submenu">
-          <router-link
-            tag="li"
-            v-for="cItem in item.content"
-            :key="cItem.route"
-            :to="cItem.route"
-          >
+          <router-link tag="li" v-for="cItem in item.content" :key="cItem.route" :to="cItem.route">
             <div>
               <i :class="['iconfont',cItem.icon]"></i>
               <span>{{ cItem.text }}</span>
@@ -60,7 +55,7 @@ export default {
   box-sizing: border-box;
   width: @sidebar-width;
   padding-bottom: @footer-height;
-  @media screen and (max-width:1200px){
+  @media screen and (max-width: 1200px) {
     width: @sidebar-small-width;
   }
   .user {
@@ -117,26 +112,42 @@ export default {
           height: @submenu-height;
           line-height: @submenu-height;
           transition: all 0.5s;
+          position: relative;
           i {
             width: 30px;
             margin-right: 20px;
           }
-          &.router-link-active {
-            position: relative;
+          &::before,&::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            transition: 0.3s;
+            transform-origin: left;
+            transform: scaleX(0);
+          }
+          &::before{
+            left: 0;
+            bottom: 0;
             background: linear-gradient(
               to right,
               transparent,
               @theme-color-1,
               @theme-color-5
             );
-            &:after {
-              content: "";
-              position: absolute;
-              top: 0;
-              right: 0;
-              width: 3px;
-              height: 100%;
-              background: @theme-color;
+          }
+          &::after{
+            width: 3px;
+            height: 100%;
+            background: @theme-color;
+          }
+          &.router-link-active {
+            &::before {
+              transform: scaleX(1);
+            }
+            &::after {
+              
+              transform: scaleX(1);
             }
           }
         }

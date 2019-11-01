@@ -31,10 +31,12 @@ export const playListHot = (params = {}) => api("/playlist/hot", params);
 // 歌单列表 cat 歌单类型 order 排序(hot/new) limit 数量 offset 偏移数量
 export const playlistAll = (params = {}) => api("/top/playlist", params);
 // 搜索 keywords 关键词(多个空格) limit 数量 offset 偏移数量 
-// type 1单曲 10专辑 100歌手 1002用户 1004mv 1006歌词 1009电台 1014视频 1018综合
+// type 1单曲 10专辑 100歌手 1000歌单 1002用户 1004mv 1006歌词 1009电台 1014视频 1018综合
 export const search = (params = {}) => api("/search", params);
 // 默认搜索词
 export const searchKey = (params = {}) => api("/search/default", params);
 // 热搜列表
 export const searchHot = (params = {}) => api("/search/hot/detail", params);
+// 搜索匹配 keywords
+export const searchSuggest = (params = {}) => api("/search/suggest", params);
 

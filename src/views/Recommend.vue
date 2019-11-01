@@ -87,7 +87,7 @@
           </div>
           <div class="album">
             <h5>{{ getSongName(item.name,item.song.album.alias) }}</h5>
-            <div class="artists">{{ getSongArtists(item.song.album.artists) }}</div>
+            <div class="artists">{{ item.song.album.artists | getArtists }}</div>
           </div>
         </li>
       </ul>
@@ -145,13 +145,6 @@ export default {
     getSongName(name, alias) {
       return name + (alias.length ? `(${alias})` : "");
     },
-    getSongArtists(arr) {
-      let artists = [];
-      for (let i in arr) {
-        artists.push(arr[i].name);
-      }
-      return artists.length && artists.join(" / ");
-    }
   }
 };
 </script>

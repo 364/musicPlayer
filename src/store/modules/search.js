@@ -11,6 +11,7 @@ const search = {
     searchHot: [],
     searchKey: "",
     searchList: [],
+    searchMatch: {},
     navigation
   },
   getters: {},
@@ -25,6 +26,9 @@ const search = {
     [TYPES.MUTATIONS_GET_SEARCH_LIST](state, data) {
       const { songs } = data;
       state.searchList = songs;
+    },
+    [TYPES.MUTATIONS_GET_SEARCH_SUGGEST](state, data) {
+      state.searchMatch = data
     }
   },
   actions: {
@@ -38,9 +42,16 @@ const search = {
       });
     },
     [TYPES.ACTIONS_GET_SEARCH_LIST]({ commit }, param) {
-      API.search(param).then(res => {
-        commit(TYPES.MUTATIONS_GET_SEARCH_LIST, res.result);
-      });
+      // console.log(param)
+      if (param.isMatch) {
+        API.searchSuggest(param).then(res => {
+          commit(TYPES.MUTATIONS_GET_SEARCH_SUGGEST, res.result);
+        });
+      } else {
+        API.search(param).then(res => {
+          commit(TYPES.MUTATIONS_GET_SEARCH_LIST, res.result);
+        });
+      }
     }
   }
 };
