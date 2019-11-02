@@ -1,7 +1,7 @@
 <!-- 搜索条 -->
 <template>
   <div class="nav">
-    <div :class="['searchBox',{'focus':this.keywords.length}]">
+    <div :class="['searchBox',{'focus':isFocus||keywords.length}]">
       <i class="el-icon-search"></i>
       <input
         :placeholder="searchKey||'请搜索'"
@@ -138,7 +138,7 @@ export default {
       setTimeout(() => {
         this.isFocus = false;
         this.isShow = false;
-      }, 100);
+      }, 200);
     },
     handleClear() {
       // 清空输入框
