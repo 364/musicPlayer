@@ -87,7 +87,7 @@
           </div>
           <div class="album">
             <h5>{{ getSongName(item.name,item.song.album.alias) }}</h5>
-            <div class="artists">{{ item.song.album.artists | getArtists }}</div>
+            <div class="artists">{{ item.song.album | getArtists }}</div>
           </div>
         </li>
       </ul>

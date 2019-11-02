@@ -5,10 +5,13 @@
       <i class="el-icon-search"></i>
       <input
         :placeholder="searchKey||'请搜索'"
-        v-model="keywords"
+        v-model.trim="keywords"
+        autocomplete="off"
+        autocapitalize="off"
         @focus="handleFocus"
         @blur="handleBlur"
         @keyup.enter="handleSearch"
+        @input="handleQuery"
         ref="input"
       />
       <i class="el-icon-circle-close" v-show="keywords.length" @click="handleClear"></i>
@@ -62,7 +65,8 @@
                 v-for="cItem in searchMatch[item]"
                 :key="cItem.id"
                 @click="handleSearch($event, {keywords:cItem.name,type:searchType[item]['type']})"
-              >{{ cItem.name }} {{(cItem.artists||cItem.artist) | getArtists(' - ')}}</li>
+                v-html="highLight(cItem)"
+              ></li>
             </ul>
           </div>
         </div>
@@ -95,20 +99,35 @@ export default {
       searchMatch: state => state.search.searchMatch
     })
   },
-  watch: {
-    keywords(keywords) {
-      if (keywords.length) {
-        this[TYPES.ACTIONS_GET_SEARCH_LIST]({
-          keywords,
-          isMatch: true
-        });
-      }
-    }
-  },
   created() {
     this[TYPES.ACTIONS_GET_SEARCH_DEFAULT]();
   },
   methods: {
+    highLight(item) {
+      let str = item.name;
+      str +=
+        item.alias && item.alias.length
+          ? `<span class="alias">${item.alias[0]}</span>`
+          : "";
+      str += this.$root.getArtists(item, " - ");
+      return str.replace(new RegExp(this.keywords, 'g'),`<span class="highlight">${this.keywords}</span>`)
+    },
+    clearTimer() {
+      if (this.timer) {
+        clearTimeout(this.timer);
+      }
+    },
+    handleQuery(e) {
+      this.clearTimer();
+      this.timer = setTimeout(() => {
+        if (this.keywords.length) {
+          this[TYPES.ACTIONS_GET_SEARCH_LIST]({
+            keywords: this.keywords,
+            isMatch: true
+          });
+        }
+      }, 100);
+    },
     handleFocus() {
       // 输入
       this.isFocus = true;
@@ -285,6 +304,14 @@ export default {
         white-space: nowrap;
         overflow: hidden;
         color: #777;
+        /deep/ .alias {
+          color: #aaa;
+          margin-left: 3px;
+        }
+        /deep/ .highlight{
+          color: @theme-color;
+          font-weight: 500;
+        }
       }
       .title {
         padding: 10px;

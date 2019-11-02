@@ -19,14 +19,14 @@ const searchCat = value => {
 };
 
 const getArtists = (val, operator) => {
-  if (!val) return;
+  if (!val ||(!val.artists && !val.artist)) return '';
   let artists = [];
-  if (Object.prototype.toString.call(val) == "[object Object]") {
-    artists.push(val.name);
-  } else {
-    for (let i in val) {
-      artists.push(val[i].name);
+  if (val.artists) {
+    for (let i in val.artists) {
+      artists.push(val.artists[i].name);
     }
+  } else {
+    artists.push(val.artist.name);
   }
   const str = artists.length && artists.join(" / ");
   return operator ? operator + str : str;

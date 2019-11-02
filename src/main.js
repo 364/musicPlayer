@@ -18,7 +18,10 @@ Vue.use(VueLazyload, {
   error: require("@/assets/images/404.gif"),
   loading: require("@/assets/images/loading.gif")
 });
-Object.keys(Filter).forEach(key => Vue.filter(key, Filter[key]));
+Object.keys(Filter).forEach(key => {
+  Vue.filter(key, Filter[key])
+  Vue.prototype[key] = Filter[key]
+})
 
 /* eslint-disable no-new */
 new Vue({
