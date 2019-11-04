@@ -25,8 +25,8 @@
       >{{ item.title }}</router-link>
     </ul>
     <div class="history">
-      <i class="el-icon-arrow-left"></i>
-      <i class="el-icon-arrow-right"></i>
+      <i class="el-icon-arrow-left" @click="$router.back(-1)"></i>
+      <i class="el-icon-arrow-right" @click="$router.back(1)"></i>
     </div>
     <!-- v-show="isShow" -->
     <div

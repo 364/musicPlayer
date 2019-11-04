@@ -21,6 +21,7 @@
           :key="item.id"
           @mouseover="isHover = 'playlist'+index"
           @mouseleave="isHover = null"
+          @click="$router.push(`/playlist/detail/${item.id}`)"
         >
           <div class="img">
             <img v-lazy="item.picUrl" />
@@ -136,6 +137,9 @@ export default {
     this[TYPES.ACTIONS_GET_MV]();
   },
   methods: {
+    toDetailPage(id){
+      this.$router.push(`/playlist/detail/${id}`)
+    },
     ...mapActions([
       TYPES.ACTIONS_GET_BANNER,
       TYPES.ACTIONS_GET_PLAYLIST,

@@ -29,3 +29,5 @@ export const searchKey = (params = {}) => axios.get("/search/default", { params 
 export const searchHot = (params = {}) => axios.get("/search/hot/detail", { params });
 // 搜索匹配 keywords
 export const searchSuggest = (params = {}) => axios.get("/search/suggest", { params })
+// 歌单详情页
+export const playListDetail = (params = {}) => axios.get("/playlist/detail", { params })

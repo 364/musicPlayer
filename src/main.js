@@ -7,7 +7,8 @@ import store from "./store";
 import VueLazyload from "vue-lazyload";
 import ElementUI from "element-ui";
 import Filter from "@/filter";
-import "element-ui/lib/theme-chalk/index.css";
+// import "element-ui/lib/theme-chalk/index.css";
+import "@/assets/theme/index.css";
 import "@/assets/style/normalize.css";
 import "@/assets/fonts/iconfont.css";
 

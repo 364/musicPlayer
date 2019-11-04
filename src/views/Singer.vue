@@ -129,9 +129,9 @@ export default {
     ul {
       display: flex;
       flex-wrap: wrap;
+      justify-content: space-between;
       li {
         width: 19%;
-        margin: 5px;
         padding: 10px;
         display: flex;
         cursor: pointer;

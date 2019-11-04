@@ -5,6 +5,7 @@ import Home from "@/views/Home";
 import Recommend from "@/views/Recommend";
 import Singer from "@/views/Singer";
 import PlayList from "@/views/PlayList";
+import PlayListDetail from "@/views/PlayListDetail";
 
 Vue.use(Router);
 
@@ -36,6 +37,11 @@ export default new Router({
               path: "/home/playlist",
               name: "PlayList",
               component: PlayList
+            },
+            {
+              path: "/playlist/detail/:id",
+              name: "PlayListDetail",
+              component: PlayListDetail,
             }
           ]
         }
@@ -50,6 +56,6 @@ export default new Router({
       path: "/mv",
       name: "Layout",
       component: Layout,
-    }
+    },
   ]
 });

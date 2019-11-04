@@ -1,3 +1,5 @@
+import moment from "moment";
+
 const playCount = value => {
   if (value > 10 ** 4) {
     let numStr = (value / 10 ** 4).toString();
@@ -19,11 +21,12 @@ const searchCat = value => {
 };
 
 const getArtists = (val, operator) => {
-  if (!val ||(!val.artists && !val.artist)) return '';
+  let arr = val.artists || val.ar
+  if (!val || (!arr && !val.artist)) return "";
   let artists = [];
-  if (val.artists) {
-    for (let i in val.artists) {
-      artists.push(val.artists[i].name);
+  if (arr) {
+    for (let i in arr) {
+      artists.push(arr[i].name);
     }
   } else {
     artists.push(val.artist.name);
@@ -32,8 +35,19 @@ const getArtists = (val, operator) => {
   return operator ? operator + str : str;
 };
 
+const formatTime = (time, format = "YYYY-MM-DD") =>{
+  return moment(time).format(format);
+}
+
+const getTags = val => {
+  const arr = val.map(item => "#" + item);
+  return arr.join(" ");
+};
+
 export default {
   playCount,
   searchCat,
-  getArtists
+  getArtists,
+  formatTime,
+  getTags,
 };

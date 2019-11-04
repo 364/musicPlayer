@@ -211,9 +211,9 @@ export default {
       ul {
         display: flex;
         flex-wrap: wrap;
+        justify-content:space-between;
         li {
           width: 19%;
-          margin: 5px;
           padding: 10px;
           cursor: pointer;
           overflow: hidden;
@@ -221,6 +221,7 @@ export default {
           box-sizing: border-box;
           box-shadow: 0 0 15px fade(#000, 5%);
           font-size: 13px;
+          line-height: 22px;
           &:hover {
             box-shadow: 0 0 15px fade(#000, 12%);
           }

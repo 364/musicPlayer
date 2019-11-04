@@ -6,6 +6,7 @@ import home from './modules/home'
 import search from './modules/search'
 import singer from './modules/singer'
 import playlist from './modules/playlist'
+import detail from './modules/detail'
 
 Vue.use(Vuex)
 
@@ -16,6 +17,7 @@ export default new Vuex.Store({
     home,
     search,
     singer,
-    playlist
+    playlist,
+    detail
   }
 })
