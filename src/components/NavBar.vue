@@ -105,10 +105,7 @@ export default {
   methods: {
     highLight(item) {
       let str = item.name;
-      str +=
-        item.alias && item.alias.length
-          ? `<span class="alias">${item.alias[0]}</span>`
-          : "";
+      str += item.alias.join('');
       str += this.$root.getArtists(item, " - ");
       return str.replace(new RegExp(this.keywords, 'g'),`<span class="highlight">${this.keywords}</span>`)
     },

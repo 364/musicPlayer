@@ -1,22 +1,37 @@
 <!-- 歌曲列表 -->
 <template>
   <div class="songlist">
-    <el-table :data="tableData">
-      <el-table-column label="歌曲">
-        <template slot-scope="scope" class="song">
-          <i class="iconfont icon-heart1"></i>
-          <span style="margin-left: 10px">{{ scope.row.name }}</span>
+    <el-table :data="tableData" size="small" row-key="id">
+      <el-table-column label="歌曲" :show-overflow-tooltip="true">
+        <template slot-scope="scope">
+          <div class="song">
+            <div class="left">
+              <i class="iconfont icon-heart1"></i>
+              <div class="name">
+                <span>{{ scope.row.name }}</span>
+                <span class="alias" v-if="scope.row.alia.length">({{ scope.row.alia | getAlias }})</span>
+              </div>
+            </div>
+            <div class="right">
+              <i class="el-icon-video-play"></i>
+              <i class="el-icon-circle-plus-outline"></i>
+              <i class="el-icon-download"></i>
+            </div>
+          </div>
         </template>
       </el-table-column>
-      <el-table-column label="歌手">
+      <el-table-column label="歌手" width="200" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          <span>{{ scope.row | getArtists }}</span>
+          <span class="artists">{{ scope.row | getArtists }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="专辑" prop="al.name"></el-table-column>
-      <el-table-column label="时长">
+      <el-table-column label="专辑" prop="al.name" 
+        width="180" :show-overflow-tooltip="true"
+        class-name="album"
+      ></el-table-column>
+      <el-table-column label="时长" width="100">
         <template slot-scope="scope">
-          <span>{{ scope.dt| formatTime('mm:ss') }}</span>
+          <span>{{ scope.row.dt | formatTime('mm:ss') }}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -33,7 +48,14 @@ export default {
   },
   components: {},
   data() {
-    return {};
+    return {
+      w: {
+        song: 0,
+        singer: 0,
+        ablum: 0,
+        time: 0
+      }
+    };
   },
   computed: {},
   created() {},
@@ -60,6 +82,37 @@ export default {
     background: transparent;
     .song {
       display: flex;
+      justify-content: space-between;
+      flex: 1;
+      i {
+        cursor: pointer;
+        font-size: 16px;
+      }
+      .left {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+        > * {
+          margin-right: 10px;
+        }
+        .name {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          .alias {
+            color: #999;
+          }
+        }
+      }
+      .right {
+        cursor: pointer;
+        flex-wrap: nowrap;
+      }
+    }
+    .artists,.album {
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
     }
   }
 }

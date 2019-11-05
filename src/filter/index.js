@@ -1,5 +1,6 @@
 import moment from "moment";
 
+// 播放数
 const playCount = value => {
   if (value > 10 ** 4) {
     let numStr = (value / 10 ** 4).toString();
@@ -8,7 +9,7 @@ const playCount = value => {
   }
   return value;
 };
-
+// 搜索结果类型
 const searchCat = value => {
   const obj = {
     songs: { icon: "icon-music-note", name: "单曲" },
@@ -19,7 +20,7 @@ const searchCat = value => {
   };
   return obj[value]["name"];
 };
-
+// 歌手
 const getArtists = (val, operator) => {
   let arr = val.artists || val.ar
   if (!val || (!arr && !val.artist)) return "";
@@ -34,15 +35,19 @@ const getArtists = (val, operator) => {
   const str = artists.length && artists.join(" / ");
   return operator ? operator + str : str;
 };
-
+// 格式化时间
 const formatTime = (time, format = "YYYY-MM-DD") =>{
   return moment(time).format(format);
 }
-
+// 标签
 const getTags = val => {
   const arr = val.map(item => "#" + item);
   return arr.join(" ");
 };
+// 获取歌曲其他信息
+const getAlias = val =>{
+  return val.join('')
+}
 
 export default {
   playCount,
@@ -50,4 +55,5 @@ export default {
   getArtists,
   formatTime,
   getTags,
+  getAlias
 };

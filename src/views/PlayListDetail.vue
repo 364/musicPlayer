@@ -1,15 +1,15 @@
 <!-- 歌单详情页 -->
 <template>
-  <div class="playlist_detail">
+  <div class="playlist_detail" v-if="Object.keys(playlist).length">
     <!-- 歌单介绍 -->
-    <div v-if="Object.keys(playlist).length" class="des">
+    <div class="des">
       <div class="coverImg" v-lazy:background-image="playlist.coverImgUrl"></div>
       <div class="info">
         <h2>{{ playlist.name }}</h2>
         <h4>
           <img :src="playlist.creator.avatarUrl" class="avatar" />
           <span>{{ playlist.creator.nickname }}</span>
-          <span>{{ playlist.tags | getTags }}</span>
+          <span class="tags">{{ playlist.tags | getTags }}</span>
         </h4>
         <div
           class="count"
@@ -31,9 +31,11 @@
     <div class="list">
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane :label="`歌曲(${playlist.trackCount})`" name="songlist">
-          <SongList :tableData="playlist.tracks" />
+          <song-list :tableData="playlist.tracks" />
         </el-tab-pane>
-        <el-tab-pane :label="`评论(${playlist.trackCount})`" name="second">评论</el-tab-pane>
+        <el-tab-pane :label="`评论(${playlist.commentCount})`" name="second">
+          <comment :id="playlist.id" type="playlist" />
+        </el-tab-pane>
       </el-tabs>
     </div>
   </div>
@@ -43,10 +45,11 @@
 import { mapActions, mapState } from "vuex";
 import * as TYPES from "@/store/types";
 import SongList from "@/components/SongList";
+import Comment from "@/components/Comment";
 
 export default {
   name: "",
-  components: { SongList },
+  components: { SongList, Comment },
   data() {
     return {
       activeName: "songlist"
@@ -58,25 +61,23 @@ export default {
     })
   },
   created() {
-    const id = this.$route.params.id;
-    if (!id) {
-      this.$router.go(-1);
-    }
-    this[TYPES.ACTIONS_GET_PLAYLIST_DETAIL]({ id });
+    this.handleGetData();
   },
   watch: {},
   methods: {
+    handleGetData() {
+      const id = this.$route.params.id;
+      if (!id) {
+        this.$router.go(-1);
+      }
+      this[TYPES.ACTIONS_GET_PLAYLIST_DETAIL]({ id });
+    },
     handleClick() {},
     ...mapActions([TYPES.ACTIONS_GET_PLAYLIST_DETAIL])
   },
-  mounted() {},
-  beforeCreate() {}, //生命周期 - 创建之前
-  beforeMount() {}, //生命周期 - 挂载之前
-  beforeUpdate() {}, //生命周期 - 更新之前
-  updated() {}, //生命周期 - 更新之后
-  beforeDestroy() {}, //生命周期 - 销毁之前
-  destroyed() {}, //生命周期 - 销毁完成
-  activated() {} //如果页面有keep-alive缓存功能，这个函数会触发
+  activated() {
+    this.handleGetData();
+  } //如果页面有keep-alive缓存功能，这个函数会触发
 };
 </script>
 <style lang='less' scoped>
@@ -100,6 +101,9 @@ export default {
         margin: 0;
         font-weight: 400;
       }
+      .tags {
+        margin-left: 20px;
+      }
       .avatar {
         width: 20px;
         border-radius: 50%;
@@ -121,7 +125,7 @@ export default {
       }
       .el-tabs__content {
         overflow-y: auto;
-        height:calc(100% - 60px);
+        height: calc(100% - 60px);
       }
     }
   }

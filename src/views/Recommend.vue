@@ -147,7 +147,7 @@ export default {
       TYPES.ACTIONS_GET_MV
     ]),
     getSongName(name, alias) {
-      return name + (alias.length ? `(${alias})` : "");
+      return name + alias.join('');
     },
   }
 };

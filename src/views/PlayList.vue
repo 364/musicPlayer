@@ -37,6 +37,7 @@
               :key="item.id+item.createTime"
               @mouseenter="isHover=index"
               @mouseleave="isHover=null"
+              @click="$router.push(`/playlist/detail/${item.id}`)"
             >
               <!-- <img v-lazy="item.coverImgUrl" /> -->
               <div class="coverImg" v-lazy:background-image="item.coverImgUrl">
@@ -62,7 +63,7 @@ import { mapActions, mapMutations, mapState } from "vuex";
 import * as TYPES from "@/store/types";
 import LoadMore from "@/components/LoadMore";
 import FilterCat from "@/components/FilterCat";
-import _ from 'lodash'
+import _ from "lodash";
 
 export default {
   name: "songList",
@@ -101,7 +102,7 @@ export default {
   mounted() {
     this.box = this.$refs.list;
     this.scroll = this.$refs.scroll;
-    this.scroll.addEventListener("scroll", _.debounce(this.handleScroll,1000));
+    this.scroll.addEventListener("scroll", _.debounce(this.handleScroll, 1000));
   },
   methods: {
     handleScroll() {
@@ -211,7 +212,7 @@ export default {
       ul {
         display: flex;
         flex-wrap: wrap;
-        justify-content:space-between;
+        justify-content: space-between;
         li {
           width: 19%;
           padding: 10px;

@@ -18,6 +18,6 @@ export default new Vuex.Store({
     search,
     singer,
     playlist,
-    detail
+    detail,
   }
 })

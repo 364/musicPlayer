@@ -31,3 +31,11 @@ export const searchHot = (params = {}) => axios.get("/search/hot/detail", { para
 export const searchSuggest = (params = {}) => axios.get("/search/suggest", { params })
 // 歌单详情页
 export const playListDetail = (params = {}) => axios.get("/playlist/detail", { params })
+// 歌单评论 limit 数量 offset 偏移数量 
+export const playListComment =  (params = {}) => axios.get("/comment/playlist", { params }) 
+// 歌曲评论 limit 数量 offset 偏移数量 
+export const musicComment =  (params = {}) => axios.get("/comment/music", { params }) 
+// mv评论 limit 数量 offset 偏移数量 
+export const mvComment =  (params = {}) => axios.get("/comment/mv", { params }) 
+// 专辑评论 limit 数量 offset 偏移数量 
+export const albumComment =  (params = {}) => axios.get("/comment/album", { params }) 

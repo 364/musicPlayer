@@ -165,6 +165,20 @@
       "font_class": "play-list-line",
       "unicode": "e890",
       "unicode_decimal": 59536
+    },
+    {
+      "icon_id": "11474268",
+      "name": "good",
+      "font_class": "good",
+      "unicode": "e6f8",
+      "unicode_decimal": 59128
+    },
+    {
+      "icon_id": "11481323",
+      "name": "good-fill",
+      "font_class": "good-fill",
+      "unicode": "e723",
+      "unicode_decimal": 59171
     }
   ]
 }
