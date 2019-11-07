@@ -38,13 +38,7 @@
           </div>
         </li>
       </ul>
-      <el-pagination
-        background
-        layout="prev, pager, next"
-        :page-size="comment.pageSize"
-        :total="comment.total"
-        :hide-on-single-page="true"
-      />
+      <pagination :comment="comment" @handleGetData="handleGetData" />
     </div>
   </div>
 </template>
@@ -52,19 +46,18 @@
 <script>
 import { mapActions, mapState } from "vuex";
 import * as TYPES from "@/store/types";
+import Pagination from "@/components/Pagination";
 
 export default {
   name: "comment",
-  components: {},
+  components: {
+    Pagination
+  },
   props: {
     type: {
       type: String,
       required: true
     },
-    id: {
-      type: [String, Number],
-      required: true
-    }
   },
   data() {
     return {};
@@ -79,12 +72,19 @@ export default {
   },
   watch: {},
   methods: {
-    handleGetData() {
+    handleGetData(update) {
       this[TYPES["ACTIONS_GET_COMMENT_" + this.type.toUpperCase()]]({
-        id: this.id
+        id: this.$route.params.id
       });
+      if (update) {
+        this.$emit("handleScrollTop");
+      }
     },
-    ...mapActions([TYPES.ACTIONS_GET_COMMENT_PLAYLIST])
+    ...mapActions([
+      TYPES.ACTIONS_GET_COMMENT_PLAYLIST,
+      TYPES.ACTIONS_GET_COMMENT_MUSIC,
+      TYPES.ACTIONS_GET_COMMENT_MV
+    ])
   },
   mounted() {},
   beforeCreate() {}, //生命周期 - 创建之前

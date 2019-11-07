@@ -7,7 +7,7 @@
     <div class="list" ref="scroll" v-show="singerList.length">
       <load-more :load="load">
         <ul ref="list">
-          <li v-for="item in singerList" :key="item.id">
+          <li v-for="item in singerList" :key="item.id" @click="$router.push(`/singer/detail/${item.id}`)">
             <img v-lazy="item.picUrl" />
             <div>{{ item.name }}</div>
           </li>
@@ -124,7 +124,7 @@ export default {
     padding: 0 20px;
   }
   .list {
-    height: 82%;
+    height: 85%;
     overflow-y: auto;
     ul {
       display: flex;
@@ -133,6 +133,7 @@ export default {
       li {
         width: 19%;
         padding: 10px;
+        margin-bottom: 10px;
         display: flex;
         cursor: pointer;
         align-items: center;

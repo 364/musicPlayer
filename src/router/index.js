@@ -6,6 +6,7 @@ import Recommend from "@/views/Recommend";
 import Singer from "@/views/Singer";
 import PlayList from "@/views/PlayList";
 import PlayListDetail from "@/views/PlayListDetail";
+import SingerDetail from "@/views/SingerDetail";
 
 Vue.use(Router);
 
@@ -42,6 +43,11 @@ export default new Router({
               path: "/playlist/detail/:id",
               name: "PlayListDetail",
               component: PlayListDetail,
+            },
+            {
+              path: "/singer/detail/:id",
+              name: "SingerDetail",
+              component: SingerDetail,
             }
           ]
         }

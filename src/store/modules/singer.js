@@ -43,8 +43,8 @@ const load = {
 const singer = {
   state: {
     load,
-    category,
-    navigation,
+    category:category,
+    navigation:navigation,
     singerList: []
   },
   getters: {
@@ -87,7 +87,10 @@ const singer = {
     [TYPES.MUTATIONS_SET_SINGER_INIT](state) {
       // 初始化
       state.singerList = [];
-      state.navigation = navigation
+      state.navigation = {
+        page: 1,
+        pageSize: 50
+      }
       state.load = load
     }
   },

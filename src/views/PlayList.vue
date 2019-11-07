@@ -169,9 +169,11 @@ export default {
   },
   deactivated() {
     window.removeEventListener("resize", this.handleChangeImgH);
+    this.scroll.removeEventListener("scroll", this.handleScroll);
   },
   beforeDestroy() {
     window.removeEventListener("resize", this.handleChangeImgH);
+    this.scroll.removeEventListener("scroll", this.handleScroll);
   }
 };
 </script>
@@ -207,7 +209,7 @@ export default {
     }
     .list {
       padding: 10px 20px;
-      height: 90%;
+      height: 92%;
       overflow-y: auto;
       ul {
         display: flex;
@@ -216,6 +218,7 @@ export default {
         li {
           width: 19%;
           padding: 10px;
+          margin-bottom: 10px;
           cursor: pointer;
           overflow: hidden;
           border-radius: 10px;

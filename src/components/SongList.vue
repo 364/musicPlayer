@@ -1,7 +1,7 @@
 <!-- 歌曲列表 -->
 <template>
   <div class="songlist">
-    <el-table :data="tableData" size="small" row-key="id">
+    <el-table :data="tableData" size="small" row-key="id" v-if="showCell.includes('song')">
       <el-table-column label="歌曲" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <div class="song">
@@ -20,16 +20,25 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="歌手" width="200" :show-overflow-tooltip="true">
+      <el-table-column
+        label="歌手"
+        width="200"
+        :show-overflow-tooltip="true"
+        v-if="showCell.includes('singer')"
+      >
         <template slot-scope="scope">
           <span class="artists">{{ scope.row | getArtists }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="专辑" prop="al.name" 
-        width="180" :show-overflow-tooltip="true"
+      <el-table-column
+        label="专辑"
+        prop="al.name"
+        width="180"
+        :show-overflow-tooltip="true"
         class-name="album"
+        v-if="showCell.includes('ablum')"
       ></el-table-column>
-      <el-table-column label="时长" width="100">
+      <el-table-column label="时长" width="100" v-if="showCell.includes('time')">
         <template slot-scope="scope">
           <span>{{ scope.row.dt | formatTime('mm:ss') }}</span>
         </template>
@@ -44,6 +53,10 @@ export default {
   props: {
     tableData: {
       type: Array
+    },
+    showCell: {
+      type: Array,
+      default: ["song", "singer", "ablum", "time"]
     }
   },
   components: {},
@@ -84,6 +97,7 @@ export default {
       display: flex;
       justify-content: space-between;
       flex: 1;
+      cursor: pointer;
       i {
         cursor: pointer;
         font-size: 16px;
@@ -105,11 +119,11 @@ export default {
         }
       }
       .right {
-        cursor: pointer;
         flex-wrap: nowrap;
       }
     }
-    .artists,.album {
+    .artists,
+    .album {
       text-overflow: ellipsis;
       white-space: nowrap;
       overflow: hidden;

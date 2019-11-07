@@ -105,9 +105,12 @@ export default {
   methods: {
     highLight(item) {
       let str = item.name;
-      str += item.alias.join('');
+      str += (item.alias || []).join("");
       str += this.$root.getArtists(item, " - ");
-      return str.replace(new RegExp(this.keywords, 'g'),`<span class="highlight">${this.keywords}</span>`)
+      return str.replace(
+        new RegExp(this.keywords, "g"),
+        `<span class="highlight">${this.keywords}</span>`
+      );
     },
     clearTimer() {
       if (this.timer) {
@@ -305,7 +308,7 @@ export default {
           color: #aaa;
           margin-left: 3px;
         }
-        /deep/ .highlight{
+        /deep/ .highlight {
           color: @theme-color;
           font-weight: 500;
         }
