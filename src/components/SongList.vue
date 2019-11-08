@@ -9,7 +9,10 @@
               <i class="iconfont icon-heart1"></i>
               <div class="name">
                 <span>{{ scope.row.name }}</span>
-                <span class="alias" v-if="scope.row.alia.length">({{ scope.row.alia | getAlias }})</span>
+                <span
+                  class="alias"
+                  v-if="(scope.row.alia||scope.row.alias).length"
+                >({{ (scope.row.alia||scope.row.alias) | getAlias }})</span>
               </div>
             </div>
             <div class="right">
@@ -32,12 +35,14 @@
       </el-table-column>
       <el-table-column
         label="专辑"
-        prop="al.name"
         width="180"
         :show-overflow-tooltip="true"
-        class-name="album"
         v-if="showCell.includes('ablum')"
-      ></el-table-column>
+      >
+        <template slot-scope="scope">
+          <span class="album">{{ scope.row.al?scope.row.al.name:scope.row.album.name }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="时长" width="100" v-if="showCell.includes('time')">
         <template slot-scope="scope">
           <span>{{ scope.row.dt | formatTime('mm:ss') }}</span>
@@ -52,11 +57,12 @@ export default {
   name: "songlist",
   props: {
     tableData: {
-      type: Array
+      type: Array,
+      required: true
     },
     showCell: {
       type: Array,
-      default: ["song", "singer", "ablum", "time"]
+      default: () => ["song", "singer", "ablum", "time"]
     }
   },
   components: {},
@@ -71,7 +77,8 @@ export default {
     };
   },
   computed: {},
-  created() {},
+  created() {
+  },
   watch: {},
   methods: {},
   mounted() {},

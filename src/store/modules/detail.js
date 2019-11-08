@@ -43,16 +43,19 @@ const detail = {
     [TYPES.ACTIONS_GET_SINGER_DETAIL]({ commit }, param) {
       // 歌手详情
       // 热门歌曲
-      Promise.all([API.singerDetail(param), API.singerAlbum(param)]).then(
-        res => {
-          if (res.length) {
-            const { artist, hotSongs } = res[0];
-            const { hotAlbums } = res[1];
-            const data = { artist, hotSongs, hotAlbums };
-            commit(TYPES.MUTATIONS_GET_SINGER_DETAIL, data);
-          }
+      Promise.all([
+        API.singerDetail(param),
+        API.singerAlbum(param),
+        API.singerDesc(param)
+      ]).then(res => {
+        if (res.length) {
+          const { artist, hotSongs } = res[0];
+          const { hotAlbums } = res[1];
+          const { introduction } = res[2];
+          const data = { artist, hotSongs, hotAlbums, introduction };
+          commit(TYPES.MUTATIONS_GET_SINGER_DETAIL, data);
         }
-      );
+      });
     },
     [TYPES.ACTIONS_GET_COMMENT_PLAYLIST]({ commit, getters }, param) {
       // 歌单评论

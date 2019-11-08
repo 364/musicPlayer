@@ -101,7 +101,7 @@ export default {
   height: calc(100% - @footer-height);
   .des {
     display: flex;
-    padding: 0 20px;
+    padding:20px;
     .coverImg {
       width: 150px;
       height: 150px;
@@ -140,7 +140,7 @@ export default {
       }
       .el-tabs__content {
         overflow-y: auto;
-        height: calc(100% - 60px);
+        height: calc(100% - 100px);
       }
     }
   }

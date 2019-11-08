@@ -8,10 +8,21 @@
         @mouseenter="isHover=index"
         @mouseleave="isHover=null"
       >
-        <img :src="item.picUrl" alt="album-img" />
+        <!-- <img :src="item.picUrl" alt="album-img" />
         <div class="name">{{ item.name }}</div>
         <div class="artists">{{ item | getArtists }}</div>
-        <div class="time">{{item.publishTime | formatTime}}</div>
+        <div class="time">{{item.publishTime | formatTime}}</div>-->
+        <div class="coverImg">
+          <img :src="item.picUrl" alt="album-img" />
+          <div class="count">
+            <span>{{item.publishTime | formatTime}}</span>
+            <transition name="fade">
+              <i class="el-icon-video-play" v-show="isHover==index"></i>
+            </transition>
+          </div>
+        </div>
+        <div class="name">{{ item.name }}</div>
+        <div class="artists">{{ item | getArtists }}</div>
       </li>
     </ul>
   </div>
@@ -53,9 +64,6 @@ export default {
     flex-wrap: wrap;
     justify-content: space-between;
     li {
-      img {
-        width: 100%;
-      }
       margin-bottom: 10px;
       width: 19%;
       padding: 10px;
@@ -69,6 +77,29 @@ export default {
       &:hover {
         box-shadow: 0 0 15px fade(#000, 12%);
       }
+      .coverImg {
+        color: #fff;
+        font-size: 12px;
+        text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+        position: relative;
+        .count{
+          position: absolute;
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-end;
+          width: 100%;
+          bottom: 0;
+          padding: 5px 10px;
+          box-sizing: border-box;
+          & > i {
+            font-size: 30px;
+          }
+        }
+        img {
+          position: relative;
+          width: 100%;
+        }
+      }
       .name {
         overflow: hidden;
         text-overflow: ellipsis;
@@ -76,10 +107,7 @@ export default {
         line-height: 25px;
       }
       .artists {
-        color: #555;
-      }
-      .time {
-        color: #777;
+        color: #888;
       }
     }
   }

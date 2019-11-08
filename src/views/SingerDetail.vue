@@ -39,6 +39,16 @@
         <el-tab-pane :label="`热门专辑(${singerList.hotAlbums.length})`" name="albumlist">
           <album-list :data="singerList.hotAlbums" />
         </el-tab-pane>
+        <el-tab-pane label="歌手介绍  " name="singerdesc">
+          <div class="desc">
+            <h3 v-html=" singerList.artist.name+'简介'"></h3>
+            <div v-html="singerList.artist.briefDesc" class="pre"></div>
+          </div>
+          <div v-for="item in singerList.introduction" :key="item.ti" class="desc">
+            <h3 v-html="item.ti"></h3>
+            <pre v-html="item.txt"></pre>
+          </div>
+        </el-tab-pane>
       </el-tabs>
     </div>
   </div>
@@ -52,7 +62,7 @@ import AlbumList from "@/components/AlbumList";
 
 export default {
   name: "",
-  components: { SongList,AlbumList },
+  components: { SongList, AlbumList },
   data() {
     return {
       showCell: ["song", "ablum", "time"],
@@ -91,7 +101,7 @@ export default {
   height: calc(100% - @footer-height);
   .des {
     display: flex;
-    padding: 0 20px;
+    padding: 20px;
     .coverImg {
       width: 150px;
       height: 150px;
@@ -145,7 +155,20 @@ export default {
       }
       .el-tabs__content {
         overflow-y: auto;
-        height: calc(100% - 60px);
+        height: calc(100% - 100px);
+      }
+    }
+    .desc {
+      .pre{
+        text-indent: 2em;
+      }
+      pre,
+      .pre {
+        padding-left: 15px;
+        line-height: 30px;
+        font-family: "Arial", "Microsoft YaHei", "黑体", "宋体", sans-serif;
+        word-wrap: break-word;
+        white-space: pre-wrap;
       }
     }
   }

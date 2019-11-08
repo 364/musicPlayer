@@ -1,7 +1,7 @@
 <!-- 评论 -->
 <template>
   <div class="comment" v-if="Object.keys(comment).length">
-    <div v-if="comment.hotComments">
+    <div v-if="comment.hotComments&&comment.hotComments.length">
       <h5>精彩评论</h5>
       <ul>
         <li v-for="item in comment.hotComments" :key="item.commentId">

@@ -9,26 +9,29 @@ const navigation = {
 const search = {
   state: {
     searchHot: [],
+    searchDefKey: "",
     searchKey: "",
-    searchList: [],
+    searchList: {},
     searchMatch: {},
     navigation
   },
   getters: {},
   mutations: {
-    [TYPES.MUTATIONS_GET_SEARCH_KEY](state, data) {
+    [TYPES.MUTATIONS_GET_SEARCH_DEFAULT_KEY](state, data) {
       const { realkeyword } = data;
-      state.searchKey = realkeyword || "";
+      state.searchDefKey = realkeyword || "";
     },
     [TYPES.MUTATIONS_GET_SEARCH_HOT](state, data) {
       state.searchHot = data;
     },
-    [TYPES.MUTATIONS_GET_SEARCH_LIST](state, data) {
-      const { songs } = data;
-      state.searchList = songs;
+    [TYPES.MUTATIONS_GET_SEARCH_LIST](state, { data, type }) {
+      state.searchList = Object.assign({}, data, { type });
     },
     [TYPES.MUTATIONS_GET_SEARCH_SUGGEST](state, data) {
-      state.searchMatch = data
+      state.searchMatch = data;
+    },
+    [TYPES.MUTATIONS_SET_SEARCH_KEY](state, data) {
+      state.searchKey = data;
     }
   },
   actions: {
@@ -36,7 +39,7 @@ const search = {
       Promise.all([API.searchKey(), API.searchHot()]).then(res => {
         // console.log(res)
         if (res.length) {
-          commit(TYPES.MUTATIONS_GET_SEARCH_KEY, res[0].data);
+          commit(TYPES.MUTATIONS_GET_SEARCH_DEFAULT_KEY, res[0].data);
           commit(TYPES.MUTATIONS_GET_SEARCH_HOT, res[1].data);
         }
       });
@@ -48,8 +51,13 @@ const search = {
           commit(TYPES.MUTATIONS_GET_SEARCH_SUGGEST, res.result);
         });
       } else {
+        const { keywords } = param;
+        commit(TYPES.MUTATIONS_SET_SEARCH_KEY, keywords);
         API.search(param).then(res => {
-          commit(TYPES.MUTATIONS_GET_SEARCH_LIST, res.result);
+          commit(TYPES.MUTATIONS_GET_SEARCH_LIST, {
+            data: res.result,
+            type: param.type || 1
+          });
         });
       }
     }

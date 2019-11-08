@@ -4,13 +4,13 @@
     <div :class="['searchBox',{'focus':isFocus||keywords.length}]">
       <i class="el-icon-search"></i>
       <input
-        :placeholder="searchKey||'请搜索'"
+        :placeholder="searchDefKey||'请搜索'"
         v-model.trim="keywords"
         autocomplete="off"
         autocapitalize="off"
         @focus="handleFocus"
         @blur="handleBlur"
-        @keyup.enter="handleSearch"
+        @keyup.enter="handleSearch($event,keywords,true)"
         @input="handleQuery"
         ref="input"
       />
@@ -95,7 +95,7 @@ export default {
     ...mapState({
       navList: state => state.home.navList,
       searchHot: state => state.search.searchHot,
-      searchKey: state => state.search.searchKey,
+      searchDefKey: state => state.search.searchDefKey,
       searchMatch: state => state.search.searchMatch
     })
   },
@@ -132,6 +132,9 @@ export default {
       // 输入
       this.isFocus = true;
       this.isShow = true;
+      if (this.keywords.length) {
+        this.handleQuery();
+      }
     },
     handleBlur() {
       // 失去焦点
@@ -145,7 +148,7 @@ export default {
       this.keywords = "";
       this.isFocus = false;
     },
-    handleSearch(e, key) {
+    handleSearch(e, key, enter) {
       // 搜索
       this.isFocus = false;
       this.isShow = false;
@@ -160,11 +163,14 @@ export default {
           ? key
           : this.keywords.length
           ? this.keywords
-          : this.searchKey;
-        if (this.keywords !== keywords) {
+          : this.searchDefKey;
+        if (this.keywords !== keywords || enter) {
           this.keywords = keywords;
           this[TYPES.ACTIONS_GET_SEARCH_LIST]({ keywords, isMatch: false });
         }
+      }
+      if (this.$route.path !== "/search") {
+        this.$router.push("/search");
       }
     },
     ...mapActions([
