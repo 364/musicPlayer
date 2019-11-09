@@ -10,7 +10,7 @@
   >
     <a target="_blank" :href="item.url" v-for="item in banners" :key="item.imageUrl">
       <el-carousel-item>
-        <img :src="item.imageUrl" ref="imgH" />
+        <img :src="item.imageUrl" ref="imgH"/>
         <span class="tag">{{item.typeTitle}}</span>
       </el-carousel-item>
     </a>
@@ -26,7 +26,9 @@ export default {
       type: Object
     },
     banners: {
-      type: Array
+      type: Array,
+      required: true,
+      default: () => []
     }
   },
   methods: {
@@ -54,7 +56,7 @@ export default {
 <style lang='less' scoped>
 @import "~@/assets/style/variable.less";
 .bannerBox {
-  /deep/ .el-carousel__item{
+  /deep/ .el-carousel__item {
     overflow: visible;
   }
   img {

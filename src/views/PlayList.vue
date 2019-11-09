@@ -37,7 +37,7 @@
               :key="item.id+item.createTime"
               @mouseenter="isHover=index"
               @mouseleave="isHover=null"
-              @click="$router.push(`/playlist/detail/${item.id}`)"
+              @click="$router.push(`/playlist/${item.id}`)"
             >
               <!-- <img v-lazy="item.coverImgUrl" /> -->
               <div class="coverImg" v-lazy:background-image="item.coverImgUrl">

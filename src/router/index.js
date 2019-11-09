@@ -8,6 +8,7 @@ import PlayList from "@/views/PlayList";
 import PlayListDetail from "@/views/PlayListDetail";
 import SingerDetail from "@/views/SingerDetail";
 import Search from "@/views/Search";
+import MvDetail from "@/views/MvDetail";
 
 Vue.use(Router);
 
@@ -43,14 +44,19 @@ export default new Router({
           ]
         },
         {
-          path: "/playlist/detail/:id",
+          path: "/playlist/:id",
           name: "PlayListDetail",
           component: PlayListDetail
         },
         {
-          path: "/singer/detail/:id",
+          path: "/singer/:id",
           name: "SingerDetail",
           component: SingerDetail
+        },
+        {
+          path: "/mv/:id",
+          name: "Search",
+          component: MvDetail
         },
         {
           path: "/search",
@@ -60,12 +66,12 @@ export default new Router({
         {
           path: "/fm",
           name: "Layout",
-          component: Layout
+          component: MvDetail
         },
         {
           path: "/mv",
           name: "Layout",
-          component: Layout
+          component: MvDetail
         }
       ]
     }

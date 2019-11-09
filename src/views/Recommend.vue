@@ -21,7 +21,7 @@
           :key="item.id"
           @mouseover="isHover = 'playlist'+index"
           @mouseleave="isHover = null"
-          @click="$router.push(`/playlist/detail/${item.id}`)"
+          @click="$router.push(`/playlist/${item.id}`)"
         >
           <div class="img">
             <img v-lazy="item.picUrl" />
@@ -53,6 +53,7 @@
           :key="item.id"
           @mouseover="isHover = 'mv'+index"
           @mouseleave="isHover = null"
+          @click="$router.push(`/mv/${item.id}`)"
         >
           <div class="img">
             <img v-lazy="item.picUrl" />
@@ -137,8 +138,8 @@ export default {
     this[TYPES.ACTIONS_GET_MV]();
   },
   methods: {
-    toDetailPage(id){
-      this.$router.push(`/playlist/detail/${id}`)
+    toDetailPage(id) {
+      this.$router.push(`/playlist/${id}`);
     },
     ...mapActions([
       TYPES.ACTIONS_GET_BANNER,
@@ -147,8 +148,8 @@ export default {
       TYPES.ACTIONS_GET_MV
     ]),
     getSongName(name, alias) {
-      return name + alias.join('');
-    },
+      return name + alias.join("");
+    }
   }
 };
 </script>

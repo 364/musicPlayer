@@ -11,6 +11,7 @@
       :page-size="comment.pageSize"
       :current-page="comment.page"
       :total="comment.total"
+      :hide-on-single-page="true"
       @current-change="handleCurrentChange"
       @size-change="handleSizeChange"
     />

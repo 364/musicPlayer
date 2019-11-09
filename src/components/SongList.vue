@@ -45,7 +45,7 @@
       </el-table-column>
       <el-table-column label="时长" width="100" v-if="showCell.includes('time')">
         <template slot-scope="scope">
-          <span>{{ scope.row.dt | formatTime('mm:ss') }}</span>
+          <span>{{ (scope.row.dt||scope.row.duration) | formatTime('mm:ss') }}</span>
         </template>
       </el-table-column>
     </el-table>

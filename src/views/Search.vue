@@ -5,14 +5,10 @@
       <div class="title">
         <span>搜索到</span>
         <b>{{ searchKey }}</b>
-        <span>{{ searchList[getCountKey] }}{{ searchType[key]['name'] }}</span>
+        <span>{{ searchList[getCountKey] }}首{{ searchType[key]['name'] }}</span>
       </div>
       <!-- 歌曲列表 -->
       <song-list :tableData="searchList[key]" class="songlist" />
-    </div>
-    <div v-if="!Object.keys(searchList).length" class="title">
-      很抱歉,暂未搜索到
-      <b>{{ searchKey }}</b> 相关内容
     </div>
   </div>
 </template>
@@ -44,24 +40,27 @@ export default {
       searchList: state => state.search.searchList
     })
   },
-  created() {
-    this.$nextTick(()=>{
-      this.getKey();
-    })
+  created() {},
+  watch: {
+    searchList(val){
+      if(Object.keys(val).length){
+        this.getKey();
+      }
+    }
   },
-  watch: {},
   methods: {
     getKey() {
       const keys = Object.keys(this.searchType);
       for (let i in keys) {
         if (this.searchList[keys[i]]) {
-          this.key = keys[i]; 
+          this.key = keys[i];
         }
       }
     }
   },
   filters: {},
-  mounted() {},
+  mounted() {
+  },
   activated() {
     this.getKey();
     // console.log(this.searchList);
@@ -79,14 +78,14 @@ export default {
   overflow: hidden;
   .title {
     margin-bottom: 10px;
-    padding:20px 20px 0;
+    padding: 20px 20px 0;
     b {
       color: @theme-color;
     }
   }
   .songlist {
-    padding:0 20px;
-    height:100%;
+    padding: 0 20px;
+    height: 100%;
     overflow-y: auto;
   }
 }

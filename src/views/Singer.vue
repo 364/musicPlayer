@@ -7,7 +7,7 @@
     <div class="list" ref="scroll" v-show="singerList.length">
       <load-more :load="load">
         <ul ref="list">
-          <li v-for="item in singerList" :key="item.id" @click="$router.push(`/singer/detail/${item.id}`)">
+          <li v-for="item in singerList" :key="item.id" @click="$router.push(`/singer/${item.id}`)">
             <img v-lazy="item.picUrl" />
             <div>{{ item.name }}</div>
           </li>
