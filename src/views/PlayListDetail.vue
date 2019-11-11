@@ -1,21 +1,21 @@
 <!-- 歌单详情页 -->
 <template>
-  <div class="playlist_detail" v-if="Object.keys(playlist).length">
+  <div class="playlist_detail" v-if="Object.keys(playDetail).length">
     <!-- 歌单介绍 -->
     <div class="des">
-      <div class="coverImg" v-lazy:background-image="playlist.coverImgUrl"></div>
+      <div class="coverImg" v-lazy:background-image="playDetail.coverImgUrl"></div>
       <div class="info">
-        <h2>{{ playlist.name }}</h2>
+        <h2>{{ playDetail.name }}</h2>
         <h4>
-          <img :src="playlist.creator.avatarUrl" class="avatar" />
-          <span>{{ playlist.creator.nickname }}</span>
-          <span class="tags">{{ playlist.tags | getTags }}</span>
+          <img :src="playDetail.creator.avatarUrl" class="avatar" />
+          <span>{{ playDetail.creator.nickname }}</span>
+          <span class="tags">{{ playDetail.tags | getTags }}</span>
         </h4>
         <div
           class="count"
-        >播放量：{{ playlist.playCount | playCount }} 创建时间：{{ playlist.createTime | formatTime }}</div>
+        >播放量：{{ playDetail.playCount | playCount }} 创建时间：{{ playDetail.createTime | formatTime }}</div>
         <div>
-          <el-button size="mini" type="primary">
+          <el-button size="mini" type="primary" @click="handleSong(playDetail.trackIds)">
             <i class="el-icon-plus"></i> 播放全部
           </el-button>
           <el-button size="mini">
@@ -30,10 +30,10 @@
     <!-- 歌曲列表 -->
     <div class="list">
       <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane :label="`歌曲(${playlist.trackCount})`" name="songlist">
-          <song-list :tableData="playlist.tracks" />
+        <el-tab-pane :label="`歌曲(${playDetail.trackCount})`" name="songlist">
+          <song-list :tableData="playDetail.tracks" />
         </el-tab-pane>
-        <el-tab-pane :label="`评论(${playlist.commentCount})`" name="second">
+        <el-tab-pane :label="`评论(${playDetail.commentCount})`" name="second">
           <comment type="playlist" @handleScrollTop="handleScrollTop" />
         </el-tab-pane>
       </el-tabs>
@@ -57,7 +57,7 @@ export default {
   },
   computed: {
     ...mapState({
-      playlist: state => state.detail.playlist
+      playDetail: state => state.detail.playDetail
     })
   },
   created() {

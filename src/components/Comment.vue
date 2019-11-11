@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState, mapMutations } from "vuex";
 import * as TYPES from "@/store/types";
 import Pagination from "@/components/Pagination";
 
@@ -57,7 +57,7 @@ export default {
     type: {
       type: String,
       required: true
-    },
+    }
   },
   data() {
     return {};
@@ -80,6 +80,10 @@ export default {
         this.$emit("handleScrollTop");
       }
     },
+    handleResetPage() {
+      this[TYPES.MUTATIONS_SET_COMMENT_PAGE]({ page: 1 });
+    },
+    ...mapMutations([TYPES.MUTATIONS_SET_COMMENT_PAGE]),
     ...mapActions([
       TYPES.ACTIONS_GET_COMMENT_PLAYLIST,
       TYPES.ACTIONS_GET_COMMENT_MUSIC,
@@ -92,10 +96,16 @@ export default {
   beforeUpdate() {}, //生命周期 - 更新之前
   updated() {}, //生命周期 - 更新之后
   beforeDestroy() {}, //生命周期 - 销毁之前
-  destroyed() {}, //生命周期 - 销毁完成
+  destroyed() {
+    this.handleResetPage();
+  }, //生命周期 - 销毁完成
   activated() {
+    //如果页面有keep-alive缓存功能，这个函数会触发
     this.handleGetData();
-  } //如果页面有keep-alive缓存功能，这个函数会触发
+  },
+  deactivated() {
+    this.handleResetPage();
+  }
 };
 </script>
 <style lang='less' scoped>

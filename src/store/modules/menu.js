@@ -16,7 +16,7 @@ const menu = {
         {
           text: "视频",
           icon: "icon-video1",
-          route: "/mv"
+          route: "/video"
         }
       ]
     },

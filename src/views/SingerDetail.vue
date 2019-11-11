@@ -1,25 +1,25 @@
 <!-- 歌单详情页 -->
 <template>
-  <div class="playlist_detail" v-if="Object.keys(singerList).length">
+  <div class="playlist_detail" v-if="Object.keys(singerDetail).length">
     <!-- 歌单介绍 -->
     <div class="des">
-      <div class="coverImg" v-lazy:background-image="singerList.artist.picUrl"></div>
+      <div class="coverImg" v-lazy:background-image="singerDetail.artist.picUrl"></div>
       <div class="info">
         <h2>
           <div>
-            {{ singerList.artist.name }}
+            {{ singerDetail.artist.name }}
             <span
               class="alias"
-              v-if="singerList.artist.alias.length"
-            >({{ singerList.artist.alias | getAlias }})</span>
+              v-if="singerDetail.artist.alias.length"
+            >({{ singerDetail.artist.alias | getAlias }})</span>
           </div>
           <div class="count">
-            <span>歌曲数：{{ singerList.artist.musicSize }}</span>
-            <span>专辑数：{{ singerList.artist.albumSize }}</span>
-            <span>MV数：{{ singerList.artist.mvSize }}</span>
+            <span>歌曲数：{{ singerDetail.artist.musicSize }}</span>
+            <span>专辑数：{{ singerDetail.artist.albumSize }}</span>
+            <span>MV数：{{ singerDetail.artist.mvSize }}</span>
           </div>
         </h2>
-        <div class="briefDes">{{ singerList.artist.briefDesc }}</div>
+        <div class="briefDes">{{ singerDetail.artist.briefDesc }}</div>
         <div>
           <el-button size="mini" type="primary">
             <i class="el-icon-plus"></i> 播放全部
@@ -33,18 +33,18 @@
     <!-- 歌曲列表 -->
     <div class="list">
       <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane :label="`热门歌曲(${singerList.hotSongs.length})`" name="songlist">
-          <song-list :tableData="singerList.hotSongs" :showCell="showCell" />
+        <el-tab-pane :label="`热门歌曲(${singerDetail.hotSongs.length})`" name="songlist">
+          <song-list :tableData="singerDetail.hotSongs" :showCell="showCell" />
         </el-tab-pane>
-        <el-tab-pane :label="`热门专辑(${singerList.hotAlbums.length})`" name="albumlist">
-          <album-list :data="singerList.hotAlbums" />
+        <el-tab-pane :label="`热门专辑(${singerDetail.hotAlbums.length})`" name="albumlist">
+          <album-list :data="singerDetail.hotAlbums" />
         </el-tab-pane>
         <el-tab-pane label="歌手介绍  " name="singerdesc">
           <div class="desc">
-            <h3 v-html=" singerList.artist.name+'简介'"></h3>
-            <div v-html="singerList.artist.briefDesc" class="pre"></div>
+            <h3 v-html=" singerDetail.artist.name+'简介'"></h3>
+            <div v-html="singerDetail.artist.briefDesc" class="pre"></div>
           </div>
-          <div v-for="item in singerList.introduction" :key="item.ti" class="desc">
+          <div v-for="item in singerDetail.introduction" :key="item.ti" class="desc">
             <h3 v-html="item.ti"></h3>
             <pre v-html="item.txt"></pre>
           </div>
@@ -71,7 +71,7 @@ export default {
   },
   computed: {
     ...mapState({
-      singerList: state => state.detail.singerList
+      singerDetail: state => state.detail.singerDetail
     })
   },
   created() {

@@ -69,7 +69,7 @@ export default new Router({
           component: MvDetail
         },
         {
-          path: "/mv",
+          path: "/video",
           name: "Layout",
           component: MvDetail
         }

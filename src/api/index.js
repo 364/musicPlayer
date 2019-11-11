@@ -45,3 +45,10 @@ export const musicComment =  (params = {}) => axios.get("/comment/music", { para
 export const mvComment =  (params = {}) => axios.get("/comment/mv", { params }) 
 // 专辑评论 limit 数量 offset 偏移数量 
 export const albumComment =  (params = {}) => axios.get("/comment/album", { params }) 
+// 获取mv详情 mvid=xx
+export const mvDetail =  (params = {}) => axios.get("/mv/detail", { params }) 
+// 歌曲详情 ids=xx,xx
+export const songDetail =  (params = {}) => axios.get("/song/detail", { params }) 
+// 歌曲url id=xx,xx
+export const songUrl =  (params = {}) => axios.get("/song/url", { params }) 
+

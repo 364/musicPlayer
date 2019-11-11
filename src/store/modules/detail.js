@@ -1,12 +1,23 @@
 import * as TYPES from "@/store/types";
 import * as API from "@/api";
+
 const detail = {
   state: {
-    playlist: {},
-    singerList: {},
+    playDetail: {},
+    singerDetail: {},
     comment: {
       page: 1,
       pageSize: 20
+    },
+    mvDetail: {},
+    songList: {
+      details: [],
+      urls: []
+    },
+    songOptions: {
+      play: false,
+      current: 0,
+      order: 0
     }
   },
   getters: {
@@ -21,17 +32,30 @@ const detail = {
   },
   mutations: {
     [TYPES.MUTATIONS_GET_PLAYLIST_DETAIL](state, data) {
-      state.playlist = data;
+      state.playDetail = data;
     },
     [TYPES.MUTATIONS_GET_SINGER_DETAIL](state, data) {
-      state.singerList = Object.assign({}, state.singerList, data);
+      state.singerDetail = Object.assign({}, state.singerDetail, data);
     },
     [TYPES.MUTATIONS_GET_COMMENT](state, data) {
       state.comment = Object.assign({}, state.comment, data);
     },
     [TYPES.MUTATIONS_SET_COMMENT_PAGE](state, data) {
       state.comment = Object.assign({}, state.comment, data);
-    }
+    },
+    [TYPES.MUTATIONS_GET_MV_DETAIL](state, data) {
+      state.mvDetail = data;
+    },
+    [TYPES.MUTATIONS_GET_SONG_DETAIL](state, data) {
+      let songList = {
+        details: state.songList.details.concat(data[0].songs),
+        urls: state.songList.urls.concat(data[1].data)
+      };
+      state.songList = songList;
+    },
+    [TYPES.MUTATIONS_SET_SONG_OPTIONS](state, data) {
+      state.songOptions = Object.assign({}, state.songOptions, data);
+    },
   },
   actions: {
     [TYPES.ACTIONS_GET_PLAYLIST_DETAIL]({ commit }, param) {
@@ -55,6 +79,27 @@ const detail = {
           const data = { artist, hotSongs, hotAlbums, introduction };
           commit(TYPES.MUTATIONS_GET_SINGER_DETAIL, data);
         }
+      });
+    },
+    [TYPES.ACTIONS_GET_MV_DETAIL]({ commit }, param) {
+      // mv详情
+      return new Promise((resolve, rej) => {
+        API.mvDetail(param).then(res => {
+          commit(TYPES.MUTATIONS_GET_MV_DETAIL, res.data);
+          resolve();
+        });
+      });
+    },
+    [TYPES.ACTIONS_GET_SONG_DETAIL]({ commit }, param) {
+      // 音乐详情
+      const { id: ids } = param;
+      return new Promise((resolve, rej) => {
+        Promise.all([API.songDetail({ ids }), API.songUrl(param)]).then(res => {
+          if (res.length) {
+            commit(TYPES.MUTATIONS_GET_SONG_DETAIL, res);
+            resolve();
+          }
+        });
       });
     },
     [TYPES.ACTIONS_GET_COMMENT_PLAYLIST]({ commit, getters }, param) {

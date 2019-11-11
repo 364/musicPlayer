@@ -80,7 +80,7 @@
         </div>
       </div>
       <ul>
-        <li v-for="item in songList" :key="item.id">
+        <li v-for="item in songList" :key="item.id" @dblclick="handleSong(item.id)">
           <div class="img">
             <img v-lazy="item.song.album.picUrl" />
             <div class="mask">
@@ -98,7 +98,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState, mapMutations } from "vuex";
 import * as TYPES from "@/store/types";
 import Banner from "@/components/Banner";
 export default {
@@ -138,14 +138,21 @@ export default {
     this[TYPES.ACTIONS_GET_MV]();
   },
   methods: {
+    handleSong(id) {
+      this[TYPES.ACTIONS_GET_SONG_DETAIL]({ id }).then(res => {
+        this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ play: true });
+      });
+    },
     toDetailPage(id) {
       this.$router.push(`/playlist/${id}`);
     },
+    ...mapMutations([TYPES.MUTATIONS_SET_SONG_OPTIONS]),
     ...mapActions([
       TYPES.ACTIONS_GET_BANNER,
       TYPES.ACTIONS_GET_PLAYLIST,
       TYPES.ACTIONS_GET_NEWSONG,
-      TYPES.ACTIONS_GET_MV
+      TYPES.ACTIONS_GET_MV,
+      TYPES.ACTIONS_GET_SONG_DETAIL
     ]),
     getSongName(name, alias) {
       return name + alias.join("");
