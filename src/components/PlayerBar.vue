@@ -3,7 +3,7 @@
   <div class="player-bar">
     <!-- 音乐名称 -->
     <div class="info">
-      <img src alt />
+      <img :src="getPicUrl" alt="picUrl" />
       <div class="name">
         <div>{{ getName }}</div>
         <div class="artists">{{ getArtists }}</div>
@@ -39,6 +39,7 @@ import { mapActions, mapState, mapMutations } from "vuex";
 import * as TYPES from "@/store/types";
 import Slider from "@/components/Slider";
 import moment from "moment";
+import { album } from "@/api";
 
 export default {
   name: "player-bar",
@@ -49,15 +50,16 @@ export default {
     return {
       default: {
         name: "DO RE MI FA SO LA XI",
-        artists: "Enjoy music Enjoy life"
+        artists: "Enjoy music Enjoy life",
+        picUrl: require('@/assets/images/artists.jpg')
       },
       songTime: {
         currentTime: "00:00",
         totalTime: "00:00",
         width: "0%"
       },
-      volume:{
-        width:'100%'
+      volume: {
+        width: "100%"
       },
       iconPlayClass: "icon-bofanganniu",
       iconOrderClass: [
@@ -69,8 +71,11 @@ export default {
     };
   },
   computed: {
-    getCurrent(){
-      return this.songDetailList[this.songOptions.current]
+    getPicUrl() {
+      return this.default.picUrl;
+    },
+    getCurrent() {
+      return this.songDetailList[this.songOptions.current];
     },
     getName() {
       if (this.getCurrent) {
@@ -94,7 +99,11 @@ export default {
   watch: {
     songDetailList(newVal) {
       if (this.getCurrent) {
-        this.songTime.totalTime = this.$root.formatTime(this.getCurrent.dt,"mm:ss")
+        this.songTime.totalTime = this.$root.formatTime(
+          this.getCurrent.dt,
+          "mm:ss"
+        );
+        this.default.picUrl = this.getCurrent.al.picUrl;
       }
     },
     songOptions(newVal) {
@@ -131,7 +140,7 @@ export default {
       const { currentTime, duration } = this.$refs.audio;
       let value = currentTime / duration;
       this.songTime = Object.assign({}, this.songTime, {
-        currentTime: this.$root.formatTime(currentTime * 1000,"mm:ss"),
+        currentTime: this.$root.formatTime(currentTime * 1000, "mm:ss"),
         width: value * 100 + "%"
       });
     },
@@ -179,8 +188,16 @@ export default {
     @media screen and (max-width: 1200px) {
       width: @sidebar-small-width;
     }
+    align-items: center;
+    img{
+      width: 35px;
+      height: 35px;
+      position: absolute;
+    }
     .name {
       width: 100%;
+      padding-left: 40px;
+      box-sizing: border-box;
       > div {
         text-overflow: ellipsis;
         overflow: hidden;

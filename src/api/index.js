@@ -51,4 +51,7 @@ export const mvDetail =  (params = {}) => axios.get("/mv/detail", { params })
 export const songDetail =  (params = {}) => axios.get("/song/detail", { params }) 
 // 歌曲url id=xx,xx
 export const songUrl =  (params = {}) => axios.get("/song/url", { params }) 
+// 专辑内容
+export const album =  (params = {}) => axios.get("/album", { params }) 
+
 
