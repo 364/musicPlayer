@@ -55,6 +55,13 @@
       "unicode_decimal": 59238
     },
     {
+      "icon_id": "1111470",
+      "name": "暂停",
+      "font_class": "zanting1",
+      "unicode": "e657",
+      "unicode_decimal": 58967
+    },
+    {
       "icon_id": "1203859",
       "name": "play",
       "font_class": "play1",
@@ -67,6 +74,27 @@
       "font_class": "user",
       "unicode": "e66f",
       "unicode_decimal": 58991
+    },
+    {
+      "icon_id": "2154280",
+      "name": "随机播放_32",
+      "font_class": "suijibofang",
+      "unicode": "e66b",
+      "unicode_decimal": 58987
+    },
+    {
+      "icon_id": "2154282",
+      "name": "循环播放_32",
+      "font_class": "xunhuanbofang",
+      "unicode": "e66c",
+      "unicode_decimal": 58988
+    },
+    {
+      "icon_id": "2154283",
+      "name": "单曲循环_32",
+      "font_class": "danquxunhuan",
+      "unicode": "e66d",
+      "unicode_decimal": 58989
     },
     {
       "icon_id": "2206528",
@@ -97,11 +125,46 @@
       "unicode_decimal": 59169
     },
     {
+      "icon_id": "4641120",
+      "name": "播放",
+      "font_class": "bofang",
+      "unicode": "e626",
+      "unicode_decimal": 58918
+    },
+    {
+      "icon_id": "4767060",
+      "name": "unordered list",
+      "font_class": "unorderedlist",
+      "unicode": "e7f4",
+      "unicode_decimal": 59380
+    },
+    {
       "icon_id": "5326810",
       "name": "play",
       "font_class": "play2",
       "unicode": "e628",
       "unicode_decimal": 58920
+    },
+    {
+      "icon_id": "5387921",
+      "name": "箭头_上一页_o",
+      "font_class": "jiantou_shangyiye_o",
+      "unicode": "eb8e",
+      "unicode_decimal": 60302
+    },
+    {
+      "icon_id": "5387922",
+      "name": "箭头_下一页_o",
+      "font_class": "jiantou_xiayiye_o",
+      "unicode": "eb8f",
+      "unicode_decimal": 60303
+    },
+    {
+      "icon_id": "5423610",
+      "name": "播放",
+      "font_class": "z",
+      "unicode": "e631",
+      "unicode_decimal": 58929
     },
     {
       "icon_id": "6419924",
@@ -116,6 +179,13 @@
       "font_class": "ios-radio",
       "unicode": "e600",
       "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "6928827",
+      "name": "play",
+      "font_class": "bofanganniu",
+      "unicode": "e726",
+      "unicode_decimal": 59174
     },
     {
       "icon_id": "7009036",
@@ -153,6 +223,13 @@
       "unicode_decimal": 58965
     },
     {
+      "icon_id": "8953104",
+      "name": "play",
+      "font_class": "play3",
+      "unicode": "e827",
+      "unicode_decimal": 59431
+    },
+    {
       "icon_id": "9266624",
       "name": "list",
       "font_class": "list",
@@ -165,6 +242,27 @@
       "font_class": "play-list-line",
       "unicode": "e890",
       "unicode_decimal": 59536
+    },
+    {
+      "icon_id": "10168312",
+      "name": "pause-1",
+      "font_class": "pause-",
+      "unicode": "e635",
+      "unicode_decimal": 58933
+    },
+    {
+      "icon_id": "10678457",
+      "name": "volume",
+      "font_class": "volume",
+      "unicode": "e6e3",
+      "unicode_decimal": 59107
+    },
+    {
+      "icon_id": "11249908",
+      "name": "pause",
+      "font_class": "pause",
+      "unicode": "e863",
+      "unicode_decimal": 59491
     },
     {
       "icon_id": "11474268",
