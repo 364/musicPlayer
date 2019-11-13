@@ -12,25 +12,37 @@
     <div class="operation">
       <!-- 播放按钮 -->
       <div class="play-btn">
-        <i class="iconfont icon-jiantou_shangyiye_o"></i>
-        <i :class="['iconfont','play',iconPlayClass]" @click="handlePlay"></i>
-        <i class="iconfont icon-jiantou_xiayiye_o"></i>
+        <i class="iconfont icon-jiantou_shangyiye_o" @click="handleChangeSong(-1)"></i>
+        <i
+          :class="['iconfont','play',iconPlayClass]"
+          @click="handleChangeOption({ play: !songOptions.play })"
+        ></i>
+        <i class="iconfont icon-jiantou_xiayiye_o" @click="handleChangeSong(1)"></i>
       </div>
       <!-- 进度条/时间 -->
       <div class="progress">
         <span>{{ songTime.currentTime }}</span>
-        <slider :width="songTime.width" />
+        <slider @handleChange="handleChange" :width="songTime.width" tag="songTime" />
         <span>{{ songTime.totalTime }}</span>
       </div>
       <!-- 随机/音量/列表 -->
       <div class="list">
-        <i :class="['iconfont','order',iconOrderClass[songOptions.order]['class']]"></i>
-        <i class="iconfont icon-volume volume"></i>
-        <slider :width="volume.width" />
-        <i class="iconfont icon-play-list-line"></i>
+        <el-tooltip :content="getOrderTip" placement="top">
+          <i
+            :class="['iconfont','order',orderInfo[songOptions.order]['class']]"
+            @click="handleChangeOption({ order: getNextOrder})"
+          ></i>
+        </el-tooltip>
+        <el-tooltip :content="volume.width" placement="top">
+          <i :class="['iconfont', 'volume', getVolIcon]" @click="handleToggleVol"></i>
+        </el-tooltip>
+        <slider @handleChange="handleChange" :width="volume.width" tag="volume" />
+        <el-tooltip content="播放列表" placement="top">
+          <i class="iconfont icon-play-list-line"></i>
+        </el-tooltip>
       </div>
     </div>
-    <audio v-if="songUrlList.length" :src="songUrlList[songOptions.current].url" ref="audio"></audio>
+    <audio v-if="songList.length" :src="getSongUrl" ref="audio"></audio>
   </div>
 </template>
 
@@ -51,7 +63,7 @@ export default {
       default: {
         name: "DO RE MI FA SO LA XI",
         artists: "Enjoy music Enjoy life",
-        picUrl: require('@/assets/images/artists.jpg')
+        picUrl: require("@/assets/images/artists.jpg")
       },
       songTime: {
         currentTime: "00:00",
@@ -59,10 +71,12 @@ export default {
         width: "0%"
       },
       volume: {
-        width: "100%"
+        default: "100%",
+        width: "100%",
+        muted: false
       },
       iconPlayClass: "icon-bofanganniu",
-      iconOrderClass: [
+      orderInfo: [
         { class: "icon-unorderedlist", name: "顺序播放" },
         { class: "icon-xunhuanbofang", name: "列表循环" },
         { class: "icon-danquxunhuan", name: "单曲循环" },
@@ -71,72 +85,105 @@ export default {
     };
   },
   computed: {
+    getSongUrl() {
+      // console.log(this.songList[this.songOptions.current].url);
+      return this.songList[this.songOptions.current].url;
+    },
+    getVolIcon() {
+      // 获取音量图标
+      return !this.volume.muted ? "icon-volume" : "icon-jingyin1";
+    },
+    getNextOrder() {
+      // 获取顺序
+      let num = this.songOptions.order;
+      if (++num >= this.orderInfo.length) {
+        num = 0;
+      }
+      return num;
+    },
+    getOrderTip() {
+      // 获取顺序提示
+      return this.orderInfo[this.songOptions.order]["name"];
+    },
     getPicUrl() {
+      // 获取歌曲图片
       return this.default.picUrl;
     },
     getCurrent() {
-      return this.songDetailList[this.songOptions.current];
+      // 获取当前播放的内容
+      return this.songList[this.songOptions.current];
     },
     getName() {
+      // 获取歌曲名
       if (this.getCurrent) {
         return this.getCurrent.name;
       }
       return this.default.name;
     },
     getArtists() {
+      // 获取歌手
       if (this.getCurrent) {
         return this.$root.getArtists(this.getCurrent);
       }
       return this.default.artists;
     },
     ...mapState({
-      songDetailList: state => state.detail.songList.details,
-      songUrlList: state => state.detail.songList.urls,
+      songList: state => state.detail.songList,
       songOptions: state => state.detail.songOptions
     })
   },
   created() {},
   watch: {
-    songDetailList(newVal) {
+    songList(newVal) {
       if (this.getCurrent) {
         this.songTime.totalTime = this.$root.formatTime(
           this.getCurrent.dt,
           "mm:ss"
         );
         this.default.picUrl = this.getCurrent.al.picUrl;
+        this.$nextTick(() => {
+          // 播放
+          if (!this.$refs.audio) return;
+          this.$refs.audio.addEventListener(
+            "timeupdate",
+            this.handlePlayTime,
+            false
+          );
+          // 播放结束
+          this.$refs.audio.addEventListener("ended", this.handlePlayEnd, false);
+        });
       }
     },
     songOptions(newVal) {
-      if (newVal.play) {
-        // 播放
-        this.$refs.audio.play();
-        this.iconPlayClass = "icon-pause";
-      } else {
-        this.$refs.audio.pause();
-        this.iconPlayClass = "icon-bofanganniu";
-      }
-    },
-    songUrlList(newVal) {
-      if (newVal.length) {
-        this.$nextTick(() => {
-          this.$refs.audio.addEventListener(
-            "timeupdate",
-            () => {
-              // console.log(
-              //   "监听音频播放时间并更新进度条",
-              //   this.$refs.audio.currentTime,
-              //   this.$refs.audio.duration
-              // );
-              this.handlePlayTime();
-            },
-            false
-          );
-        });
+      console.log(newVal.play);
+      if (this.$refs.audio) {
+        if (newVal.play) {
+          // 播放
+          this.$refs.audio.play();
+          this.iconPlayClass = "icon-pause";
+        } else {
+          this.$refs.audio.pause();
+          this.iconPlayClass = "icon-bofanganniu";
+        }
       }
     }
   },
   methods: {
+    handleToggleVol() {
+      // 切换音量
+      const vol = parseInt(this.volume.default) / 100;
+      this.handleChangeVol(!this.volume.muted ? 0 : vol);
+    },
+    handleChangeVol(rate) {
+      // 改变音量
+      this.volume.width = parseInt(rate * 100) + "%";
+      this.volume.muted = !rate;
+      if (this.$refs.audio) {
+        this.$refs.audio.volume = rate;
+      }
+    },
     handlePlayTime() {
+      // 改变播放事件
       const { currentTime, duration } = this.$refs.audio;
       let value = currentTime / duration;
       this.songTime = Object.assign({}, this.songTime, {
@@ -144,13 +191,74 @@ export default {
         width: value * 100 + "%"
       });
     },
-    handlePlay() {
-      this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ play: !this.songOptions.play });
+    handlePlayEnd() {
+      // 播放结束
+      this.songTime = Object.assign({}, this.songTime, {
+        currentTime: "00:00",
+        width: "0%"
+      });
+      this.handleChangeSong(1);
     },
-    updateProgress(audio) {
-      var value = audio.currentTime / audio.duration;
+    handleChange(rate, tag) {
+      // 改变进度
+      if (tag === "volume") {
+        this.handleChangeVol(rate);
+        this.volume.default = !rate ? "75%" : parseInt(rate * 100) + "%";
+      } else {
+        if (this.$refs.audio) {
+          const { duration } = this.$refs.audio;
+          this.$refs.audio.currentTime = duration * rate;
+          this.handlePlayTime();
+        }
+      }
     },
-    ...mapMutations([TYPES.MUTATIONS_SET_SONG_OPTIONS])
+    handleChangeOption(obj) {
+      // 改变信息
+      this[TYPES.MUTATIONS_SET_SONG_OPTIONS](obj);
+    },
+    handleChangeSong(num) {
+      // 改变歌曲
+      this.handleChangeOption({ play: false });
+      let current = this.songOptions.current;
+      let play = true;
+      current += num;
+      switch (this.songOptions.order) {
+        case 0:
+          // 顺序播放
+          if (current < 0 || current >= this.songList.length - 1) {
+            play = false;
+            current = 0;
+            this.$refs.audio.pause();
+          }
+          break;
+        case 1:
+          // 列表循环
+          if (current >= this.songList.length - 1) {
+            current = 0;
+          }
+          if (current < 0) {
+            current = this.songList.length - 1;
+          }
+          break;
+        case 3:
+          // 随机播放
+          current = Math.round(Math.random() * this.songList.length - 1);
+          break;
+        default:
+          break; // 单曲循环
+      }
+      this.handleChangeOption({ current });
+      if (this.$refs.audio && play) {
+        this.default.picUrl = this.getCurrent.al.picUrl;
+        setTimeout(()=>{
+          this.handleChangeOption({ play: true });
+        },1000)
+      }
+    },
+    ...mapMutations([
+      TYPES.MUTATIONS_SET_SONG_OPTIONS,
+      TYPES.MUTATIONS_GET_SONG_DETAIL
+    ])
   },
   mounted() {},
   beforeCreate() {}, //生命周期 - 创建之前
@@ -189,10 +297,12 @@ export default {
       width: @sidebar-small-width;
     }
     align-items: center;
-    img{
+    img {
       width: 35px;
       height: 35px;
       position: absolute;
+      border-radius: 3px;
+      overflow: hidden;
     }
     .name {
       width: 100%;

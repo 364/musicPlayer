@@ -76,6 +76,13 @@
       "unicode_decimal": 58991
     },
     {
+      "icon_id": "1621430",
+      "name": "静音",
+      "font_class": "jingyin1",
+      "unicode": "e61e",
+      "unicode_decimal": 58910
+    },
+    {
       "icon_id": "2154280",
       "name": "随机播放_32",
       "font_class": "suijibofang",

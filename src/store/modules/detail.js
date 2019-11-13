@@ -10,14 +10,12 @@ const detail = {
       pageSize: 20
     },
     mvDetail: {},
-    songList: {
-      details: [],
-      urls: []
-    },
+    songList: [],
     songOptions: {
       play: false,
       current: 0,
-      order: 0
+      order: 0,
+      url: {}
     }
   },
   getters: {
@@ -38,7 +36,10 @@ const detail = {
       state.singerDetail = Object.assign({}, state.singerDetail, data);
     },
     [TYPES.MUTATIONS_GET_COMMENT](state, data) {
-      state.comment = Object.assign({}, state.comment, data);
+      state.comment = Object.assign({}, data,{
+        page: state.comment.page,
+        pageSize: state.comment.pageSize
+      });
     },
     [TYPES.MUTATIONS_SET_COMMENT_PAGE](state, data) {
       state.comment = Object.assign({}, state.comment, data);
@@ -47,15 +48,24 @@ const detail = {
       state.mvDetail = data;
     },
     [TYPES.MUTATIONS_GET_SONG_DETAIL](state, data) {
-      let songList = {
-        details: state.songList.details.concat(data[0].songs),
-        urls: state.songList.urls.concat(data[1].data)
-      };
-      state.songList = songList;
+      // console.log(data);
+      if (data.length) {
+        let songList = data[0].songs.map((item, index) =>
+          Object.assign({}, item, data[1].data[index])
+        );
+        state.songList = state.songList.concat(songList);
+      } else {
+        state.songList = [];
+        state.songOptions = Object.assign({},state.songOptions,{
+          play: false,
+          current: 0,
+          url: {}
+        });
+      }
     },
     [TYPES.MUTATIONS_SET_SONG_OPTIONS](state, data) {
       state.songOptions = Object.assign({}, state.songOptions, data);
-    },
+    }
   },
   actions: {
     [TYPES.ACTIONS_GET_PLAYLIST_DETAIL]({ commit }, param) {
@@ -93,8 +103,15 @@ const detail = {
     [TYPES.ACTIONS_GET_SONG_DETAIL]({ commit }, param) {
       // 音乐详情
       const { id: ids } = param;
+      const val =
+        Object.prototype.toString.call(ids) === "[object String]"
+          ? ids
+          : ids.join();
       return new Promise((resolve, rej) => {
-        Promise.all([API.songDetail({ ids }), API.songUrl(param)]).then(res => {
+        Promise.all([
+          API.songDetail({ ids: val }),
+          API.songUrl({ id: val })
+        ]).then(res => {
           if (res.length) {
             commit(TYPES.MUTATIONS_GET_SONG_DETAIL, res);
             resolve();

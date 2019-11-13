@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState, mapMutations } from "vuex";
 import * as TYPES from "@/store/types";
 import SongList from "@/components/SongList";
 import Comment from "@/components/Comment";
@@ -65,6 +65,13 @@ export default {
   },
   watch: {},
   methods: {
+    handleSong(ids) {
+      const id = ids.map(item => item.id);
+      this[TYPES.MUTATIONS_GET_SONG_DETAIL]([]);
+      this[TYPES.ACTIONS_GET_SONG_DETAIL]({ id }).then(()=>{
+        this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ play: true });
+      });
+    },
     handleGetData() {
       const id = this.$route.params.id;
       if (!id) {
@@ -87,7 +94,14 @@ export default {
         }
       }, 1);
     },
-    ...mapActions([TYPES.ACTIONS_GET_PLAYLIST_DETAIL])
+    ...mapMutations([
+      TYPES.MUTATIONS_GET_SONG_DETAIL,
+      TYPES.MUTATIONS_SET_SONG_OPTIONS
+    ]),
+    ...mapActions([
+      TYPES.ACTIONS_GET_PLAYLIST_DETAIL,
+      TYPES.ACTIONS_GET_SONG_DETAIL
+    ])
   },
   activated() {
     this.activeName = "songlist";
@@ -101,7 +115,7 @@ export default {
   height: calc(100% - @footer-height);
   .des {
     display: flex;
-    padding:20px;
+    padding: 20px;
     .coverImg {
       width: 150px;
       height: 150px;

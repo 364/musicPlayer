@@ -1,7 +1,12 @@
 <!-- 滑动条 -->
 <template>
-  <div class="progress-bar-bg" ref="progressBarBg">
-    <span class="progress-dot" ref="progressDot" :style="{ 'left':width }"></span>
+  <div class="progress-bar-bg" ref="progress" @mousedown="handleChange">
+    <span
+      class="progress-dot"
+      ref="progressDot"
+      :style="{ 'left':width }"
+      @mousedown.stop="handleStart"
+    ></span>
     <div class="progress-bar" ref="progressBar" :style="{ 'width':width }"></div>
   </div>
 </template>
@@ -13,23 +18,72 @@ export default {
     width: {
       type: [String, Number],
       default: "0%"
+    },
+    tag: {
+      type: String
     }
   },
   components: {},
   data() {
-    return {};
+    return {
+      move: {
+        flag: false,
+        startX: 0,
+        moveX: 0,
+        offsetX: 0
+      }
+    };
   },
   computed: {},
-  created() {},
+  created() {
+    window.addEventListener("mouseup", this.handleEnd);
+    window.addEventListener("mousemove", this.handleMove);
+  },
   watch: {},
-  methods: {},
+  methods: {
+    handleChange(e) {
+      const rate = e.offsetX / this.$refs.progress.clientWidth;
+      this.$emit("handleChange", rate, this.tag);
+    },
+    handleStart(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      this.move.flag = true;
+      this.move.startX = e.clientX;
+      this.move.offsetX = e.target.offsetLeft;
+    },
+    handleMove(e) {
+      if (this.move.flag) {
+        let maxWidth = this.$refs.progress.clientWidth;
+        let moveX = e.clientX - this.move.startX;
+        let offsetX = this.move.offsetX + moveX;
+        if (offsetX < 0) {
+          offsetX = 0;
+        }
+        if (offsetX >= maxWidth) {
+          offsetX = maxWidth;
+        }
+        const rate = offsetX / maxWidth
+        this.$emit("handleChange", rate, this.tag);
+      }
+    },
+    handleEnd(e) {
+      this.move.flag = false;
+    }
+  },
   mounted() {},
   beforeCreate() {}, //生命周期 - 创建之前
   beforeMount() {}, //生命周期 - 挂载之前
   beforeUpdate() {}, //生命周期 - 更新之前
   updated() {}, //生命周期 - 更新之后
-  beforeDestroy() {}, //生命周期 - 销毁之前
-  destroyed() {}, //生命周期 - 销毁完成
+  beforeDestroy() {
+    window.removeEventListener("mouseup", this.handleEnd);
+    window.removeEventListener("mousemove", this.handleMove);
+  }, //生命周期 - 销毁之前
+  deactivated() {
+    window.removeEventListener("mouseup", this.handleEnd);
+    window.removeEventListener("mousemove", this.handleMove);
+  },
   activated() {} //如果页面有keep-alive缓存功能，这个函数会触发
 };
 </script>
