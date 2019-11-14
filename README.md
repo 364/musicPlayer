@@ -1,29 +1,35 @@
-# player
+# music-player
 
-> A Vue.js project
+> A Vue.js project  
 
 ## Build Setup
 
+#### start api
 ``` bash
+# download api
+git clone git@github.com:Binaryify/NeteaseCloudMusicApi.git
+
 # install dependencies
+cd NeteaseCloudMusicApi
+npm install
+
+# start service at localhost:5000
+set PORT=5000 && node app.js
+```
+
+#### start project
+```bash
+# download project
+git clone https://github.com/364/musicPlayer.git
+
+# install dependencies
+cd musicPlayer
 npm install
 
 # serve with hot reload at localhost:8080
 npm run dev
-
-# build for production with minification
-npm run build
-
-# build for production and view the bundle analyzer report
-npm run build --report
 ```
 
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+## Thanks
 
-## API
-```
-git clone git@github.com:Binaryify/NeteaseCloudMusicApi.git
-cd NeteaseCloudMusicApi
-node app.js
-```
-
+[Binaryify/NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)
