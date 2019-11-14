@@ -67,7 +67,7 @@ export default {
   methods: {
     handleSong(ids) {
       const id = ids.map(item => item.id);
-      this[TYPES.MUTATIONS_GET_SONG_DETAIL]([]);
+      this[TYPES.MUTATIONS_INIT_SONG_LIST]();
       this[TYPES.ACTIONS_GET_SONG_DETAIL]({ id }).then(()=>{
         this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ play: true });
       });
@@ -95,8 +95,9 @@ export default {
       }, 1);
     },
     ...mapMutations([
+      TYPES.MUTATIONS_INIT_SONG_LIST,
       TYPES.MUTATIONS_GET_SONG_DETAIL,
-      TYPES.MUTATIONS_SET_SONG_OPTIONS
+      TYPES.MUTATIONS_SET_SONG_OPTIONS,
     ]),
     ...mapActions([
       TYPES.ACTIONS_GET_PLAYLIST_DETAIL,

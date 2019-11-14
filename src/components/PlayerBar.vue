@@ -37,8 +37,11 @@
           <i :class="['iconfont', 'volume', getVolIcon]" @click="handleToggleVol"></i>
         </el-tooltip>
         <slider @handleChange="handleChange" :width="volume.width" tag="volume" />
-        <el-tooltip content="播放列表" placement="top">
-          <i class="iconfont icon-play-list-line"></i>
+        <el-tooltip content="播放列表" placement="bottom">
+          <div class="playlist" @click="handleChangeOption({ showList: !songOptions.showList})">
+            <i class="iconfont icon-play-list-line"></i>
+            <span>{{ songList.length }}</span>
+          </div>
         </el-tooltip>
       </div>
     </div>
@@ -87,7 +90,8 @@ export default {
   computed: {
     getSongUrl() {
       // console.log(this.songList[this.songOptions.current].url);
-      return this.songList[this.songOptions.current].url;
+      // return this.songList[this.songOptions.current].url;
+      return `http://music.163.com/song/media/outer/url?id=${this.songList[this.songOptions.current].id}.mp3`;
     },
     getVolIcon() {
       // 获取音量图标
@@ -107,7 +111,7 @@ export default {
     },
     getPicUrl() {
       // 获取歌曲图片
-      return this.default.picUrl;
+      return this.getCurrent ? this.getCurrent.al.picUrl : this.default.picUrl;
     },
     getCurrent() {
       // 获取当前播放的内容
@@ -136,11 +140,7 @@ export default {
   watch: {
     songList(newVal) {
       if (this.getCurrent) {
-        this.songTime.totalTime = this.$root.formatTime(
-          this.getCurrent.dt,
-          "mm:ss"
-        );
-        this.default.picUrl = this.getCurrent.al.picUrl;
+        this.handleChangeInfo();
         this.$nextTick(() => {
           // 播放
           if (!this.$refs.audio) return;
@@ -155,7 +155,6 @@ export default {
       }
     },
     songOptions(newVal) {
-      console.log(newVal.play);
       if (this.$refs.audio) {
         if (newVal.play) {
           // 播放
@@ -169,6 +168,13 @@ export default {
     }
   },
   methods: {
+    handleToggleList() {},
+    handleChangeInfo() {
+      this.songTime.totalTime = this.$root.formatTime(
+        this.getCurrent.dt,
+        "mm:ss"
+      );
+    },
     handleToggleVol() {
       // 切换音量
       const vol = parseInt(this.volume.default) / 100;
@@ -249,10 +255,10 @@ export default {
       }
       this.handleChangeOption({ current });
       if (this.$refs.audio && play) {
-        this.default.picUrl = this.getCurrent.al.picUrl;
-        setTimeout(()=>{
+        this.handleChangeInfo();
+        setTimeout(() => {
           this.handleChangeOption({ play: true });
-        },1000)
+        }, 1000);
       }
     },
     ...mapMutations([
@@ -285,6 +291,7 @@ export default {
   align-items: center;
   padding-right: 20px;
   color: @theme-color;
+  z-index: 200;
   .info {
     color: #555;
     display: flex;
@@ -355,6 +362,13 @@ export default {
       .volume {
         margin-left: 10px;
         font-size: 22px;
+      }
+      .playlist {
+        display: flex;
+        cursor: pointer;
+        i {
+          margin-right: 5px;
+        }
       }
     }
     .progress {

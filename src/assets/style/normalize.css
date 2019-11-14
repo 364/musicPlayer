@@ -174,7 +174,8 @@ textarea {
  */
 
 button,
-input { /* 1 */
+input {
+  /* 1 */
   overflow: visible;
 }
 
@@ -184,7 +185,8 @@ input { /* 1 */
  */
 
 button,
-select { /* 1 */
+select {
+  /* 1 */
   text-transform: none;
 }
 
@@ -355,7 +357,7 @@ body {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #4F4E6A;
+  color: #4f4e6a;
   min-width: 1010px;
 }
 ul {
@@ -365,31 +367,28 @@ ul {
 li {
   list-style: none;
 }
-img{
+img {
   vertical-align: middle;
 }
-a{
+a {
   text-decoration: none;
 }
-::-webkit-scrollbar
-{
+::-webkit-scrollbar {
   width: 3px;
   background-color: #ccc;
 }
-::-webkit-scrollbar-track
-{
-  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.05);
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.05);
   background-color: #fff;
 }
-::-webkit-scrollbar-thumb
-{
-  background-color: #E0E0E0;
-  border: 2px solid #E0E0E0;
+::-webkit-scrollbar-thumb {
+  background-color: #e0e0e0;
+  border: 2px solid #e0e0e0;
 }
-img[lazy="loading"]{
-  display:block;
-  width:50%;
-  margin:0 auto;
+img[lazy="loading"] {
+  display: block;
+  width: 50%;
+  margin: 0 auto;
 }
 .fade-enter-active,
 .fade-leave-active {
@@ -398,4 +397,21 @@ img[lazy="loading"]{
 .fade-enter,
 .fade-leave-to {
   opacity: 0;
+}
+
+.slide-enter-active,
+.slide-leave-active {
+  transition: all 0.3s;
+}
+.slide-enter,
+.slide-leave-to {
+  transform: translateX(100%);
+}
+@keyframes rotate{
+	0%{
+		transform: rotateZ(0deg);/*从0度开始*/
+	}
+	100%{
+		transform: rotateZ(360deg);/*360度结束*/
+	}
 }

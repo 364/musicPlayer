@@ -1,14 +1,14 @@
 import Vue from "vue";
 import Router from "vue-router";
-import Layout from "@/views/Layout";
-import Home from "@/views/Home";
-import Recommend from "@/views/Recommend";
-import Singer from "@/views/Singer";
-import PlayList from "@/views/PlayList";
-import PlayListDetail from "@/views/PlayListDetail";
-import SingerDetail from "@/views/SingerDetail";
-import Search from "@/views/Search";
-import MvDetail from "@/views/MvDetail";
+import Layout from "@/pages/Layout";
+import Home from "@/pages/Home";
+import Recommend from "@/pages/Recommend";
+import Singer from "@/pages/Singer";
+import PlayList from "@/pages/PlayList";
+import PlayListDetail from "@/pages/PlayListDetail";
+import SingerDetail from "@/pages/SingerDetail";
+import Search from "@/pages/Search";
+import MvDetail from "@/pages/MvDetail";
 
 Vue.use(Router);
 

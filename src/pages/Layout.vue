@@ -10,6 +10,7 @@
           <router-view />
         </keep-alive>
       </div>
+      <music-list></music-list>
     </div>
     <player-bar />
   </div>
@@ -19,13 +20,15 @@
 import Sidebar from "@/components/Sidebar";
 import PlayerBar from "@/components/PlayerBar";
 import NavBar from "@/components/NavBar";
+import MusicList from "@/components/MusicList";
 
 export default {
   name: "layout",
   components: {
     NavBar,
     Sidebar,
-    PlayerBar
+    PlayerBar,
+    MusicList
   },
   data() {
     return {};
@@ -53,6 +56,7 @@ export default {
   position: relative;
   background: fade(#fff, 40%);
   box-shadow: 0 0 15px fade(#000, 10%);
+  overflow: hidden;
   @media screen and (max-width:1200px){
     width: @box-small-width;
   }

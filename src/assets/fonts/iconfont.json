@@ -69,11 +69,32 @@
       "unicode_decimal": 58938
     },
     {
+      "icon_id": "1290344",
+      "name": "Heart",
+      "font_class": "Heart",
+      "unicode": "e613",
+      "unicode_decimal": 58899
+    },
+    {
       "icon_id": "1433866",
       "name": "user",
       "font_class": "user",
       "unicode": "e66f",
       "unicode_decimal": 58991
+    },
+    {
+      "icon_id": "1555813",
+      "name": "ranking",
+      "font_class": "ranking",
+      "unicode": "e6ad",
+      "unicode_decimal": 59053
+    },
+    {
+      "icon_id": "1555815",
+      "name": "ranking2",
+      "font_class": "ranking1",
+      "unicode": "e6ae",
+      "unicode_decimal": 59054
     },
     {
       "icon_id": "1621430",
@@ -186,6 +207,13 @@
       "font_class": "ios-radio",
       "unicode": "e600",
       "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "6900629",
+      "name": "heart",
+      "font_class": "heart2",
+      "unicode": "e601",
+      "unicode_decimal": 58881
     },
     {
       "icon_id": "6928827",

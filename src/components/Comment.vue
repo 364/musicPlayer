@@ -1,6 +1,12 @@
 <!-- 评论 -->
 <template>
   <div class="comment" v-if="Object.keys(comment).length">
+    <!-- 写评论 -->
+    <div class="send">
+    <el-input type="textarea" placeholder="请输入评论" v-model="textarea" maxlength="50" show-word-limit></el-input>
+    <el-button type="primary" size="mini" class="btn">提交</el-button>
+    </div>
+    <!-- 精彩评论  -->
     <div v-if="comment.hotComments&&comment.hotComments.length">
       <h5>精彩评论</h5>
       <ul>
@@ -20,6 +26,7 @@
         </li>
       </ul>
     </div>
+    <!-- 最新评论 -->
     <div v-if="comment.comments">
       <h5>最新评论</h5>
       <ul>
@@ -60,7 +67,9 @@ export default {
     }
   },
   data() {
-    return {};
+    return {
+      textarea: ""
+    };
   },
   computed: {
     ...mapState({
@@ -111,6 +120,13 @@ export default {
 <style lang='less' scoped>
 @import "~@/assets/style/variable.less";
 .comment {
+  .send{
+    padding-top: 10px;
+    text-align: right;
+    .btn{
+      margin-top: 10px;
+    }
+  }
   li {
     display: flex;
     border-top: 1px solid #f1f1f1;

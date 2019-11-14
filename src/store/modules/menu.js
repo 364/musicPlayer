@@ -14,8 +14,8 @@ const menu = {
           route: "/fm"
         },
         {
-          text: "视频",
-          icon: "icon-video1",
+          text: "排行榜",
+          icon: "icon-ranking",
           route: "/video"
         }
       ]
