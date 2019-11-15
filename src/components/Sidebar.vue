@@ -99,7 +99,7 @@ export default {
         padding-top: 0;
       }
       &:not(:last-child) {
-        border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+        // border-bottom: 1px solid rgba(255, 255, 255, 0.6);
       }
       > .title {
         font-size: 15px;

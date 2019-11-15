@@ -10,7 +10,7 @@
   >
     <a target="_blank" :href="item.url" v-for="item in banners" :key="item.imageUrl">
       <el-carousel-item>
-        <img :src="item.imageUrl" ref="imgH"/>
+        <img :src="item.imageUrl" ref="imgH" />
         <span class="tag">{{item.typeTitle}}</span>
       </el-carousel-item>
     </a>
@@ -42,7 +42,6 @@ export default {
     }
   },
   mounted() {
-    this.setImgH();
     window.addEventListener(
       "resize",
       () => {
@@ -50,6 +49,9 @@ export default {
       },
       false
     );
+    setTimeout(()=>{
+      this.setImgH()
+    },500)
   }
 };
 </script>

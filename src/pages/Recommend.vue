@@ -80,12 +80,20 @@
         </div>
       </div>
       <ul>
-        <li v-for="item in songList" :key="item.id" @dblclick="handleSong(item.id)">
+        <li
+          v-for="(item,index) in songList"
+          :key="item.id"
+          @dblclick="handleSong(index)"
+          @mouseover="isHover = 'music'+index"
+          @mouseleave="isHover = null"
+        >
           <div class="img">
             <img v-lazy="item.song.album.picUrl" />
-            <div class="mask">
-              <i class="el-icon-video-play"></i>
-            </div>
+            <transition name="fade">
+              <div class="mask" v-show="isHover == 'music'+index">
+                <i class="el-icon-video-play"></i>
+              </div>
+            </transition>
           </div>
           <div class="album">
             <h5>{{ getSongName(item.name,item.song.album.alias) }}</h5>
@@ -128,7 +136,9 @@ export default {
       banners: state => state.home.banners,
       playlist: state => state.home.playlist,
       songList: state => state.home.songList,
-      mvList: state => state.home.mvList
+      mvList: state => state.home.mvList,
+      musicList: state => state.detail.songList,
+      songOptions: state => state.detail.songOptions
     })
   },
   created() {
@@ -138,15 +148,23 @@ export default {
     this[TYPES.ACTIONS_GET_MV]();
   },
   methods: {
-    handleSong(id) {
+    handleSong(idx) {
+      const id = this.songList.map(item => item.id);
+      this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ play: false, current: idx });
       this[TYPES.ACTIONS_GET_SONG_DETAIL]({ id }).then(res => {
-        this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ play: true });
+        this[TYPES.MUTATIONS_GET_SONG_DETAIL](res);
+        setTimeout(() => {
+          this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ play: true });
+        }, 200);
       });
     },
     toDetailPage(id) {
       this.$router.push(`/playlist/${id}`);
     },
-    ...mapMutations([TYPES.MUTATIONS_SET_SONG_OPTIONS]),
+    ...mapMutations([
+      TYPES.MUTATIONS_SET_SONG_OPTIONS,
+      TYPES.MUTATIONS_GET_SONG_DETAIL
+    ]),
     ...mapActions([
       TYPES.ACTIONS_GET_BANNER,
       TYPES.ACTIONS_GET_PLAYLIST,

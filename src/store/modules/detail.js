@@ -15,7 +15,13 @@ const detail = {
       play: false,
       current: 0,
       order: 3,
-      showList:false,
+      showList: false,
+      showLyrics: true,
+      default: {
+        name: "DO RE MI FA SO LA XI",
+        artists: "Enjoy music Enjoy life",
+        picUrl: require("@/assets/images/artists.jpg")
+      }
     }
   },
   getters: {
@@ -51,7 +57,7 @@ const detail = {
       // let songList = data[0].songs.map((item, index) =>
       //   Object.assign({}, item, data[1].data[index])
       // );
-      state.songList = state.songList.concat(data);
+      state.songList = data;
     },
     [TYPES.MUTATIONS_INIT_SONG_LIST](state) {
       state.songList = [];
@@ -98,13 +104,13 @@ const detail = {
         });
       });
     },
-    [TYPES.ACTIONS_GET_SONG_DETAIL]({ commit }, param) {
+    [TYPES.ACTIONS_GET_SONG_DETAIL]({}, param) {
       // 音乐详情
       const { id: ids } = param;
       const val =
-        Object.prototype.toString.call(ids) === "[object String]"
-          ? ids
-          : ids.join();
+        Object.prototype.toString.call(ids) === "[object Array]"
+          ? ids.join()
+          : ids;
       return new Promise((resolve, rej) => {
         // Promise.all([
         //   API.songDetail({ ids: val }),
@@ -116,8 +122,7 @@ const detail = {
         //   }
         // });
         API.songDetail({ ids: val }).then(res => {
-          commit(TYPES.MUTATIONS_GET_SONG_DETAIL, res.songs);
-          resolve();
+          resolve(res.songs);
         });
       });
     },

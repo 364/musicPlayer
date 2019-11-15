@@ -10,7 +10,10 @@
           <router-view />
         </keep-alive>
       </div>
+      <!-- 播放列表 -->
       <music-list></music-list>
+      <!-- 歌词 -->
+      <lyrics></lyrics>
     </div>
     <player-bar />
   </div>
@@ -21,12 +24,14 @@ import Sidebar from "@/components/Sidebar";
 import PlayerBar from "@/components/PlayerBar";
 import NavBar from "@/components/NavBar";
 import MusicList from "@/components/MusicList";
+import Lyrics from "@/components/Lyrics";
 
 export default {
   name: "layout",
   components: {
     NavBar,
     Sidebar,
+    Lyrics,
     PlayerBar,
     MusicList
   },

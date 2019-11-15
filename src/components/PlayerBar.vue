@@ -2,7 +2,7 @@
 <template>
   <div class="player-bar">
     <!-- 音乐名称 -->
-    <div class="info">
+    <div class="info" @click="handleChangeOption({ showLyrics: !songOptions.showLyrics})">
       <img :src="getPicUrl" alt="picUrl" />
       <div class="name">
         <div>{{ getName }}</div>
@@ -63,11 +63,6 @@ export default {
   },
   data() {
     return {
-      default: {
-        name: "DO RE MI FA SO LA XI",
-        artists: "Enjoy music Enjoy life",
-        picUrl: require("@/assets/images/artists.jpg")
-      },
       songTime: {
         currentTime: "00:00",
         totalTime: "00:00",
@@ -111,7 +106,7 @@ export default {
     },
     getPicUrl() {
       // 获取歌曲图片
-      return this.getCurrent ? this.getCurrent.al.picUrl : this.default.picUrl;
+      return this.getCurrent ? this.getCurrent.al.picUrl : this.songOptions.default.picUrl;
     },
     getCurrent() {
       // 获取当前播放的内容
@@ -122,14 +117,14 @@ export default {
       if (this.getCurrent) {
         return this.getCurrent.name;
       }
-      return this.default.name;
+      return this.songOptions.default.name;
     },
     getArtists() {
       // 获取歌手
       if (this.getCurrent) {
         return this.$root.getArtists(this.getCurrent);
       }
-      return this.default.artists;
+      return this.songOptions.default.artists;
     },
     ...mapState({
       songList: state => state.detail.songList,
@@ -168,8 +163,8 @@ export default {
     }
   },
   methods: {
-    handleToggleList() {},
     handleChangeInfo() {
+      // 总时长
       this.songTime.totalTime = this.$root.formatTime(
         this.getCurrent.dt,
         "mm:ss"
@@ -233,7 +228,7 @@ export default {
           // 顺序播放
           if (current < 0 || current >= this.songList.length - 1) {
             play = false;
-            current = 0;
+            current = current < 0 ? 0 : this.songList.length - 1;
             this.$refs.audio.pause();
           }
           break;
@@ -258,7 +253,7 @@ export default {
         this.handleChangeInfo();
         setTimeout(() => {
           this.handleChangeOption({ play: true });
-        }, 1000);
+        }, 200);
       }
     },
     ...mapMutations([
@@ -300,10 +295,28 @@ export default {
     box-sizing: border-box;
     padding-left: 20px;
     margin-right: 20px;
+    cursor: pointer;
     @media screen and (max-width: 1200px) {
       width: @sidebar-small-width;
     }
     align-items: center;
+    &:hover {
+      &:before {
+        content: "\e6dd";
+        background: rgba(0, 0, 0, 0.4);
+        position: absolute;
+        width: 35px;
+        height: 35px;
+        z-index: 5;
+        border-radius: 3px;
+        overflow: hidden;
+        color: #ccc;
+        font-family: element-icons !important;
+        transform: rotate(90deg);
+        text-align: center;
+        line-height: 35px;
+      }
+    }
     img {
       width: 35px;
       height: 35px;

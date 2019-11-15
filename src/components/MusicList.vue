@@ -16,12 +16,14 @@
             </span>
           </div>
         </div>
-        <ul class="list">
+        <ul class="list" ref="list">
           <li
             v-for="(item,index) in songList"
             :key="item.id"
             :class="[{'active':index === songOptions.current}]"
+            :ref="`current${index}`"
           >
+            <i class="el-icon-caret-right" v-if="index === songOptions.current"></i>
             <img :src="item.al.picUrl" :class="{paused:!songOptions.play}" />
             <div class="song">
               <div class="name">
@@ -48,7 +50,9 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
+import * as TYPES from "@/store/types";
+
 export default {
   name: "",
   components: {},
@@ -62,9 +66,38 @@ export default {
       songOptions: state => state.detail.songOptions
     })
   },
-  created() {},
-  watch: {},
-  methods: {},
+  created() {
+    window.addEventListener("click", this.handleClose);
+  },
+  watch: {
+    songOptions(newVal, oldVal) {
+      if (newVal.current != oldVal.current) {
+        this.handleScroll();
+      }
+    }
+  },
+  methods: {
+    handleScroll() {
+      const name = "current" + this.songOptions.current;
+      if (this.$refs[name]) {
+        if (!this.$refs[name].length) return;
+        const listRef = this.$refs.list;
+        const liRef = this.$refs[name][0];
+        listRef.scrollTop = liRef.offsetTop - listRef.clientHeight / 2;
+      }
+    },
+    handleClose(e) {
+      if (this.isShow) {
+        const isInclude = e.path.some(item => item.className == "music-list");
+        const isLayout = e.path.some(item => item.className == "layout");
+        const isPlayBar = e.path.some(item => item.className == "player-bar");
+        if (!isInclude && !isPlayBar && isLayout) {
+          this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ showList: false });
+        }
+      }
+    },
+    ...mapMutations([TYPES.MUTATIONS_SET_SONG_OPTIONS])
+  },
   mounted() {},
   beforeCreate() {}, //生命周期 - 创建之前
   beforeMount() {}, //生命周期 - 挂载之前
@@ -117,8 +150,14 @@ export default {
         padding: 10px 20px;
         display: flex;
         align-items: center;
+        position: relative;
+        > i {
+          position: absolute;
+          left: 3px;
+        }
         &.active {
-          span {
+          span,
+          i {
             color: @theme-color!important;
           }
           img {
