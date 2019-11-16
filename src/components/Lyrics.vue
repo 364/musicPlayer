@@ -70,8 +70,17 @@ export default {
     })
   },
   created() {},
-  watch: {},
+  watch: {
+    songOptions(newVal){
+      if(newVal.play){
+        this.handleGetLyrics()
+      }
+    }
+  },
   methods: {
+    handleGetLyrics(){
+      
+    },
     handleChangeOption(obj) {
       // 改变信息
       this[TYPES.MUTATIONS_SET_SONG_OPTIONS](obj);
