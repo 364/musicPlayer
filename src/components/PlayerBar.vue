@@ -155,6 +155,7 @@ export default {
           // 播放
           this.$refs.audio.play();
           this.iconPlayClass = "icon-pause";
+          console.log(this.getCurrent)
         } else {
           this.$refs.audio.pause();
           this.iconPlayClass = "icon-bofanganniu";

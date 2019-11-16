@@ -17,6 +17,7 @@ const detail = {
       order: 3,
       showList: false,
       showLyrics: true,
+      lyricsList:[],
       default: {
         name: "DO RE MI FA SO LA XI",
         artists: "Enjoy music Enjoy life",

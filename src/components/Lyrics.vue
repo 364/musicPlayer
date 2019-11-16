@@ -1,9 +1,38 @@
 <!-- 歌词 -->
 <template>
-  <div class="lyrics" v-show="isShow">
-    <div class="blur" :style="{backgroundImage:`url(${getPicUrl})`}"></div>
-    <div class="content">歌词页面</div>
-  </div>
+  <transition name="slide-down">
+    <div class="lyrics" v-show="isShow">
+      <div class="blur" :style="{backgroundImage:`url(${getPicUrl})`}"></div>
+      <div class="content">
+        <div class="back" @click="handleChangeOption({ showLyrics: !songOptions.showLyrics})">
+          <i class="el-icon-arrow-down"></i>
+        </div>
+        <div class="main">
+          <div class="disc">
+            <img :src="getPicUrl" alt />
+            <span class="mask"></span>
+          </div>
+          <div class="info">
+            <div class="name">
+              <h3>{{ getName }}</h3>
+              <div class="artists" v-if="getCurrent">
+                <span>歌手：</span>
+                {{ getCurrent | getArtists }}
+                <span>专辑：</span>
+                {{ getCurrent.al.name }}
+              </div>
+            </div>
+            <div class="text">
+              <div class="center" v-if="!getCurrent">{{ songOptions.default.artists }} 享受生活，享受音乐</div>
+              <ul v-else>
+                <li v-for="item in songOptions.lyricsList" :key="item"></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </transition>
 </template>
 
 <script>
@@ -17,6 +46,13 @@ export default {
     return {};
   },
   computed: {
+    getName() {
+      // 获取歌曲名
+      if (this.getCurrent) {
+        return this.getCurrent.name;
+      }
+      return this.songOptions.default.name;
+    },
     getCurrent() {
       // 获取当前播放的内容
       return this.songList[this.songOptions.current];
@@ -35,7 +71,13 @@ export default {
   },
   created() {},
   watch: {},
-  methods: {},
+  methods: {
+    handleChangeOption(obj) {
+      // 改变信息
+      this[TYPES.MUTATIONS_SET_SONG_OPTIONS](obj);
+    },
+    ...mapMutations([TYPES.MUTATIONS_SET_SONG_OPTIONS])
+  },
   mounted() {},
   beforeCreate() {}, //生命周期 - 创建之前
   beforeMount() {}, //生命周期 - 挂载之前
@@ -72,9 +114,74 @@ export default {
     position: relative;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.4);
+    background: rgba(0, 0, 0, 0.5);
     color: #fff;
     padding: 20px;
+    box-sizing: border-box;
+    .back {
+      font-size: 25px;
+      cursor: pointer;
+    }
+    .main {
+      display: flex;
+      height: 75%;
+      align-items: center;
+      width: 90%;
+      margin: 0 auto;
+      justify-content: space-around;
+      flex: 1;
+      position: relative;
+      top: 42%;
+      transform: translateY(-50%);
+      .info {
+        width: 50%;
+        height: 100%;
+        align-self: flex-start;
+        .name {
+          h3 {
+            font-weight: 400;
+            font-size: 20px;
+          }
+          .artists {
+            span {
+              color: #999;
+              &:last-child {
+                margin-left: 10px;
+              }
+            }
+          }
+        }
+        .text {
+          height: 85%;
+          font-size: 16px;
+          .center {
+            height: 100%;
+            display: flex;
+            align-items: center;
+          }
+        }
+      }
+      .disc {
+        position: relative;
+        width: 300px;
+        height: 300px;
+        img {
+          width: 70%;
+          margin: 50%;
+          border-radius: 50%;
+          transform: translate(-50%, -50%);
+        }
+        .mask {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: url("~@/assets/images/disc.png") no-repeat;
+          background-size: 100% 100%;
+        }
+      }
+    }
   }
 }
 </style>
