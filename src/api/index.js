@@ -53,5 +53,7 @@ export const songDetail =  (params = {}) => axios.get("/song/detail", { params }
 export const songUrl =  (params = {}) => axios.get("/song/url", { params }) 
 // 专辑内容
 export const album =  (params = {}) => axios.get("/album", { params }) 
+// 获取歌词
+export const lyrics =  (params = {}) => axios.get("/lyric", { params }) 
 
 

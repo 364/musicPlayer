@@ -106,7 +106,9 @@ export default {
     },
     getPicUrl() {
       // 获取歌曲图片
-      return this.getCurrent ? this.getCurrent.al.picUrl : this.songOptions.default.picUrl;
+      return this.getCurrent
+        ? this.getCurrent.al.picUrl
+        : this.songOptions.default.picUrl;
     },
     getCurrent() {
       // 获取当前播放的内容
@@ -147,6 +149,9 @@ export default {
           // 播放结束
           this.$refs.audio.addEventListener("ended", this.handlePlayEnd, false);
         });
+        if (!this.songOptions.audio) {
+          this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ audio: this.$refs.audio });
+        }
       }
     },
     songOptions(newVal) {
@@ -155,7 +160,6 @@ export default {
           // 播放
           this.$refs.audio.play();
           this.iconPlayClass = "icon-pause";
-          console.log(this.getCurrent)
         } else {
           this.$refs.audio.pause();
           this.iconPlayClass = "icon-bofanganniu";
@@ -244,12 +248,12 @@ export default {
           break;
         case 3:
           // 随机播放
-          current = Math.round(Math.random() * this.songList.length - 1);
+          current = Math.round(Math.random() * (this.songList.length - 1));
           break;
         default:
           break; // 单曲循环
       }
-      this.handleChangeOption({ current });
+      this.handleChangeOption({ current, lyricsIndex: 0 });
       if (this.$refs.audio && play) {
         this.handleChangeInfo();
         setTimeout(() => {
@@ -262,14 +266,6 @@ export default {
       TYPES.MUTATIONS_GET_SONG_DETAIL
     ])
   },
-  mounted() {},
-  beforeCreate() {}, //生命周期 - 创建之前
-  beforeMount() {}, //生命周期 - 挂载之前
-  beforeUpdate() {}, //生命周期 - 更新之前
-  updated() {}, //生命周期 - 更新之后
-  beforeDestroy() {}, //生命周期 - 销毁之前
-  destroyed() {}, //生命周期 - 销毁完成
-  activated() {} //如果页面有keep-alive缓存功能，这个函数会触发
 };
 </script>
 <style lang='less' scoped>

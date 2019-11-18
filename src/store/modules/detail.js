@@ -1,5 +1,6 @@
 import * as TYPES from "@/store/types";
 import * as API from "@/api";
+import Filter from "@/filter";
 
 const detail = {
   state: {
@@ -15,9 +16,11 @@ const detail = {
       play: false,
       current: 0,
       order: 3,
+      audio: null,
       showList: false,
-      showLyrics: true,
-      lyricsList:[],
+      showLyrics: false,
+      lyricsList: [],
+      lyricsIndex: 0,
       default: {
         name: "DO RE MI FA SO LA XI",
         artists: "Enjoy music Enjoy life",
@@ -55,9 +58,6 @@ const detail = {
       state.mvDetail = data;
     },
     [TYPES.MUTATIONS_GET_SONG_DETAIL](state, data) {
-      // let songList = data[0].songs.map((item, index) =>
-      //   Object.assign({}, item, data[1].data[index])
-      // );
       state.songList = data;
     },
     [TYPES.MUTATIONS_INIT_SONG_LIST](state) {
@@ -70,6 +70,11 @@ const detail = {
     },
     [TYPES.MUTATIONS_SET_SONG_OPTIONS](state, data) {
       state.songOptions = Object.assign({}, state.songOptions, data);
+    },
+    [TYPES.MUTATIONS_SET_SONG_LYRICS](state, data) {
+      const { lyric } = data;
+      const lyricsList = Filter.getLyrics(lyric);
+      state.songOptions.lyricsList = lyricsList;
     }
   },
   actions: {
@@ -113,18 +118,15 @@ const detail = {
           ? ids.join()
           : ids;
       return new Promise((resolve, rej) => {
-        // Promise.all([
-        //   API.songDetail({ ids: val }),
-        //   API.songUrl({ id: val })
-        // ]).then(res => {
-        //   if (res.length) {
-        //     commit(TYPES.MUTATIONS_GET_SONG_DETAIL, res);
-        //     resolve();
-        //   }
-        // });
         API.songDetail({ ids: val }).then(res => {
           resolve(res.songs);
         });
+      });
+    },
+    [TYPES.ACTIONS_GET_SONG_LYRICS]({ commit }, param) {
+      // 歌词
+      API.lyrics(param).then(res => {
+        commit(TYPES.MUTATIONS_SET_SONG_LYRICS, res.lrc);
       });
     },
     [TYPES.ACTIONS_GET_COMMENT_PLAYLIST]({ commit, getters }, param) {

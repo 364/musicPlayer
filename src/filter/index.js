@@ -22,7 +22,7 @@ const searchCat = value => {
 };
 // 歌手
 const getArtists = (val, operator) => {
-  let arr = val.artists || val.ar
+  let arr = val.artists || val.ar;
   if (!val || (!arr && !val.artist)) return "";
   let artists = [];
   if (arr) {
@@ -36,24 +36,51 @@ const getArtists = (val, operator) => {
   return operator ? operator + str : str;
 };
 // 格式化时间
-const formatTime = (time, format = "YYYY-MM-DD") =>{
+const formatTime = (time, format = "YYYY-MM-DD") => {
   return moment(time).format(format);
-}
+};
 // 标签
 const getTags = val => {
   const arr = val.map(item => "#" + item);
   return arr.join(" ");
 };
 // 获取歌曲其他信息
-const getAlias = val =>{
-  return val.join('')
-}
+const getAlias = val => {
+  return val.join("");
+};
 
+// 获取歌词
+const getLyrics = val => {
+  const parts = val.split("\n");
+  for (let index = 0; index < parts.length; index++) {
+    parts[index] = changeToObject(parts[index]);
+    parts[index] ? parts[index] : parts.splice(index, 1);
+  }
+  // console.log(parts);
+  return parts;
+};
+// 根据一行歌词 转换为对象
+function changeToObject(str) {
+  const words = str.split("]")[1];
+  // 这个正则返回时间信息
+  const reg = /\w{0,}:\w{0,}.\w{0,}/g;
+  let timeArray = reg.exec(str);
+  if (!timeArray) return;
+  timeArray = timeArray[0].split(":");
+  const minute = parseInt(timeArray[0]); // 分钟数
+  const second = parseFloat(timeArray[1]); // 秒数
+  const time = minute * 60 + second;
+  return {
+    time,
+    words
+  };
+}
 export default {
   playCount,
   searchCat,
   getArtists,
   formatTime,
   getTags,
-  getAlias
+  getAlias,
+  getLyrics
 };

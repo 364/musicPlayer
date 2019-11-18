@@ -10,30 +10,22 @@
           <router-view />
         </keep-alive>
       </div>
-      <!-- 播放列表 -->
-      <music-list></music-list>
-      <!-- 歌词 -->
-      <lyrics></lyrics>
     </div>
-    <player-bar />
+    <play-song />
   </div>
 </template>
 
 <script>
 import Sidebar from "@/components/Sidebar";
-import PlayerBar from "@/components/PlayerBar";
 import NavBar from "@/components/NavBar";
-import MusicList from "@/components/MusicList";
-import Lyrics from "@/components/Lyrics";
+import PlaySong from "@/components/PlaySong/index";
 
 export default {
   name: "layout",
   components: {
     NavBar,
     Sidebar,
-    Lyrics,
-    PlayerBar,
-    MusicList
+    PlaySong
   },
   data() {
     return {};
@@ -62,7 +54,7 @@ export default {
   background: fade(#fff, 40%);
   box-shadow: 0 0 15px fade(#000, 10%);
   overflow: hidden;
-  @media screen and (max-width:1200px){
+  @media screen and (max-width: 1200px) {
     width: @box-small-width;
   }
   .content {
@@ -73,7 +65,7 @@ export default {
       overflow: hidden;
       background: fade(#fff, 90%);
       border-radius: 0 @box-radius @box-radius 0;
-      .nav{
+      .nav {
         padding: 20px 20px 0;
       }
       > div:not(.nav) {
