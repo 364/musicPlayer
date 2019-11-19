@@ -1,12 +1,11 @@
-
-<!-- 播放列表 -->
+<!--  -->
 <template>
   <transition name="slide">
     <div class="music-list" v-show="isShow">
       <div v-if="songList.length" class="main">
         <h3 class="title">播放列表</h3>
         <div class="operation">
-          <span>{{songList.length}}首歌曲</span>
+          <span>{{ songList.length }}首歌曲</span>
           <div>
             <span>
               <i class="el-icon-star-off"></i>收藏
@@ -20,11 +19,11 @@
           <li
             v-for="(item,index) in songList"
             :key="item.id"
-            :class="[{'active':index === songOptions.current}]"
+            :class="[{'active':index === current}]"
             :ref="`current${index}`"
           >
-            <i class="el-icon-caret-right" v-if="index === songOptions.current"></i>
-            <img :src="item.al.picUrl" :class="{paused:!songOptions.play}" />
+            <i class="el-icon-caret-right" v-if="index === current"></i>
+            <img :src="item.al.picUrl" :class="{ 'paused': !playState }" />
             <div class="song">
               <div class="name">
                 <span>{{ item.name }}</span>
@@ -50,35 +49,42 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex";
-import * as TYPES from "@/store/types";
-
 export default {
   name: "",
   components: {},
+  props: {
+    current: {
+      type: Number
+    },
+    isShow: {
+      type: Boolean
+    },
+    playState: {
+      type: Boolean
+    },
+    songList: {
+      type: Array
+    }
+  },
   data() {
     return {};
   },
-  computed: {
-    ...mapState({
-      isShow: state => state.detail.songOptions.showList,
-      songList: state => state.detail.songList,
-      songOptions: state => state.detail.songOptions
-    })
-  },
+  computed: {},
   created() {
     window.addEventListener("click", this.handleClose);
   },
   watch: {
-    songOptions(newVal, oldVal) {
-      if (newVal.current != oldVal.current) {
-        this.handleScroll();
+    current(val, newVal) {
+      if (val != newVal) {
+        this.$nextTick(() => {
+          this.handleScroll();
+        });
       }
     }
   },
   methods: {
     handleScroll() {
-      const name = "current" + this.songOptions.current;
+      const name = "current" + this.current;
       if (this.$refs[name]) {
         if (!this.$refs[name].length) return;
         const listRef = this.$refs.list;
@@ -92,11 +98,10 @@ export default {
         const isLayout = e.path.some(item => item.className == "layout");
         const isPlayBar = e.path.some(item => item.className == "player-bar");
         if (!isInclude && !isPlayBar && isLayout) {
-          this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ showList: false });
+          this.$emit("handleToggleShow", "showList");
         }
       }
-    },
-    ...mapMutations([TYPES.MUTATIONS_SET_SONG_OPTIONS])
+    }
   },
   mounted() {},
   beforeCreate() {}, //生命周期 - 创建之前
@@ -110,7 +115,6 @@ export default {
 </script>
 <style lang='less' scoped>
 @import "~@/assets/style/variable.less";
-
 .music-list {
   background: #fff;
   height: calc(100% - @footer-height);
@@ -146,6 +150,7 @@ export default {
     .list {
       height: calc(100% - 80px);
       overflow-y: auto;
+      transition: all 0.3s;
       li {
         padding: 10px 20px;
         display: flex;

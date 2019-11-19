@@ -14,7 +14,7 @@ const detail = {
     songList: [],
     songOptions: {
       play: false,
-      current: 0,
+      current: -1,
       order: 3,
       audio: null,
       showList: false,
@@ -36,6 +36,10 @@ const detail = {
         limit: pageSize,
         offset: (page - 1) * pageSize
       };
+    },
+    [TYPES.GETTERS_GET_CURRENT_SONG](state) {
+      // 获取当前歌曲
+      return state.songList[state.songOptions.current];
     }
   },
   mutations: {
@@ -75,6 +79,34 @@ const detail = {
       const { lyric } = data;
       const lyricsList = Filter.getLyrics(lyric);
       state.songOptions.lyricsList = lyricsList;
+    },
+    [TYPES.MUTATIONS_SET_SONG_ORDER](state, data) {
+      let current = state.songOptions.current + data;
+      switch (state.songOptions.order) {
+        case 0:
+          // 顺序播放
+          if (current < 0 || current > state.songList.length - 1) {
+            current = current < 0 ? 0 : state.songList.length - 1;
+            return;
+          }
+          break;
+        case 1:
+          // 列表循环
+          if (current < 0 || current > state.songList.length - 1) {
+            current = current < 0 ? state.songList.length - 1 : 0;
+          }
+          break;
+        case 3:
+          // 随机播放
+          current = Math.round(Math.random() * (state.songList.length - 1));
+          break;
+        default:
+          // 单曲循环
+          break;
+      }
+      console.log(current)
+      if (state.songOptions.order == 2 && state.songOptions.current > 0) return;
+      state.songOptions = Object.assign({}, state.songOptions, { current });
     }
   },
   actions: {
@@ -125,7 +157,7 @@ const detail = {
     },
     [TYPES.ACTIONS_GET_SONG_LYRICS]({ commit }, param) {
       // 歌词
-      API.lyrics(param).then(res => {
+      API.songLyrics(param).then(res => {
         commit(TYPES.MUTATIONS_SET_SONG_LYRICS, res.lrc);
       });
     },

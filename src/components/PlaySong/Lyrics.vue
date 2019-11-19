@@ -2,38 +2,42 @@
 <template>
   <transition name="slide-down">
     <div class="lyrics" v-show="isShow">
-      <div class="blur" :style="{backgroundImage:`url(${getPicUrl})`}"></div>
+      <div class="blur" :style="{backgroundImage:`url(${info.picUrl})`}"></div>
       <div class="content">
-        <div class="back" @click="handleChangeOption({ showLyrics: !songOptions.showLyrics})">
+        <div class="back" @click="$emit('handleToggleShow','showLyrics')">
           <i class="el-icon-arrow-down"></i>
         </div>
         <div class="main">
-          <div class="disc" :class="{paused:!songOptions.play}">
-            <img :src="getPicUrl" alt />
+          <div class="disc" :class="{'paused':!playState}">
+            <img :src="info.picUrl" alt />
             <span class="mask"></span>
           </div>
           <div class="info" ref="box">
             <div class="name">
-              <h3>{{ getName }}</h3>
-              <div class="artists" v-if="getCurrent">
+              <h3>{{ info.name }}</h3>
+              <div class="artists" v-if="info.currentSong">
                 <span>歌手：</span>
-                {{ getCurrent | getArtists }}
+                {{ info.artists }}
                 <span>专辑：</span>
-                {{ getCurrent.al.name }}
+                {{ info.album }}
               </div>
             </div>
             <div class="text">
-              <div class="center" v-if="!getCurrent">享受生活，享受音乐 {{ songOptions.default.artists }}</div>
-              <div v-else class="list" ref="list">
-                <ul>
-                  <li
-                    v-for="(item,index) in songOptions.lyricsList"
-                    :key="item.time"
-                    :class="{ 'active': index === songOptions.lyricsIndex }"
-                    :ref="`current${index}`"
-                  >{{ item.words }}</li>
-                </ul>
-              </div>
+              <div class="center" v-if="lyrics.noLyric">{{ lyrics.noLyricText }}</div>
+              <ul
+                ref="list"
+                v-if="lyrics.list.length"
+                @mousedown="handleStart"
+                @mouseup="handleEnd"
+                @mousemove="handleMove"
+              >
+                <li
+                  v-for="(item,index) in lyrics.list"
+                  :key="item.time"
+                  :class="{ 'active': index === lyrics.index }"
+                  :ref="`current${index}`"
+                >{{ item.words }}</li>
+              </ul>
             </div>
           </div>
         </div>
@@ -43,87 +47,59 @@
 </template>
 
 <script>
-import { mapActions, mapState, mapMutations } from "vuex";
-import * as TYPES from "@/store/types";
-
 export default {
-  name: "lyrics",
+  name: "",
   components: {},
-  data() {
-    return {};
-  },
-  computed: {
-    getName() {
-      // 获取歌曲名
-      if (this.getCurrent) {
-        return this.getCurrent.name;
-      }
-      return this.songOptions.default.name;
+  props: {
+    info: {
+      type: Object
     },
-    getCurrent() {
-      // 获取当前播放的内容
-      return this.songList[this.songOptions.current];
+    isShow: {
+      type: Boolean
     },
-    getPicUrl() {
-      // 获取歌曲图片
-      return this.getCurrent
-        ? this.getCurrent.al.picUrl
-        : this.songOptions.default.picUrl;
+    playState: {
+      type: Boolean
     },
-    ...mapState({
-      isShow: state => state.detail.songOptions.showLyrics,
-      songList: state => state.detail.songList,
-      songOptions: state => state.detail.songOptions
-    })
-  },
-  created() {},
-  watch: {
-    songList(newVal) {
-      if (newVal.length) {
-        this.handleGetLyrics();
-      }
-    },
-    songOptions(newVal, oldVal) {
-      if (newVal.current != oldVal.current) {
-        this.handleGetLyrics();
-      }
-      if (newVal.audio) {
-        const { lyricsList } = this.songOptions;
-        for (let i = lyricsList.length - 2; i >= 0; i--) {
-          if (newVal.audio.currentTime > lyricsList[i].time) {
-            this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ lyricsIndex: i });
-            break;
-          }
-        }
-      }
-      if (newVal.lyricsIndex != oldVal.lyricsIndex) {
-        this.handleScroll();
-      }
+    lyrics: {
+      type: Object
     }
   },
+  data() {
+    return {
+      index: -1,
+      drag: false
+    };
+  },
+  computed: {},
+  created() {},
+  watch: {},
   methods: {
-    handleScroll() {
-      const name = "current" + this.songOptions.lyricsIndex;
-      if (this.$refs[name]) {
-        if (!this.$refs[name].length) return;
-        const boxRef = this.$refs.box;
-        const listRef = this.$refs.list;
-        const liRef = this.$refs[name][0];
-        listRef.scrollTop = liRef.offsetTop - boxRef.clientHeight / 2;
+    handleScroll(i) {
+      if (this.index != i) {
+        const name = "current" + this.lyrics.index;
+        if (this.$refs[name]) {
+          if (!this.$refs[name].length) return;
+          const listRef = this.$refs.list;
+          const liRef = this.$refs[name][0];
+          listRef.scrollTop = liRef.offsetTop - listRef.clientHeight / 2 + 25;
+        }
+        this.index = i;
       }
     },
-    handleGetLyrics() {
-      if (this.getCurrent) {
-        const id = this.getCurrent.id;
-        this[TYPES.ACTIONS_GET_SONG_LYRICS]({ id });
+    handleStart() {
+      this.drag = true;
+    },
+    handleMove(e) {
+      e.stopPropagation()
+      e.preventDefault()
+      if (this.drag) {
+        console.log(e);
       }
     },
-    handleChangeOption(obj) {
-      // 改变信息
-      this[TYPES.MUTATIONS_SET_SONG_OPTIONS](obj);
-    },
-    ...mapMutations([TYPES.MUTATIONS_SET_SONG_OPTIONS]),
-    ...mapActions([TYPES.ACTIONS_GET_SONG_LYRICS])
+    handleEnd(e) {
+      this.drag = false;
+      console.log("end", e);
+    }
   },
   mounted() {},
   beforeCreate() {}, //生命周期 - 创建之前
@@ -137,6 +113,7 @@ export default {
 </script>
 <style lang='less' scoped>
 @import "~@/assets/style/variable.less";
+
 .lyrics {
   position: absolute;
   top: 0;
@@ -211,6 +188,7 @@ export default {
             overflow-y: auto;
             height: 100%;
             cursor: grabbing;
+            position: relative;
             &::-webkit-scrollbar {
               display: none;
             }
@@ -233,7 +211,7 @@ export default {
         position: relative;
         width: 300px;
         height: 300px;
-        animation: rotate 8s linear infinite;
+        animation: rotate 20s linear infinite;
         animation-play-state: running;
         &.paused {
           animation-play-state: paused;

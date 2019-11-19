@@ -2,10 +2,36 @@
 <template>
   <div class="play-song">
     <!-- 播放列表 -->
-    <player-bar />
-    <Lyrics />
-    <music-list />
-    <audio :src="url" ref="audio"></audio>
+    <player-bar
+      :info="getInfo"
+      :playState="songOptions.play"
+      :songTime="songTime"
+      :volume="volume"
+      :order="songOptions.order"
+      :songList="songList"
+      @handleChangeOption="handleChangeOption"
+      @handleChangeSong="handleChangeSong"
+      @handleChange="handleChange"
+      @handleToggleShow="handleToggleShow"
+      @handleChangeVol="handleChangeVol"
+    />
+    <Lyrics
+      ref="lyricPage"
+      :info="getInfo"
+      :isShow="showLyrics"
+      :lyrics="lyrics"
+      :playState="songOptions.play"
+      @handleToggleShow="handleToggleShow"
+    />
+    <music-list
+      :isShow="showList"
+      :songList="songList"
+      :current="songOptions.current"
+      :playState="songOptions.play"
+      @handleToggleShow="handleToggleShow"
+    />
+    <!-- @canplay="handlePlaying" -->
+    <audio :src="url" crossorigin="anonymous" preload="auto" ref="audio" @ended="handleEnded"></audio>
   </div>
 </template>
 
@@ -13,6 +39,11 @@
 import PlayerBar from "@/components/PlaySong/PlayerBar";
 import MusicList from "@/components/PlaySong/MusicList";
 import Lyrics from "@/components/PlaySong/Lyrics";
+import { mapActions, mapState, mapMutations, mapGetters } from "vuex";
+import * as TYPES from "@/store/types";
+import moment from "moment";
+import { Message } from "element-ui";
+import { checkUrl, songUrl, songLyrics } from "@/api";
 
 export default {
   name: "playsong",
@@ -23,13 +54,221 @@ export default {
   },
   data() {
     return {
-      url: ""
+      url: "",
+      showList: false,
+      showLyrics: false,
+      lyrics: {
+        list: [],
+        index: 0,
+        noLyric: true,
+        noLyricText: "享受音乐，享受生活"
+      },
+      default: {
+        name: "DO RE MI FA SO LA XI",
+        artists: "享受音乐，享受生活",
+        picUrl: require("@/assets/images/artists.jpg"),
+        alName: "未知"
+      },
+      songTime: {
+        currentTime: "00:00",
+        totalTime: "00:00",
+        width: "0%"
+      },
+      volume: {
+        default: "75%",
+        width: "75%",
+        muted: false
+      }
     };
   },
-  computed: {},
+  computed: {
+    ...mapState({
+      songList: state => state.detail.songList,
+      songOptions: state => state.detail.songOptions
+    }),
+    ...mapGetters({
+      currentSong: TYPES.GETTERS_GET_CURRENT_SONG
+    }),
+    getInfo() {
+      return {
+        name: this.getName,
+        artists: this.getArtists,
+        picUrl: this.getPicUrl,
+        album: this.getAlbum,
+        currentSong: this.currentSong
+      };
+    },
+    getName() {
+      // 获取歌曲名
+      return this.currentSong ? this.currentSong.name : this.default.name;
+    },
+    getArtists() {
+      // 获取歌手
+      return this.currentSong
+        ? this.$root.getArtists(this.currentSong)
+        : this.default.artists;
+    },
+    getPicUrl() {
+      // 获取歌曲图片
+      return this.currentSong
+        ? this.currentSong.al.picUrl
+        : this.default.picUrl;
+    },
+    getAlbum() {
+      // 获取歌曲图片
+      return this.currentSong ? this.currentSong.al.name : this.default.alName;
+    }
+  },
+  watch: {
+    currentSong(val, oldVal = {}) {
+      if (val) {
+        if (val.id == oldVal.id) return;
+        // 检查歌曲
+        this.handleCheckSong(val.id);
+      }
+    },
+    songOptions(val) {
+      if (!val.play) {
+        this.handlePause();
+      }
+    }
+  },
   created() {},
-  watch: {},
-  methods: {},
+  methods: {
+    ...mapMutations([
+      TYPES.MUTATIONS_SET_SONG_OPTIONS,
+      TYPES.MUTATIONS_GET_SONG_DETAIL,
+      TYPES.MUTATIONS_SET_SONG_ORDER
+    ]),
+    handleCheckSong(id) {
+      // 检查歌曲是否可以播放
+      checkUrl({ id })
+        .then(res => {
+          if (res.success) {
+            this.handleTotalTime();
+            this.handleGetSongUrl(id);
+          } else {
+            Message.info(res.message);
+            // 下一首歌曲
+            this.handleChangeSong(1);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    handleTotalTime() {
+      // 总时长
+      this.songTime.totalTime = this.$root.formatTime(
+        this.currentSong.dt,
+        "mm:ss"
+      );
+    },
+    handleGetSongUrl(id) {
+      // 获取歌曲url
+      songUrl({ id }).then(res => {
+        const { data } = res;
+        if (data.length) {
+          this.url = data[0]["url"];
+          this.$refs.audio.addEventListener("timeupdate", this.handlePlaying);
+          this.handleLyrics(id);
+          setTimeout(() => {
+            this.handlePlay();
+            this.handleChangeOption({ play: true });
+          }, 0);
+        }
+      });
+    },
+    handlePlaying() {
+      // 播放中
+      const { currentTime, duration } = this.$refs.audio;
+      let value = currentTime / duration;
+      this.songTime = Object.assign({}, this.songTime, {
+        currentTime: this.$root.formatTime(currentTime * 1000, "mm:ss"),
+        width: value * 100 + "%"
+      });
+      for (let i = this.lyrics.list.length - 1; i >= 0; i--) {
+        if (currentTime > this.lyrics.list[i].time) {
+          this.lyrics.index = i;
+          this.$refs.lyricPage.handleScroll(i);
+          break;
+        }
+      }
+    },
+    handleLyrics(id) {
+      // 获取歌词
+      songLyrics({ id }).then(res => {
+        const lrc = res.lrc.lyric;
+        if (res.nolyric) {
+          // 当前歌曲没有歌词
+          this.lyrics = Object.assign({}, this.lyrics, {
+            list: [],
+            noLyric: true,
+            noLyricText: "纯音乐，请欣赏"
+          });
+          return;
+        }
+        if (!lrc.trim()) {
+          // 歌词为空
+          this.lyrics = Object.assign({}, this.lyrics, {
+            list: [],
+            noLyric: true,
+            noLyricText: "暂时没有歌词"
+          });
+          return;
+        }
+        this.lyrics.noLyric = false;
+        this.lyrics.list = this.$root.getLyrics(lrc);
+      });
+    },
+    handleEnded(e) {
+      // 播放结束
+      this.handleChangeOption({ play: false });
+      this.handleChangeSong(1);
+    },
+    handlePlay() {
+      // 播放
+      this.$refs.audio.play();
+    },
+    handlePause() {
+      // 暂停
+      this.$refs.audio.pause();
+    },
+    handleChangeOption(obj) {
+      // 改变信息
+      this[TYPES.MUTATIONS_SET_SONG_OPTIONS](obj);
+    },
+    handleChangeSong(num) {
+      // 改变歌曲
+      console.log(num)
+      this[TYPES.MUTATIONS_SET_SONG_ORDER](num);
+    },
+    handleChangeVol(rate) {
+      console.log(rate);
+      // 改变音量
+      this.volume.width = parseInt(rate * 100) + "%";
+      this.volume.muted = !rate;
+      if (this.$refs.audio) {
+        this.$refs.audio.volume = rate;
+      }
+    },
+    handleChange(rate, tag) {
+      // 改变进度条
+      if (tag === "volume") {
+        this.handleChangeVol(rate);
+        this.volume.default = !rate ? "75%" : parseInt(rate * 100) + "%";
+      } else {
+        if (this.$refs.audio) {
+          const { duration } = this.$refs.audio;
+          this.$refs.audio.currentTime = duration * rate;
+          this.handlePlaying();
+        }
+      }
+    },
+    handleToggleShow(key) {
+      this[key] = !this[key];
+    }
+  },
   mounted() {},
   beforeCreate() {}, //生命周期 - 创建之前
   beforeMount() {}, //生命周期 - 挂载之前

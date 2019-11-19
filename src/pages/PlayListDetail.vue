@@ -67,9 +67,10 @@ export default {
   methods: {
     handleSong(ids) {
       const id = ids.map(item => item.id);
-      this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ play: false, current: 0 });
+      this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ play: false });
       this[TYPES.MUTATIONS_INIT_SONG_LIST]();
       this[TYPES.ACTIONS_GET_SONG_DETAIL]({ id }).then(res => {
+        this[TYPES.MUTATIONS_SET_SONG_ORDER]()
         this[TYPES.MUTATIONS_GET_SONG_DETAIL](res);
         setTimeout(() => {
           this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ play: true });
