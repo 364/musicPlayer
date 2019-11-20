@@ -9,6 +9,7 @@
       :volume="volume"
       :order="songOptions.order"
       :songList="songList"
+      :orderInfo="orderInfo"
       @handleChangeOption="handleChangeOption"
       @handleChangeSong="handleChangeSong"
       @handleChange="handleChange"
@@ -19,9 +20,20 @@
       ref="lyricPage"
       :info="getInfo"
       :isShow="showLyrics"
+      :showComment="showComment"
       :lyrics="lyrics"
       :playState="songOptions.play"
+      :songTime="songTime"
+      :volume="volume"
+      :order="songOptions.order"
+      :songList="songList"
+      :orderInfo="orderInfo"
+      :comment="comment"
       @handleToggleShow="handleToggleShow"
+      @handleChangeOption="handleChangeOption"
+      @handleChangeSong="handleChangeSong"
+      @handleChange="handleChange"
+      @handleChangeVol="handleChangeVol"
     />
     <music-list
       :isShow="showList"
@@ -43,7 +55,7 @@ import { mapActions, mapState, mapMutations, mapGetters } from "vuex";
 import * as TYPES from "@/store/types";
 import moment from "moment";
 import { Message } from "element-ui";
-import { checkUrl, songUrl, songLyrics } from "@/api";
+import { checkUrl, songUrl, songLyrics, musicComment } from "@/api";
 
 export default {
   name: "playsong",
@@ -56,7 +68,9 @@ export default {
     return {
       url: "",
       showList: false,
+      showComment: false,
       showLyrics: false,
+      isEnd:false,
       lyrics: {
         list: [],
         index: 0,
@@ -78,6 +92,16 @@ export default {
         default: "75%",
         width: "75%",
         muted: false
+      },
+      orderInfo: [
+        { class: "icon-unorderedlist", name: "顺序播放" },
+        { class: "icon-xunhuanbofang", name: "列表循环" },
+        { class: "icon-danquxunhuan", name: "单曲循环" },
+        { class: "icon-suijibofang", name: "随机播放" }
+      ],
+      comment: {
+        page: 1,
+        pageSize: 20
       }
     };
   },
@@ -95,7 +119,7 @@ export default {
         artists: this.getArtists,
         picUrl: this.getPicUrl,
         album: this.getAlbum,
-        currentSong: this.currentSong
+        current: this.currentSong || {}
       };
     },
     getName() {
@@ -122,14 +146,22 @@ export default {
   watch: {
     currentSong(val, oldVal = {}) {
       if (val) {
-        if (val.id == oldVal.id) return;
-        // 检查歌曲
-        this.handleCheckSong(val.id);
+        if (val.id == oldVal.id){
+          if(this.isEnd){
+            this.$refs.audio.currentTime = 0;
+            setTimeout(()=>{
+              this.handleChangeOption({ play:true })
+            },200)
+          }
+        }else{
+          // 检查歌曲
+          this.handleCheckSong(val.id);
+        }
       }
     },
     songOptions(val) {
-      if (!val.play) {
-        this.handlePause();
+      if (this.$refs.audio) {
+        val.play ? this.handlePlay() : this.handlePause();
       }
     }
   },
@@ -147,6 +179,7 @@ export default {
           if (res.success) {
             this.handleTotalTime();
             this.handleGetSongUrl(id);
+            this.handleComment(id);
           } else {
             Message.info(res.message);
             // 下一首歌曲
@@ -154,8 +187,14 @@ export default {
           }
         })
         .catch(err => {
-          console.log(err);
+          console.log("checkUrl err", err);
         });
+    },
+    handleComment(id) {
+      // 获取评论
+      musicComment({ id }).then(res => {
+        this.comment = Object.assign({}, this.comment, res);
+      });
     },
     handleTotalTime() {
       // 总时长
@@ -194,6 +233,9 @@ export default {
           break;
         }
       }
+      if(this.isEnd){
+        this.isEnd = false
+      }
     },
     handleLyrics(id) {
       // 获取歌词
@@ -223,6 +265,7 @@ export default {
     },
     handleEnded(e) {
       // 播放结束
+      this.isEnd = true;
       this.handleChangeOption({ play: false });
       this.handleChangeSong(1);
     },
@@ -240,11 +283,11 @@ export default {
     },
     handleChangeSong(num) {
       // 改变歌曲
-      console.log(num)
+      this.isEnd = true;
+      this.handleChangeOption({ play:false })
       this[TYPES.MUTATIONS_SET_SONG_ORDER](num);
     },
     handleChangeVol(rate) {
-      console.log(rate);
       // 改变音量
       this.volume.width = parseInt(rate * 100) + "%";
       this.volume.muted = !rate;

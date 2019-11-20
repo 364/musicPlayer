@@ -34,7 +34,7 @@
           <song-list :tableData="playDetail.tracks" />
         </el-tab-pane>
         <el-tab-pane :label="`评论(${playDetail.commentCount})`" name="second">
-          <comment type="playlist" @handleScrollTop="handleScrollTop" />
+          <comment type="playlist" @handleScrollTop="handleScrollTop" :id="$route.params.id"/>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -70,8 +70,8 @@ export default {
       this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ play: false });
       this[TYPES.MUTATIONS_INIT_SONG_LIST]();
       this[TYPES.ACTIONS_GET_SONG_DETAIL]({ id }).then(res => {
-        this[TYPES.MUTATIONS_SET_SONG_ORDER]()
         this[TYPES.MUTATIONS_GET_SONG_DETAIL](res);
+        this[TYPES.MUTATIONS_SET_SONG_ORDER]()
         setTimeout(() => {
           this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ play: true });
         }, 200);
@@ -102,7 +102,8 @@ export default {
     ...mapMutations([
       TYPES.MUTATIONS_INIT_SONG_LIST,
       TYPES.MUTATIONS_GET_SONG_DETAIL,
-      TYPES.MUTATIONS_SET_SONG_OPTIONS
+      TYPES.MUTATIONS_SET_SONG_OPTIONS,
+      TYPES.MUTATIONS_SET_SONG_ORDER,
     ]),
     ...mapActions([
       TYPES.ACTIONS_GET_PLAYLIST_DETAIL,

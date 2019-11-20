@@ -1,10 +1,16 @@
 <!-- 评论 -->
 <template>
-  <div class="comment" v-if="Object.keys(comment).length">
+  <div :class="['comment',{'dark':method=='dark'}]" v-if="Object.keys(comment).length">
     <!-- 写评论 -->
     <div class="send">
-    <el-input type="textarea" placeholder="请输入评论" v-model="textarea" maxlength="50" show-word-limit></el-input>
-    <el-button type="primary" size="mini" class="btn">提交</el-button>
+      <el-input
+        type="textarea"
+        placeholder="请输入评论"
+        v-model="textarea"
+        maxlength="50"
+        show-word-limit
+      ></el-input>
+      <el-button type="primary" size="mini" class="btn">提交</el-button>
     </div>
     <!-- 精彩评论  -->
     <div v-if="comment.hotComments&&comment.hotComments.length">
@@ -64,6 +70,14 @@ export default {
     type: {
       type: String,
       required: true
+    },
+    id: {
+      type: [String, Number],
+      required: true
+    },
+    method: {
+      type: String,
+      default: "light"
     }
   },
   data() {
@@ -82,8 +96,9 @@ export default {
   watch: {},
   methods: {
     handleGetData(update) {
+      // console.log(this.id);
       this[TYPES["ACTIONS_GET_COMMENT_" + this.type.toUpperCase()]]({
-        id: this.$route.params.id
+        id: this.id
       });
       if (update) {
         this.$emit("handleScrollTop");
@@ -120,10 +135,25 @@ export default {
 <style lang='less' scoped>
 @import "~@/assets/style/variable.less";
 .comment {
-  .send{
+  &.dark {
+    color: #fff;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    .nickname {
+      color: #fff;
+    }
+    li {
+      border-top: 0px;
+    }
+    /deep/ .el-pagination__jump {
+      color: #fff;
+    }
+  }
+  .send {
     padding-top: 10px;
     text-align: right;
-    .btn{
+    .btn {
       margin-top: 10px;
     }
   }

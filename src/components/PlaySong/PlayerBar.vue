@@ -72,16 +72,14 @@ export default {
     },
     songList: {
       type: Array
+    },
+    orderInfo: {
+      type: Array
     }
   },
   data() {
     return {
-      orderInfo: [
-        { class: "icon-unorderedlist", name: "顺序播放" },
-        { class: "icon-xunhuanbofang", name: "列表循环" },
-        { class: "icon-danquxunhuan", name: "单曲循环" },
-        { class: "icon-suijibofang", name: "随机播放" }
-      ]
+      
     };
   },
   computed: {
@@ -241,6 +239,9 @@ export default {
           margin-right: 5px;
         }
       }
+      .progress-bar-bg{
+        margin:0 10px;
+      }
     }
     .progress {
       display: flex;
@@ -248,6 +249,9 @@ export default {
       align-items: center;
       flex: 1;
       margin: 0 20px;
+      .progress-bar-bg{
+        margin:0 20px;
+      }
     }
   }
 }

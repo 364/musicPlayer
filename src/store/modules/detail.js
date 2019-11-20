@@ -68,8 +68,7 @@ const detail = {
       state.songList = [];
       state.songOptions = Object.assign({}, state.songOptions, {
         play: false,
-        current: 0,
-        url: {}
+        current: -1
       });
     },
     [TYPES.MUTATIONS_SET_SONG_OPTIONS](state, data) {
@@ -80,7 +79,7 @@ const detail = {
       const lyricsList = Filter.getLyrics(lyric);
       state.songOptions.lyricsList = lyricsList;
     },
-    [TYPES.MUTATIONS_SET_SONG_ORDER](state, data) {
+    [TYPES.MUTATIONS_SET_SONG_ORDER](state, data = 1) {
       let current = state.songOptions.current + data;
       switch (state.songOptions.order) {
         case 0:
@@ -104,7 +103,7 @@ const detail = {
           // 单曲循环
           break;
       }
-      console.log(current)
+      // console.log(current);
       if (state.songOptions.order == 2 && state.songOptions.current > 0) return;
       state.songOptions = Object.assign({}, state.songOptions, { current });
     }

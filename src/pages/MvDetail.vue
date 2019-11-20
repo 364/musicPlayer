@@ -18,7 +18,7 @@
         <h3>简介：</h3>
         <div class="desc">{{ mvDetail.desc }}</div>
       </div>
-      <comment type="mv" />
+      <comment type="mv" :id="$route.params.id"/>
     </div>
   </div>
   <!--

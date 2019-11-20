@@ -10,7 +10,7 @@
             <span>
               <i class="el-icon-star-off"></i>收藏
             </span>
-            <span>
+            <span @click="handleClear">
               <i class="el-icon-delete"></i>清空
             </span>
           </div>
@@ -33,7 +33,7 @@
                 <span class="artists">{{ item | getArtists }}</span>
                 <div class="icon">
                   <i class="iconfont icon-heart2"></i>
-                  <i class="el-icon-delete"></i>
+                  <i class="el-icon-delete" @click="handleDelete(item.id)"></i>
                 </div>
               </div>
             </div>
@@ -49,6 +49,9 @@
 </template>
 
 <script>
+import { mapActions, mapState, mapMutations } from "vuex";
+import * as TYPES from "@/store/types";
+
 export default {
   name: "",
   components: {},
@@ -74,6 +77,11 @@ export default {
     window.addEventListener("click", this.handleClose);
   },
   watch: {
+    isShow(val) {
+      if (val) {
+        this.handleScroll();
+      }
+    },
     current(val, newVal) {
       if (val != newVal) {
         this.$nextTick(() => {
@@ -84,15 +92,18 @@ export default {
   },
   methods: {
     handleScroll() {
+      // 滚动
       const name = "current" + this.current;
       if (this.$refs[name]) {
         if (!this.$refs[name].length) return;
         const listRef = this.$refs.list;
         const liRef = this.$refs[name][0];
+        // console.log(this.$refs[name][0].offsetTop)
         listRef.scrollTop = liRef.offsetTop - listRef.clientHeight / 2;
       }
     },
     handleClose(e) {
+      // 关闭
       if (this.isShow) {
         const isInclude = e.path.some(item => item.className == "music-list");
         const isLayout = e.path.some(item => item.className == "layout");
@@ -101,7 +112,37 @@ export default {
           this.$emit("handleToggleShow", "showList");
         }
       }
-    }
+    },
+    handleClear() {
+      // 清空
+      this[TYPES.MUTATIONS_INIT_SONG_LIST]();
+    },
+    handleDelete(id) {
+      let num = -1;
+      for (let i = 0; i < this.songList.length; i++) {
+        if (this.songList[i].id == id) {
+          num = i;
+          break;
+        }
+      }
+      // let res = this.songList;
+      // res.splice(num, 1);
+      // this[TYPES.MUTATIONS_GET_SONG_DETAIL](res);
+      // if(num == this.songOptions.current){
+      //   this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ play: false });
+      //   this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({
+      //     current: this.songOptions.current + 1
+      //   });
+      //   setTimeout(() => {
+      //     this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ play: true });
+      //   }, 200);
+      // }
+    },
+    ...mapMutations([
+      TYPES.MUTATIONS_INIT_SONG_LIST,
+      TYPES.MUTATIONS_SET_SONG_OPTIONS,
+      TYPES.MUTATIONS_GET_SONG_DETAIL
+    ])
   },
   mounted() {},
   beforeCreate() {}, //生命周期 - 创建之前
@@ -161,6 +202,7 @@ export default {
           left: 3px;
         }
         &.active {
+          background: @theme-color-1!important;
           span,
           i {
             color: @theme-color!important;
@@ -214,10 +256,13 @@ export default {
     }
   }
   .empty {
-    width: 60%;
+    width: 80%;
     text-align: center;
-    margin: 50% auto;
+    margin: 0 auto;
     color: #999;
+    height: 100%;
+    padding-top: 50%;
+    box-sizing: border-box;
     img {
       width: 100%;
     }

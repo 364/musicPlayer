@@ -1,7 +1,14 @@
 <!-- 歌曲列表 -->
 <template>
   <div class="songlist">
-    <el-table :data="tableData" size="small" row-key="id" v-if="showCell.includes('song')">
+    <el-table
+      :data="tableData"
+      size="small"
+      row-key="id"
+      v-if="showCell.includes('song')"
+      @cell-dblclick="handleSong"
+      :row-class-name="handleRowClass"
+    >
       <el-table-column label="歌曲" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <div class="song">
@@ -16,7 +23,10 @@
               </div>
             </div>
             <div class="right">
-              <i class="el-icon-video-play"></i>
+              <span v-if="currentSong&&currentSong.id==scope.row.id">
+                <i :class="['iconfont','play',playIcon]"></i>
+              </span>
+              <i class="el-icon-video-play" v-else></i>
               <i class="el-icon-circle-plus-outline"></i>
               <i class="el-icon-download"></i>
             </div>
@@ -53,6 +63,9 @@
 </template>
 
 <script>
+import { mapState, mapGetters, mapMutations } from "vuex";
+import * as TYPES from "@/store/types";
+
 export default {
   name: "songlist",
   props: {
@@ -76,11 +89,62 @@ export default {
       }
     };
   },
-  computed: {},
-  created() {
+  computed: {
+    ...mapState({
+      songList: state => state.detail.songList,
+      songOptions: state => state.detail.songOptions
+    }),
+    ...mapGetters({
+      currentSong: TYPES.GETTERS_GET_CURRENT_SONG
+    }),
+    playIcon() {
+      // 暂停播放按钮
+      return this.songOptions.play ? "icon-pause" : "icon-bofanganniu";
+    }
   },
+  created() {},
   watch: {},
-  methods: {},
+  methods: {
+    ...mapMutations([
+      TYPES.MUTATIONS_GET_SONG_DETAIL,
+      TYPES.MUTATIONS_SET_SONG_OPTIONS,
+      TYPES.MUTATIONS_SET_SONG_ORDER
+    ]),
+    handleSong(row, column, cell, event) {
+      let num = -1;
+      for (let i = 0; i < this.songList.length; i++) {
+        if (this.songList[i].id == row.id) {
+          num = i;
+          break;
+        }
+      }
+      this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ play: false });
+      // console.log(num);
+      if (num < 0) {
+        // 不在歌单内
+        let res = this.songList;
+        res.splice(this.songOptions.current + 1, 0, row);
+        this[TYPES.MUTATIONS_GET_SONG_DETAIL](res);
+        this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({
+          current: this.songOptions.current + 1
+        });
+      } else {
+        // 在歌单内 更改当前index
+        this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ current: num });
+      }
+      setTimeout(() => {
+        this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ play: true });
+      }, 200);
+    },
+    handleRowClass({ row, column, rowIndex, columnIndex }) {
+      if (this.currentSong) {
+        if (row.id == this.currentSong.id) {
+          return "table-row-active";
+        }
+      }
+      return "";
+    }
+  },
   mounted() {},
   beforeCreate() {}, //生命周期 - 创建之前
   beforeMount() {}, //生命周期 - 挂载之前
@@ -134,6 +198,10 @@ export default {
       text-overflow: ellipsis;
       white-space: nowrap;
       overflow: hidden;
+    }
+    .table-row-active {
+      color: @theme-color;
+      background: @theme-color-1;
     }
   }
 }

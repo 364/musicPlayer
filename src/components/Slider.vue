@@ -1,6 +1,6 @@
 <!-- 滑动条 -->
 <template>
-  <div class="progress-bar-bg" ref="progress" @mousedown="handleChange">
+  <div class="progress-bar-bg" ref="progress" @mousedown="handleChange" :style="{'height':height }">
     <span
       class="progress-dot"
       ref="progressDot"
@@ -21,6 +21,10 @@ export default {
     },
     tag: {
       type: String
+    },
+    height: {
+      type: String,
+      default: "3px"
     }
   },
   components: {},
@@ -63,7 +67,7 @@ export default {
         if (offsetX >= maxWidth) {
           offsetX = maxWidth;
         }
-        const rate = offsetX / maxWidth
+        const rate = offsetX / maxWidth;
         this.$emit("handleChange", rate, this.tag);
       }
     },
@@ -91,9 +95,7 @@ export default {
 @import "~@/assets/style/variable.less";
 
 .progress-bar-bg {
-  margin: 0 20px;
   background: #f1f1f1;
-  height: 3px;
   border-radius: 10px;
   width: 100%;
   position: relative;
@@ -103,23 +105,23 @@ export default {
     left: 0;
     top: 0;
     cursor: pointer;
-    width: 16px;
-    height: 16px;
+    width: 12px;
+    height: 12px;
     border-radius: 100%;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     transform: translate(-50%, -45%);
     background: #fff;
     z-index: 3;
     &:hover {
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     }
     &::after {
       content: "";
       position: absolute;
       left: 50%;
       top: 50%;
-      width: 8px;
-      height: 8px;
+      width: 5px;
+      height: 5px;
       border-radius: 100%;
       transform: translate(-50%, -50%);
       background: @theme-color;
