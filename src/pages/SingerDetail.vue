@@ -21,8 +21,11 @@
         </h2>
         <div class="briefDes">{{ singerDetail.artist.briefDesc }}</div>
         <div>
-          <el-button size="mini" type="primary">
+          <el-button size="mini" type="primary" @click="handleSong(singerDetail.hotSongs)">
             <i class="el-icon-plus"></i> 播放全部
+          </el-button>
+          <el-button size="mini">
+            <i class="el-icon-star-off"></i> 收藏
           </el-button>
           <el-button size="mini">
             <i class="el-icon-download"></i> 下载
@@ -32,12 +35,12 @@
     </div>
     <!-- 歌曲列表 -->
     <div class="list">
-      <el-tabs v-model="activeName" @tab-click="handleClick">
+      <el-tabs v-model="activeName">
         <el-tab-pane :label="`热门歌曲(${singerDetail.hotSongs.length})`" name="songlist">
           <song-list :tableData="singerDetail.hotSongs" :showCell="showCell" />
         </el-tab-pane>
         <el-tab-pane :label="`热门专辑(${singerDetail.hotAlbums.length})`" name="albumlist">
-          <album-list :data="singerDetail.hotAlbums" />
+          <album-list ref="albumlist" :data="singerDetail.hotAlbums" />
         </el-tab-pane>
         <el-tab-pane label="歌手介绍  " name="singerdesc">
           <div class="desc">
@@ -55,7 +58,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState, mapMutations } from "vuex";
 import * as TYPES from "@/store/types";
 import SongList from "@/components/SongList";
 import AlbumList from "@/components/AlbumList";
@@ -79,15 +82,38 @@ export default {
   },
   watch: {},
   methods: {
-    handleClick() {},
+    handleSong(ids) {
+      // 播放全部
+      const id = ids.map(item => item.id);
+      this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ play: false });
+      this[TYPES.MUTATIONS_INIT_SONG_LIST]();
+      this[TYPES.ACTIONS_GET_SONG_DETAIL]({ id }).then(res => {
+        this[TYPES.MUTATIONS_GET_SONG_DETAIL](res);
+        this[TYPES.MUTATIONS_SET_SONG_ORDER]();
+        setTimeout(() => {
+          this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ play: true });
+        }, 200);
+      });
+    },
     handleGetData() {
+      // 获取歌手数据
       const id = this.$route.params.id;
       if (!id) {
         this.$router.go(-1);
+        return;
       }
       this[TYPES.ACTIONS_GET_SINGER_DETAIL]({ id });
     },
-    ...mapActions([TYPES.ACTIONS_GET_SINGER_DETAIL])
+    ...mapMutations([
+      TYPES.MUTATIONS_SET_SONG_OPTIONS,
+      TYPES.MUTATIONS_INIT_SONG_LIST,
+      TYPES.MUTATIONS_GET_SONG_DETAIL,
+      TYPES.MUTATIONS_SET_SONG_ORDER
+    ]),
+    ...mapActions([
+      TYPES.ACTIONS_GET_SINGER_DETAIL,
+      TYPES.ACTIONS_GET_SONG_DETAIL
+    ])
   },
   activated() {
     this.activeName = "songlist";
@@ -159,7 +185,7 @@ export default {
       }
     }
     .desc {
-      .pre{
+      .pre {
         text-indent: 2em;
       }
       pre,

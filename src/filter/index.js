@@ -75,6 +75,18 @@ function changeToObject(str) {
     words
   };
 }
+const scrollTop = (el, pos = 0, step = 30) => {
+  setTimeout(function animation() {
+    if (el.scrollTop > pos) {
+      setTimeout(() => {
+        const scrollStep = el.scrollTop - step;
+        el.scrollTop = scrollStep;
+        animation();
+      }, 1);
+    }
+  }, 1);
+};
+
 export default {
   playCount,
   searchCat,
@@ -82,5 +94,6 @@ export default {
   formatTime,
   getTags,
   getAlias,
-  getLyrics
+  getLyrics,
+  scrollTop
 };

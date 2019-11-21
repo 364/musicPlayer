@@ -106,7 +106,12 @@
             {{ info.album }}
           </div>
         </div>
-        <Comment type="music" :id="info.current.id" method="dark"/>
+        <Comment
+          :comment="comment"
+          @handleChangePage="handleChangePage"
+          method="dark"
+          ref="comment"
+        />
       </div>
     </div>
   </transition>
@@ -187,17 +192,35 @@ export default {
     }
   },
   created() {
-    this.handleScroll()
+    this.handleScroll();
   },
-  watch: {
-  },
+  watch: {},
   methods: {
+    handleChangePage(obj) {
+      // 评论改变
+      // console.log(obj)
+      this.$emit("handleChangeComment", obj);
+      this.handleScrollTop();
+    },
+    handleScrollTop() {
+      // 评论翻页滚动
+      const el = this.$refs.comment.$el;
+      this.$root.scrollTop(el, 0, 20);
+    },
     handleToggleVol() {
       // 切换音量
       const vol = parseInt(this.volume.default) / 100;
       this.$emit("handleChangeVol", !this.volume.muted ? 0 : vol);
     },
-    handleChange() {},
+    handleChange(rate, tag) {
+      // 改变进度
+      this.$emit("handleChange", rate, tag);
+    },
+    handleToggleVol() {
+      // 切换音量
+      const vol = parseInt(this.volume.default) / 100;
+      this.$emit("handleChangeVol", !this.volume.muted ? 0 : vol);
+    },
     handleScroll(i) {
       if (this.index != i) {
         const name = "current" + this.lyrics.index;
@@ -224,15 +247,6 @@ export default {
     handleEnd(e) {
       this.drag = false;
       console.log("end", e);
-    },
-    handleChange(rate, tag) {
-      // 改变进度
-      this.$emit("handleChange", rate, tag);
-    },
-    handleToggleVol() {
-      // 切换音量
-      const vol = parseInt(this.volume.default) / 100;
-      this.$emit("handleChangeVol", !this.volume.muted ? 0 : vol);
     }
   },
   mounted() {},
@@ -243,7 +257,7 @@ export default {
   beforeDestroy() {}, //生命周期 - 销毁之前
   destroyed() {}, //生命周期 - 销毁完成
   activated() {
-    this.handleScroll()
+    this.handleScroll();
   } //如果页面有keep-alive缓存功能，这个函数会触发
 };
 </script>
@@ -399,7 +413,7 @@ export default {
         .chat,
         .list {
           cursor: pointer;
-          width: 160px;
+          width: 120px;
           > i {
             margin-right: 5px;
           }
@@ -437,8 +451,8 @@ export default {
   }
   > .comment {
     padding: 50px 0;
-    >div{
-      padding:0 50px;
+    > div {
+      padding: 0 50px;
     }
     width: 100%;
     height: 100%;
@@ -467,7 +481,7 @@ export default {
         }
       }
     }
-    .comment{
+    .comment {
       height: 85%;
       overflow-y: auto;
     }

@@ -298,6 +298,14 @@ export default {
           flex-direction: column;
           margin-left: 10px;
           flex: 1;
+          @media screen and (max-width: 1000px) {
+            > * {
+              overflow: hidden;
+              -webkit-line-clamp: 1;
+              -webkit-box-orient: vertical;
+              display: -webkit-box;
+            }
+          }
           h5 {
             margin: 0;
           }

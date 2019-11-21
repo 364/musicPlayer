@@ -6,7 +6,7 @@
       <el-input
         type="textarea"
         placeholder="请输入评论"
-        v-model="textarea"
+        v-model="content"
         maxlength="50"
         show-word-limit
       ></el-input>
@@ -43,7 +43,7 @@
             <div class="content">{{ item.content }}</div>
             <div class="time">
               <span>{{ item.time | formatTime('YYYY-MM-DD HH:mm') }}</span>
-              <span>
+              <span class="like">
                 <i class="iconfont icon-good"></i>
                 ({{ item.likedCount }})
               </span>
@@ -51,14 +51,12 @@
           </div>
         </li>
       </ul>
-      <pagination :comment="comment" @handleGetData="handleGetData" />
+      <pagination :comment="comment" @handleChange="handleChange" />
     </div>
   </div>
 </template>
 
 <script>
-import { mapActions, mapState, mapMutations } from "vuex";
-import * as TYPES from "@/store/types";
 import Pagination from "@/components/Pagination";
 
 export default {
@@ -67,12 +65,8 @@ export default {
     Pagination
   },
   props: {
-    type: {
-      type: String,
-      required: true
-    },
-    id: {
-      type: [String, Number],
+    comment: {
+      type: Object,
       required: true
     },
     method: {
@@ -82,53 +76,30 @@ export default {
   },
   data() {
     return {
-      textarea: ""
+      content: ""
     };
   },
-  computed: {
-    ...mapState({
-      comment: state => state.detail.comment
-    })
-  },
-  created() {
-    this.handleGetData();
-  },
+  computed: {},
+  created() {},
   watch: {},
   methods: {
-    handleGetData(update) {
-      // console.log(this.id);
-      this[TYPES["ACTIONS_GET_COMMENT_" + this.type.toUpperCase()]]({
-        id: this.id
-      });
-      if (update) {
-        this.$emit("handleScrollTop");
-      }
-    },
-    handleResetPage() {
-      this[TYPES.MUTATIONS_SET_COMMENT_PAGE]({ page: 1 });
-    },
-    ...mapMutations([TYPES.MUTATIONS_SET_COMMENT_PAGE]),
-    ...mapActions([
-      TYPES.ACTIONS_GET_COMMENT_PLAYLIST,
-      TYPES.ACTIONS_GET_COMMENT_MUSIC,
-      TYPES.ACTIONS_GET_COMMENT_MV
-    ])
+    handleChange(obj) {
+      this.$emit("handleChangePage", obj);
+    }
   },
   mounted() {},
   beforeCreate() {}, //生命周期 - 创建之前
   beforeMount() {}, //生命周期 - 挂载之前
   beforeUpdate() {}, //生命周期 - 更新之前
   updated() {}, //生命周期 - 更新之后
-  beforeDestroy() {}, //生命周期 - 销毁之前
-  destroyed() {
-    this.handleResetPage();
-  }, //生命周期 - 销毁完成
+  beforeDestroy() {
+
+  }, //生命周期 - 销毁之前
+  destroyed() {}, //生命周期 - 销毁完成
   activated() {
     //如果页面有keep-alive缓存功能，这个函数会触发
-    this.handleGetData();
   },
   deactivated() {
-    this.handleResetPage();
   }
 };
 </script>

@@ -1,6 +1,6 @@
 <!-- mv详情 -->
 <template>
-  <div class="mv_detail">
+  <div class="mv_detail" ref="box">
     <div class="main" v-if="Object.keys(mvDetail).length">
       <div class="title">
         <h2 class="name">
@@ -12,13 +12,13 @@
           <span>播放次数：{{mvDetail.playCount | playCount }}次</span>
         </div>
       </div>
-      <video-player ref="videoPlayer" class="vjs-custom-skin" :options="playerOptions" />
+      <video-player ref="videoPlayer" class="vjs-custom-skin" :options="playerOptions" @play="handlePlay"/>
       <!-- mv详情 -->
       <div v-show="mvDetail.desc">
         <h3>简介：</h3>
         <div class="desc">{{ mvDetail.desc }}</div>
       </div>
-      <comment type="mv" :id="$route.params.id"/>
+      <comment :comment="comment" @handleChangePage="handleChangePage" ref="comment" />
     </div>
   </div>
   <!--
@@ -40,9 +40,10 @@
 import { videoPlayer } from "vue-video-player";
 import "video.js/dist/video-js.css";
 import "vue-video-player/src/custom-theme.css";
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState, mapMutations } from "vuex";
 import * as TYPES from "@/store/types";
 import Comment from "@/components/Comment";
+import { mvComment } from "@/api";
 
 export default {
   name: "mvDetail",
@@ -50,6 +51,11 @@ export default {
   data() {
     return {
       activeName: "comment",
+      comment: {
+        type: 1,
+        page: 1,
+        pageSize: 20
+      },
       playerOptions: {
         playbackRates: [0.5, 1.0, 1.5, 2.0],
         autoplay: false,
@@ -81,7 +87,7 @@ export default {
           volumePanel: {
             inline: false,
             vertical: true, //竖着的音量条
-            volume: 0.7,
+            volume: 0.7
           }
         }
       }
@@ -97,6 +103,7 @@ export default {
   },
   created() {
     this.handleGetData();
+    this.handleGetComment();
   },
   watch: {
     mvDetail(newVal) {
@@ -107,15 +114,50 @@ export default {
     }
   },
   methods: {
+    handlePlay(e){
+      this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ play:false });
+    },
+    handleChangePage(obj) {
+      // 评论改变
+      this.comment = Object.assign({}, this.comment, obj);
+      this.handleGetComment();
+      this.handleScrollTop();
+    },
+    handleScrollTop() {
+      // 评论翻页滚动
+      const el = this.$refs.box;
+      const pos = this.$refs.comment.$el.offsetTop;
+      this.$root.scrollTop(el, pos);
+    },
+    handleGetComment() {
+      // 获取评论
+      const id = this.$route.params.id;
+      const { type, page, pageSize } = this.comment;
+      const params = {
+        id,
+        limit: pageSize,
+        offset: (page - 1) * pageSize
+      };
+      mvComment(params).then(res => {
+        this.comment = Object.assign({}, res, {
+          type,
+          page,
+          pageSize
+        });
+      });
+    },
     handleGetData() {
+      // 获取mv数据
       const id = this.$route.params.id;
       if (!id) {
         this.$router.go(-1);
+        return;
       }
       this[TYPES.ACTIONS_GET_MV_DETAIL]({ mvid: id }).then(() => {
         this.player;
       });
     },
+    ...mapMutations([TYPES.MUTATIONS_SET_SONG_OPTIONS]),
     ...mapActions([TYPES.ACTIONS_GET_MV_DETAIL])
   },
   beforeCreate() {}, //生命周期 - 创建之前
@@ -126,6 +168,7 @@ export default {
   destroyed() {}, //生命周期 - 销毁完成
   activated() {
     this.handleGetData();
+    this.handleGetComment();
   } //如果页面有keep-alive缓存功能，这个函数会触发
 };
 </script>

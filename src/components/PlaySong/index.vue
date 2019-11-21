@@ -34,10 +34,10 @@
       @handleChangeSong="handleChangeSong"
       @handleChange="handleChange"
       @handleChangeVol="handleChangeVol"
+      @handleChangeComment="handleChangeComment"
     />
     <music-list
       :isShow="showList"
-      :songList="songList"
       :current="songOptions.current"
       :playState="songOptions.play"
       @handleToggleShow="handleToggleShow"
@@ -70,7 +70,7 @@ export default {
       showList: false,
       showComment: false,
       showLyrics: false,
-      isEnd:false,
+      isEnd: false,
       lyrics: {
         list: [],
         index: 0,
@@ -100,6 +100,7 @@ export default {
         { class: "icon-suijibofang", name: "随机播放" }
       ],
       comment: {
+        type: 0,
         page: 1,
         pageSize: 20
       }
@@ -146,15 +147,16 @@ export default {
   watch: {
     currentSong(val, oldVal = {}) {
       if (val) {
-        if (val.id == oldVal.id){
-          if(this.isEnd){
+        if (val.id == oldVal.id) {
+          if (this.isEnd && !this.songOptions.songEnd) {
             this.$refs.audio.currentTime = 0;
-            setTimeout(()=>{
-              this.handleChangeOption({ play:true })
-            },200)
+            setTimeout(() => {
+              this.handleChangeOption({ play: true });
+            }, 200);
           }
-        }else{
+        } else {
           // 检查歌曲
+          this.comment.page = 1
           this.handleCheckSong(val.id);
         }
       }
@@ -179,21 +181,35 @@ export default {
           if (res.success) {
             this.handleTotalTime();
             this.handleGetSongUrl(id);
-            this.handleComment(id);
+            this.handleGetComment(id);
           } else {
-            Message.info(res.message);
             // 下一首歌曲
-            this.handleChangeSong(1);
+            this.handleNotUrl(id, res.message);
           }
         })
         .catch(err => {
           console.log("checkUrl err", err);
         });
     },
-    handleComment(id) {
+    handleChangeComment(obj) {
+      // 评论改变
+      this.comment = Object.assign({}, this.comment, obj);
+      this.handleGetComment(this.currentSong.id);
+    },
+    handleGetComment(id) {
       // 获取评论
-      musicComment({ id }).then(res => {
-        this.comment = Object.assign({}, this.comment, res);
+      const { type, page, pageSize } = this.comment;
+      const params = {
+        id,
+        limit: pageSize,
+        offset: (page - 1) * pageSize
+      };
+      musicComment(params).then(res => {
+        this.comment = Object.assign({}, res, {
+          type,
+          page,
+          pageSize
+        });
       });
     },
     handleTotalTime() {
@@ -208,15 +224,33 @@ export default {
       songUrl({ id }).then(res => {
         const { data } = res;
         if (data.length) {
-          this.url = data[0]["url"];
-          this.$refs.audio.addEventListener("timeupdate", this.handlePlaying);
-          this.handleLyrics(id);
-          setTimeout(() => {
-            this.handlePlay();
-            this.handleChangeOption({ play: true });
-          }, 0);
+          if (data[0].code == 200) {
+            this.url = data[0]["url"];
+            this.$refs.audio.addEventListener("timeupdate", this.handlePlaying);
+            this.handleLyrics(id);
+            setTimeout(() => {
+              this.handlePlay();
+              this.handleChangeOption({ play: true });
+            }, 0);
+          } else {
+            // 下一首歌曲
+            this.handleNotUrl(id, "该歌曲不能播放，自动播放下一首");
+          }
         }
       });
+    },
+    handleNotUrl(id, msg) {
+      // 没有版权
+      let list = [].concat(this.songList);
+      for (let i = 0; i < list.length; i++) {
+        if (list[i].id == id) {
+          list.splice(i, 1);
+          break;
+        }
+      }
+      Message.error(msg);
+      this[TYPES.MUTATIONS_GET_SONG_DETAIL](list);
+      this.handleChangeSong(1);
     },
     handlePlaying() {
       // 播放中
@@ -233,8 +267,8 @@ export default {
           break;
         }
       }
-      if(this.isEnd){
-        this.isEnd = false
+      if (this.isEnd) {
+        this.isEnd = false;
       }
     },
     handleLyrics(id) {
@@ -284,7 +318,7 @@ export default {
     handleChangeSong(num) {
       // 改变歌曲
       this.isEnd = true;
-      this.handleChangeOption({ play:false })
+      this.handleChangeOption({ play: false });
       this[TYPES.MUTATIONS_SET_SONG_ORDER](num);
     },
     handleChangeVol(rate) {

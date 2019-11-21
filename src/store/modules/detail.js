@@ -18,6 +18,7 @@ const detail = {
       order: 3,
       audio: null,
       showList: false,
+      songEnd: false,
       showLyrics: false,
       lyricsList: [],
       lyricsIndex: 0,
@@ -86,6 +87,9 @@ const detail = {
           // 顺序播放
           if (current < 0 || current > state.songList.length - 1) {
             current = current < 0 ? 0 : state.songList.length - 1;
+            state.songOptions = Object.assign({}, state.songOptions, {
+              songEnd: true
+            });
             return;
           }
           break;
@@ -103,9 +107,8 @@ const detail = {
           // 单曲循环
           break;
       }
-      // console.log(current);
       if (state.songOptions.order == 2 && state.songOptions.current > 0) return;
-      state.songOptions = Object.assign({}, state.songOptions, { current });
+      state.songOptions.current = state.songList.length ? current : -1;
     }
   },
   actions: {

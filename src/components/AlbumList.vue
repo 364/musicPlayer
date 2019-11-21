@@ -8,12 +8,8 @@
         @mouseenter="isHover=index"
         @mouseleave="isHover=null"
       >
-        <!-- <img :src="item.picUrl" alt="album-img" />
-        <div class="name">{{ item.name }}</div>
-        <div class="artists">{{ item | getArtists }}</div>
-        <div class="time">{{item.publishTime | formatTime}}</div>-->
         <div class="coverImg">
-          <img :src="item.picUrl" alt="album-img" />
+          <img :src="item.picUrl" alt="album-img" ref="coverImg" />
           <div class="count">
             <span>{{item.publishTime | formatTime}}</span>
             <transition name="fade">
@@ -46,7 +42,18 @@ export default {
   computed: {},
   created() {},
   watch: {},
-  methods: {},
+  methods: {
+    handleChangeImgH() {
+      const list = this.$refs.coverImg;
+      list.map(item => {
+        setTimeout(() => {
+          if (item.width != item.height) {
+            item.height = item.width + "px";
+          }
+        }, 1000);
+      });
+    }
+  },
   mounted() {},
   beforeCreate() {}, //生命周期 - 创建之前
   beforeMount() {}, //生命周期 - 挂载之前
@@ -60,12 +67,10 @@ export default {
 <style lang='less' scoped>
 .album {
   ul {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: repeat(5, 19%);
+    grid-gap: 10px;
     li {
-      margin-bottom: 10px;
-      width: 19%;
       padding: 10px;
       cursor: pointer;
       overflow: hidden;
@@ -74,6 +79,7 @@ export default {
       box-shadow: 0 0 15px fade(#000, 5%);
       font-size: 13px;
       line-height: 22px;
+      width: 100%;
       &:hover {
         box-shadow: 0 0 15px fade(#000, 12%);
       }
@@ -82,7 +88,8 @@ export default {
         font-size: 12px;
         text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
         position: relative;
-        .count{
+        width: 100%;
+        .count {
           position: absolute;
           display: flex;
           justify-content: space-between;
@@ -98,6 +105,7 @@ export default {
         img {
           position: relative;
           width: 100%;
+          object-fit: cover;
         }
       }
       .name {

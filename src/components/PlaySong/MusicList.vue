@@ -64,15 +64,17 @@ export default {
     },
     playState: {
       type: Boolean
-    },
-    songList: {
-      type: Array
     }
   },
   data() {
     return {};
   },
-  computed: {},
+  computed: {
+    ...mapState({
+      songOptions: state => state.detail.songOptions,
+      songList: state => state.detail.songList,
+    })
+  },
   created() {
     window.addEventListener("click", this.handleClose);
   },
@@ -118,6 +120,7 @@ export default {
       this[TYPES.MUTATIONS_INIT_SONG_LIST]();
     },
     handleDelete(id) {
+      // 删除一首歌曲
       let num = -1;
       for (let i = 0; i < this.songList.length; i++) {
         if (this.songList[i].id == id) {
@@ -125,23 +128,27 @@ export default {
           break;
         }
       }
-      // let res = this.songList;
-      // res.splice(num, 1);
-      // this[TYPES.MUTATIONS_GET_SONG_DETAIL](res);
-      // if(num == this.songOptions.current){
-      //   this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ play: false });
-      //   this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({
-      //     current: this.songOptions.current + 1
-      //   });
-      //   setTimeout(() => {
-      //     this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ play: true });
-      //   }, 200);
-      // }
+      let res = this.songList;
+      res.splice(num, 1);
+      this[TYPES.MUTATIONS_GET_SONG_DETAIL](res);
+      if (num == this.songOptions.current) {
+        this.handleChangeOption({ play: false });
+        this[TYPES.MUTATIONS_SET_SONG_ORDER](num);
+      }
+      if (num < this.songOptions.current) {
+        let current = this.songOptions.current - 1;
+        this.handleChangeOption({ current });
+      }
+    },
+    handleChangeOption(obj) {
+      // 改变信息
+      this[TYPES.MUTATIONS_SET_SONG_OPTIONS](obj);
     },
     ...mapMutations([
       TYPES.MUTATIONS_INIT_SONG_LIST,
       TYPES.MUTATIONS_SET_SONG_OPTIONS,
-      TYPES.MUTATIONS_GET_SONG_DETAIL
+      TYPES.MUTATIONS_GET_SONG_DETAIL,
+      TYPES.MUTATIONS_SET_SONG_ORDER
     ])
   },
   mounted() {},

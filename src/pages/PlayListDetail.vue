@@ -29,12 +29,12 @@
     </div>
     <!-- 歌曲列表 -->
     <div class="list">
-      <el-tabs v-model="activeName" @tab-click="handleClick">
+      <el-tabs v-model="activeName" @tab-click="handleScrollTop">
         <el-tab-pane :label="`歌曲(${playDetail.trackCount})`" name="songlist">
           <song-list :tableData="playDetail.tracks" />
         </el-tab-pane>
         <el-tab-pane :label="`评论(${playDetail.commentCount})`" name="second">
-          <comment type="playlist" @handleScrollTop="handleScrollTop" :id="$route.params.id"/>
+          <comment :comment="comment" @handleChangePage="handleChangePage" />
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -46,12 +46,18 @@ import { mapActions, mapState, mapMutations } from "vuex";
 import * as TYPES from "@/store/types";
 import SongList from "@/components/SongList";
 import Comment from "@/components/Comment";
+import { playListComment } from "@/api";
 
 export default {
   name: "",
   components: { SongList, Comment },
   data() {
     return {
+      comment: {
+        type: 2,
+        page: 1,
+        pageSize: 20
+      },
       activeName: "songlist"
     };
   },
@@ -62,48 +68,65 @@ export default {
   },
   created() {
     this.handleGetData();
+    this.handleGetComment();
   },
   watch: {},
   methods: {
+    handleChangePage(obj) {
+      // 评论改变
+      this.comment = Object.assign({}, this.comment, obj);
+      this.handleGetComment();
+      this.handleScrollTop();
+    },
+    handleGetComment() {
+      // 获取评论
+      const id = this.$route.params.id;
+      const { type, page, pageSize } = this.comment;
+      const params = {
+        id,
+        limit: pageSize,
+        offset: (page - 1) * pageSize
+      };
+      playListComment(params).then(res => {
+        this.comment = Object.assign({}, res, {
+          type,
+          page,
+          pageSize
+        });
+      });
+    },
     handleSong(ids) {
+      // 播放全部
       const id = ids.map(item => item.id);
       this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ play: false });
       this[TYPES.MUTATIONS_INIT_SONG_LIST]();
       this[TYPES.ACTIONS_GET_SONG_DETAIL]({ id }).then(res => {
         this[TYPES.MUTATIONS_GET_SONG_DETAIL](res);
-        this[TYPES.MUTATIONS_SET_SONG_ORDER]()
+        this[TYPES.MUTATIONS_SET_SONG_ORDER]();
         setTimeout(() => {
           this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ play: true });
         }, 200);
       });
     },
     handleGetData() {
+      // 获取歌单数据
       const id = this.$route.params.id;
       if (!id) {
         this.$router.go(-1);
+        return;
       }
       this[TYPES.ACTIONS_GET_PLAYLIST_DETAIL]({ id });
     },
-    handleClick(tab) {
-      this.handleScrollTop();
-    },
     handleScrollTop() {
+      // 评论翻页滚动
       const el = this.$el.querySelector(".el-tabs__content");
-      setTimeout(function animation() {
-        if (el.scrollTop > 0) {
-          setTimeout(() => {
-            const scrollStep = el.scrollTop - 30;
-            el.scrollTop = scrollStep;
-            animation();
-          }, 1);
-        }
-      }, 1);
+      this.$root.scrollTop(el, 0);
     },
     ...mapMutations([
       TYPES.MUTATIONS_INIT_SONG_LIST,
       TYPES.MUTATIONS_GET_SONG_DETAIL,
       TYPES.MUTATIONS_SET_SONG_OPTIONS,
-      TYPES.MUTATIONS_SET_SONG_ORDER,
+      TYPES.MUTATIONS_SET_SONG_ORDER
     ]),
     ...mapActions([
       TYPES.ACTIONS_GET_PLAYLIST_DETAIL,
@@ -113,6 +136,7 @@ export default {
   activated() {
     this.activeName = "songlist";
     this.handleGetData();
+    this.handleGetComment();
   } //如果页面有keep-alive缓存功能，这个函数会触发
 };
 </script>

@@ -19,9 +19,6 @@
 </template>
 
 <script>
-import { mapMutations } from "vuex";
-import * as TYPES from "@/store/types";
-
 export default {
   name: "",
   props: {
@@ -38,14 +35,13 @@ export default {
   watch: {},
   methods: {
     handleSizeChange(pageSize) {
-      this[TYPES.MUTATIONS_SET_COMMENT_PAGE]({ pageSize, page: 1 });
-      this.$emit("handleGetData", true);
+      // 改变一页多少条
+      this.$emit("handleChange", { pageSize, page: 1 });
     },
     handleCurrentChange(page) {
-      this[TYPES.MUTATIONS_SET_COMMENT_PAGE]({ page });
-      this.$emit("handleGetData", true);
+      // 改变页数
+      this.$emit("handleChange", { page });
     },
-    ...mapMutations([TYPES.MUTATIONS_SET_COMMENT_PAGE])
   }
 };
 </script>
