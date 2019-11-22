@@ -2,6 +2,7 @@
 <template>
   <div class="mv_detail" ref="box">
     <div class="main" v-if="Object.keys(mvDetail).length">
+      <!-- mv信息 -->
       <div class="title">
         <h2 class="name">
           {{ mvDetail.name }}
@@ -18,6 +19,7 @@
         <h3>简介：</h3>
         <div class="desc">{{ mvDetail.desc }}</div>
       </div>
+      <!-- mv评论 -->
       <comment :comment="comment" @handleChangePage="handleChangePage" ref="comment" />
     </div>
   </div>
@@ -46,7 +48,7 @@ import Comment from "@/components/Comment";
 import { mvComment } from "@/api";
 
 export default {
-  name: "mvDetail",
+  name: "mv-detail",
   components: { videoPlayer, Comment },
   data() {
     return {
@@ -95,6 +97,7 @@ export default {
   },
   computed: {
     player() {
+      // 初始化播放
       return this.$refs.videoPlayer.player;
     },
     ...mapState({

@@ -52,7 +52,7 @@
 import Slider from "@/components/Slider";
 
 export default {
-  name: "",
+  name: "player-bar",
   components: { Slider },
   props: {
     info: {

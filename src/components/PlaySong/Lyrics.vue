@@ -4,15 +4,18 @@
     <div class="lyrics" v-show="isShow">
       <div class="blur" :style="{backgroundImage:`url(${info.picUrl})`}"></div>
       <div class="content" v-show="!showComment">
+        <!-- 返回 -->
         <div class="back" @click="$emit('handleToggleShow','showLyrics')">
           <i class="el-icon-arrow-down"></i>
         </div>
         <div class="main">
+          <!-- 专辑图 -->
           <div class="disc" :class="{'paused':!playState}">
             <img :src="info.picUrl" alt />
             <span class="mask"></span>
           </div>
           <div class="info" ref="box">
+            <!-- 歌曲信息 -->
             <div class="name">
               <h3>{{ info.name }}</h3>
               <div class="artists" v-if="info.current">
@@ -22,6 +25,7 @@
                 {{ info.album }}
               </div>
             </div>
+            <!-- 歌词 -->
             <div class="text">
               <div class="center" v-if="lyrics.noLyric">{{ lyrics.noLyricText }}</div>
               <ul
@@ -93,6 +97,7 @@
           </div>
         </div>
       </div>
+      <!-- 评论 -->
       <div v-if="info.current.id && showComment " class="comment">
         <div class="back" @click="$emit('handleToggleShow','showComment')">
           <i class="el-icon-arrow-left"></i>返回
@@ -122,7 +127,7 @@ import Slider from "@/components/Slider";
 import Comment from "@/components/Comment";
 
 export default {
-  name: "",
+  name: "lyrics",
   components: { Slider, Comment },
   props: {
     info: {
@@ -167,11 +172,11 @@ export default {
   },
   computed: {
     getComment() {
-      // 获取歌曲数
+      // 获取歌曲评论数
       return this.comment.total > 999 ? "999+" : this.comment.total;
     },
     getNextOrder() {
-      // 获取顺序
+      // 获取歌曲顺序
       let num = this.order;
       if (++num >= this.orderInfo.length) {
         num = 0;
@@ -222,6 +227,7 @@ export default {
       this.$emit("handleChangeVol", !this.volume.muted ? 0 : vol);
     },
     handleScroll(i) {
+      // 歌词滚动
       if (this.index != i) {
         const name = "current" + this.lyrics.index;
         if (this.$refs[name]) {
@@ -235,9 +241,11 @@ export default {
       }
     },
     handleStart() {
+      // 拖拽歌词开始
       this.drag = true;
     },
     handleMove(e) {
+      // 拖拽歌词移动
       e.stopPropagation();
       e.preventDefault();
       if (this.drag) {
@@ -245,6 +253,7 @@ export default {
       }
     },
     handleEnd(e) {
+      // 拖拽歌词结束
       this.drag = false;
       console.log("end", e);
     }

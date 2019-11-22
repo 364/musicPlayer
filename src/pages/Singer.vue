@@ -50,11 +50,12 @@ export default {
   mounted() {
     this.box = this.$refs.list;
     this.scroll = this.$refs.scroll;
+    // 监听加载更多
     this.scroll.addEventListener("scroll", _.debounce(this.handleScroll,1000));
-    this.handleBottom();
+    this.handleFullBottom();
   },
   methods: {
-    handleBottom() {
+    handleFullBottom() {
       // 是否满一屏
       this.$nextTick(() => {
         const clientH = this.box.clientHeight;
@@ -104,6 +105,7 @@ export default {
     ])
   },
   activated() {
+    // 返回顶部
     if (this.scrollH > 0) {
       this.scroll.scrollTo(0, this.scrollH);
     }

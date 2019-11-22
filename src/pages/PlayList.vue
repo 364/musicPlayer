@@ -3,6 +3,7 @@
   <div class="songList">
     <!-- 筛选条件 -->
     <div class="category" v-show="category.content[category.tag].length">
+      <!-- 标题 -->
       <div class="title">
         <div>{{title.filter.title}}</div>
         <ul>
@@ -14,21 +15,24 @@
           >{{item.name}}</li>
         </ul>
       </div>
+      <!-- 内容 -->
       <filter-cat :category="category.content[category.tag]" @handleChange="handleChange" />
     </div>
     <!-- 筛选结果 -->
     <div class="playlist">
+      <!-- 标题 -->
       <div class="title">
         <div>{{title.list.title}}</div>
         <ul>
           <li
             v-for="item in title.list.content"
             :key="item.tag"
-            @click="handleChangeTag({list:item.tag})"
             :class="{'active':item.tag===title.list.active}"
+            @click="handleChangeTag({list:item.tag})"
           >{{item.name}}</li>
         </ul>
       </div>
+      <!-- 内容 -->
       <div class="list" ref="scroll" v-show="playList.length">
         <load-more :load="load">
           <ul ref="list">
@@ -66,7 +70,7 @@ import FilterCat from "@/components/FilterCat";
 import _ from "lodash";
 
 export default {
-  name: "songList",
+  name: "song-list",
   components: {
     LoadMore,
     FilterCat
@@ -95,6 +99,7 @@ export default {
     }
   },
   created() {
+    // 获取歌单分类和内容
     this[TYPES.ACTIONS_GET_PLAY_LIST]();
     this[TYPES.ACTIONS_GET_PLAYLIST_CATEGORY]();
     window.addEventListener("resize", this.handleChangeImgH);
@@ -102,6 +107,7 @@ export default {
   mounted() {
     this.box = this.$refs.list;
     this.scroll = this.$refs.scroll;
+    // 监听滚动 / 是否加载更多
     this.scroll.addEventListener("scroll", _.debounce(this.handleScroll, 1000));
   },
   methods: {
@@ -139,6 +145,7 @@ export default {
       }
     },
     handleChangeImgH() {
+      // 改变图片高度
       this.$nextTick(() => {
         const node = this.$refs.list.querySelectorAll(".coverImg");
         if (node && node.length) {

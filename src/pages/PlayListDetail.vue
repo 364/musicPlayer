@@ -49,7 +49,7 @@ import Comment from "@/components/Comment";
 import { playListComment } from "@/api";
 
 export default {
-  name: "",
+  name: "playlist-detail",
   components: { SongList, Comment },
   data() {
     return {

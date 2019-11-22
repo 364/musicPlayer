@@ -1,71 +1,44 @@
 import * as TYPES from "@/store/types";
 import * as API from "@/api";
-import Filter from "@/filter";
 
 const detail = {
   state: {
     playDetail: {},
     singerDetail: {},
-    comment: {
-      page: 1,
-      pageSize: 20
-    },
     mvDetail: {},
     songList: [],
     songOptions: {
       play: false,
       current: -1,
       order: 3,
-      audio: null,
-      showList: false,
       songEnd: false,
-      showLyrics: false,
-      lyricsList: [],
-      lyricsIndex: 0,
-      default: {
-        name: "DO RE MI FA SO LA XI",
-        artists: "Enjoy music Enjoy life",
-        picUrl: require("@/assets/images/artists.jpg")
-      }
     }
   },
   getters: {
-    [TYPES.GETTERS_GET_COMMENT_PARAMS](state) {
-      // 获取评论参数
-      const { page, pageSize } = state.comment;
-      return {
-        limit: pageSize,
-        offset: (page - 1) * pageSize
-      };
-    },
     [TYPES.GETTERS_GET_CURRENT_SONG](state) {
-      // 获取当前歌曲
+      // 获取当前播放歌曲
       return state.songList[state.songOptions.current];
     }
   },
   mutations: {
     [TYPES.MUTATIONS_GET_PLAYLIST_DETAIL](state, data) {
+      // 歌单详情
       state.playDetail = data;
     },
     [TYPES.MUTATIONS_GET_SINGER_DETAIL](state, data) {
+      // 歌手详情
       state.singerDetail = Object.assign({}, state.singerDetail, data);
     },
-    [TYPES.MUTATIONS_GET_COMMENT](state, data) {
-      state.comment = Object.assign({}, data, {
-        page: state.comment.page,
-        pageSize: state.comment.pageSize
-      });
-    },
-    [TYPES.MUTATIONS_SET_COMMENT_PAGE](state, data) {
-      state.comment = Object.assign({}, state.comment, data);
-    },
     [TYPES.MUTATIONS_GET_MV_DETAIL](state, data) {
+      // mv详情
       state.mvDetail = data;
     },
     [TYPES.MUTATIONS_GET_SONG_DETAIL](state, data) {
+      // 播放列表
       state.songList = data;
     },
     [TYPES.MUTATIONS_INIT_SONG_LIST](state) {
+      // 初始化播放列表
       state.songList = [];
       state.songOptions = Object.assign({}, state.songOptions, {
         play: false,
@@ -73,14 +46,11 @@ const detail = {
       });
     },
     [TYPES.MUTATIONS_SET_SONG_OPTIONS](state, data) {
+      // 更改歌曲配置
       state.songOptions = Object.assign({}, state.songOptions, data);
     },
-    [TYPES.MUTATIONS_SET_SONG_LYRICS](state, data) {
-      const { lyric } = data;
-      const lyricsList = Filter.getLyrics(lyric);
-      state.songOptions.lyricsList = lyricsList;
-    },
     [TYPES.MUTATIONS_SET_SONG_ORDER](state, data = 1) {
+      // 根据播放顺序更改当前歌曲索引
       let current = state.songOptions.current + data;
       switch (state.songOptions.order) {
         case 0:
@@ -107,6 +77,7 @@ const detail = {
           // 单曲循环
           break;
       }
+      // 单曲循环不更改
       if (state.songOptions.order == 2 && state.songOptions.current > 0) return;
       state.songOptions.current = state.songList.length ? current : -1;
     }
@@ -157,45 +128,6 @@ const detail = {
         });
       });
     },
-    [TYPES.ACTIONS_GET_SONG_LYRICS]({ commit }, param) {
-      // 歌词
-      API.songLyrics(param).then(res => {
-        commit(TYPES.MUTATIONS_SET_SONG_LYRICS, res.lrc);
-      });
-    },
-    [TYPES.ACTIONS_GET_COMMENT_PLAYLIST]({ commit, getters }, param) {
-      // 歌单评论
-      let params = Object.assign(
-        {},
-        getters[TYPES.GETTERS_GET_COMMENT_PARAMS],
-        param
-      );
-      API.playListComment(params).then(res => {
-        commit(TYPES.MUTATIONS_GET_COMMENT, res);
-      });
-    },
-    [TYPES.ACTIONS_GET_COMMENT_MUSIC]({ commit, getters }, param) {
-      // 音乐评论
-      let params = Object.assign(
-        {},
-        getters[TYPES.GETTERS_GET_COMMENT_PARAMS],
-        param
-      );
-      API.musicComment(params).then(res => {
-        commit(TYPES.MUTATIONS_GET_COMMENT, res);
-      });
-    },
-    [TYPES.ACTIONS_GET_COMMENT_MV]({ commit, getters }, param) {
-      // mv评论
-      let params = Object.assign(
-        {},
-        getters[TYPES.GETTERS_GET_COMMENT_PARAMS],
-        param
-      );
-      API.mvComment(params).then(res => {
-        commit(TYPES.MUTATIONS_GET_COMMENT, res);
-      });
-    }
   }
 };
 

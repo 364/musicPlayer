@@ -32,6 +32,7 @@ export default {
   },
   computed: {
     getCountKey() {
+      // 获取搜索总条数
       let str = this.key;
       return str.slice(0, -1) + "Count";
     },
@@ -50,6 +51,7 @@ export default {
   },
   methods: {
     getKey() {
+      // 获取搜索类型
       const keys = Object.keys(this.searchType);
       for (let i in keys) {
         if (this.searchList[keys[i]]) {

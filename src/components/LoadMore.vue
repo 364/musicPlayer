@@ -13,8 +13,12 @@
 
 <script>
 export default {
-  name: "",
-  props: ["load"],
+  name: "load-more",
+  props: {
+    load: {
+      type: Object
+    }
+  }
 };
 </script>
 <style lang='less' scoped>
@@ -24,7 +28,7 @@ export default {
     height: 50px;
     line-height: 50px;
     color: #999;
-    img{
+    img {
       height: 100%;
     }
   }

@@ -46,10 +46,12 @@ export default {
   watch: {},
   methods: {
     handleChange(e) {
+      // 更改滑动条
       const rate = e.offsetX / this.$refs.progress.clientWidth;
       this.$emit("handleChange", rate, this.tag);
     },
     handleStart(e) {
+      // 拖动开始
       e.preventDefault();
       e.stopPropagation();
       this.move.flag = true;
@@ -57,6 +59,7 @@ export default {
       this.move.offsetX = e.target.offsetLeft;
     },
     handleMove(e) {
+      // 拖动中
       if (this.move.flag) {
         let maxWidth = this.$refs.progress.clientWidth;
         let moveX = e.clientX - this.move.startX;
@@ -72,6 +75,7 @@ export default {
       }
     },
     handleEnd(e) {
+      // 拖动结束
       this.move.flag = false;
     }
   },

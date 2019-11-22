@@ -9,7 +9,7 @@
         @mouseleave="isHover=null"
       >
         <div class="coverImg">
-          <img :src="item.picUrl" alt="album-img" ref="coverImg" />
+          <img v-lazy="item.picUrl" alt="album-img" ref="coverImg" />
           <div class="count">
             <span>{{item.publishTime | formatTime}}</span>
             <transition name="fade">
@@ -26,7 +26,7 @@
 
 <script>
 export default {
-  name: "album",
+  name: "album-list",
   props: {
     data: {
       type: Array,
@@ -44,13 +44,16 @@ export default {
   watch: {},
   methods: {
     handleChangeImgH() {
-      const list = this.$refs.coverImg;
-      list.map(item => {
+      // 改变专辑图片高度 父组件调用
+      this.$nextTick(() => {
         setTimeout(() => {
-          if (item.width != item.height) {
-            item.height = item.width + "px";
-          }
-        }, 1000);
+          const list = this.$refs.coverImg;
+          list.map(item => {
+            if (item.width != item.height && item.height < 500) {
+              item.style.height = item.width + "px";
+            }
+          });
+        }, 500);
       });
     }
   },

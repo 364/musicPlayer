@@ -1,4 +1,4 @@
-<!--  -->
+<!-- 播放列表 -->
 <template>
   <transition name="slide">
     <div class="music-list" v-show="isShow">
@@ -40,6 +40,7 @@
           </li>
         </ul>
       </div>
+      <!-- 空列表 -->
       <div class="empty" v-else>
         <img src="@/assets/images/empty.jpg" alt="empty" />
         <span>去添加些歌曲吧~</span>
@@ -53,7 +54,7 @@ import { mapActions, mapState, mapMutations } from "vuex";
 import * as TYPES from "@/store/types";
 
 export default {
-  name: "",
+  name: "music-list",
   components: {},
   props: {
     current: {
@@ -94,7 +95,7 @@ export default {
   },
   methods: {
     handleScroll() {
-      // 滚动
+      // 滚动到当前播放的歌曲
       const name = "current" + this.current;
       if (this.$refs[name]) {
         if (!this.$refs[name].length) return;
@@ -105,7 +106,7 @@ export default {
       }
     },
     handleClose(e) {
-      // 关闭
+      // 点击遮罩关闭
       if (this.isShow) {
         const isInclude = e.path.some(item => item.className == "music-list");
         const isLayout = e.path.some(item => item.className == "layout");
@@ -131,6 +132,7 @@ export default {
       let res = this.songList;
       res.splice(num, 1);
       this[TYPES.MUTATIONS_GET_SONG_DETAIL](res);
+      // 改变当前歌曲索引
       if (num == this.songOptions.current) {
         this.handleChangeOption({ play: false });
         this[TYPES.MUTATIONS_SET_SONG_ORDER](num);

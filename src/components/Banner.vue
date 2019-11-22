@@ -32,7 +32,8 @@ export default {
     }
   },
   methods: {
-    setImgH() {
+    handleChangeImgH() {
+      // 改变高度
       const arrImg = this.$refs.imgH;
       if (arrImg && arrImg.length) {
         if (arrImg[0].height < 300) {
@@ -42,17 +43,12 @@ export default {
     }
   },
   mounted() {
-    window.addEventListener(
-      "resize",
-      () => {
-        this.setImgH();
-      },
-      false
-    );
-    setTimeout(()=>{
-      this.setImgH()
-    },500)
-  }
+    window.addEventListener("resize", this.handleChangeImgH);
+    setTimeout(this.handleChangeImgH, 500);
+  },
+  beforeDestroy() {
+    window.removeEventListener("resize", this.handleChangeImgH);
+  } //生命周期 - 销毁完成
 };
 </script>
 <style lang='less' scoped>

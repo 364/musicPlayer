@@ -30,6 +30,7 @@ const singer = {
     load,
     title,
     navigation,
+    playList: [],
     category: {
       tag: title.filter.active,
       active: "",
@@ -38,7 +39,6 @@ const singer = {
         all: []
       }
     },
-    playList: []
   },
   getters: {
     [TYPES.GETTERS_GET_PLAYLIST_PARAM](state) {
@@ -132,8 +132,8 @@ const singer = {
       });
     },
     [TYPES.ACTIONS_GET_PLAY_LIST]({ commit, getters }) {
+      // 获取歌单
       const param = getters[TYPES.GETTERS_GET_PLAYLIST_PARAM];
-
       API.playlistAll(param).then(res => {
         if (res.more) {
           commit(TYPES.MUTATIONS_GET_PLAY_LIST, res.playlists);
@@ -147,16 +147,5 @@ const singer = {
     }
   }
 };
-
-function getLetter() {
-  const arr = new Array(25).fill().map((item, index) => ({
-    name: String.fromCharCode(65 + index),
-    code: String.fromCharCode(65 + index),
-    active: false
-  }));
-  arr.unshift({ name: "热门", code: "", active: true });
-  arr.push({ name: "#", code: "#", active: false });
-  return arr;
-}
 
 export default singer;

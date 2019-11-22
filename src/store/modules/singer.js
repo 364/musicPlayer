@@ -71,9 +71,11 @@ const singer = {
       state.singerList = list;
     },
     [TYPES.MUTATIONS_SET_SINGER_LOAD](state, data = {}) {
+      // 加载更多 / 下一页
       state.load = Object.assign({}, state.load, data);
     },
     [TYPES.MUTATIONS_CHANGE_SINGER_PAGE](state) {
+      // 导航
       state.navigation.page++;
     },
     [TYPES.MUTATIONS_CHANGE_SINGER_LIST](state, data) {
@@ -85,7 +87,7 @@ const singer = {
       }
     },
     [TYPES.MUTATIONS_SET_SINGER_INIT](state) {
-      // 初始化
+      // 初始化歌手列表
       state.singerList = [];
       state.navigation = {
         page: 1,
@@ -96,6 +98,7 @@ const singer = {
   },
   actions: {
     [TYPES.ACTIONS_GET_SINGER_LIST]({ commit, getters }) {
+      // 获取歌手列表
       const param = getters[TYPES.GETTERS_GET_SINGER_PARAM];
       // console.log(param);
       API.singerList(param).then(res => {
@@ -113,6 +116,7 @@ const singer = {
 };
 
 function getLetter() {
+  // 获取字母
   const arr = new Array(25).fill().map((item, index) => ({
     name: String.fromCharCode(65 + index),
     code: String.fromCharCode(65 + index),

@@ -58,7 +58,7 @@ import { Message } from "element-ui";
 import { checkUrl, songUrl, songLyrics, musicComment } from "@/api";
 
 export default {
-  name: "playsong",
+  name: "play-song",
   components: {
     Lyrics,
     PlayerBar,

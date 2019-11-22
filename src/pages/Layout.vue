@@ -2,15 +2,17 @@
 <template>
   <div class="layout">
     <div class="content">
+      <!-- 侧边栏 -->
       <sidebar />
       <div class="detail">
-        <!-- 导航 -->
+        <!-- 导航 / 搜索 -->
         <nav-bar class="nav" />
         <keep-alive>
           <router-view />
         </keep-alive>
       </div>
     </div>
+    <!-- 播放条 -->
     <play-song />
   </div>
 </template>

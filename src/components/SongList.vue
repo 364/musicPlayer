@@ -9,6 +9,7 @@
       @cell-dblclick="handleSong"
       :row-class-name="handleRowClass"
     >
+      <!-- 歌曲 -->
       <el-table-column label="歌曲" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <div class="song">
@@ -33,6 +34,7 @@
           </div>
         </template>
       </el-table-column>
+      <!-- 歌手 -->
       <el-table-column
         label="歌手"
         width="200"
@@ -43,6 +45,7 @@
           <span class="artists">{{ scope.row | getArtists }}</span>
         </template>
       </el-table-column>
+      <!-- 专辑 -->
       <el-table-column
         label="专辑"
         width="180"
@@ -53,6 +56,7 @@
           <span class="album">{{ scope.row.al?scope.row.al.name:scope.row.album.name }}</span>
         </template>
       </el-table-column>
+      <!-- 时长 -->
       <el-table-column label="时长" width="100" v-if="showCell.includes('time')">
         <template slot-scope="scope">
           <span>{{ (scope.row.dt||scope.row.duration) | formatTime('mm:ss') }}</span>
@@ -111,6 +115,7 @@ export default {
       TYPES.MUTATIONS_SET_SONG_ORDER
     ]),
     handleSong(row, column, cell, event) {
+      // 播放某一首
       let num = -1;
       for (let i = 0; i < this.songList.length; i++) {
         if (this.songList[i].id == row.id) {
@@ -137,6 +142,7 @@ export default {
       }, 200);
     },
     handleRowClass({ row, column, rowIndex, columnIndex }) {
+      // 当前播放那一行样式
       if (this.currentSong) {
         if (row.id == this.currentSong.id) {
           return "table-row-active";

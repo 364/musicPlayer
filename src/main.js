@@ -19,12 +19,12 @@ Vue.use(VueLazyload, {
   error: require("@/assets/images/404.gif"),
   loading: require("@/assets/images/loading.gif")
 });
+// 注册全局过滤器和方法
 Object.keys(Filter).forEach(key => {
   Vue.filter(key, Filter[key])
   Vue.prototype[key] = Filter[key]
 })
 
-/* eslint-disable no-new */
 new Vue({
   el: "#app",
   store,

@@ -110,7 +110,7 @@ import { mapActions, mapState, mapMutations } from "vuex";
 import * as TYPES from "@/store/types";
 import Banner from "@/components/Banner";
 export default {
-  name: "home",
+  name: "recommend",
   components: {
     Banner
   },
@@ -142,13 +142,18 @@ export default {
     })
   },
   created() {
+    // banner
     this[TYPES.ACTIONS_GET_BANNER]();
+    // 推荐歌单
     this[TYPES.ACTIONS_GET_PLAYLIST](this.param.playList);
-    this[TYPES.ACTIONS_GET_NEWSONG]();
+    // 推荐mv
     this[TYPES.ACTIONS_GET_MV]();
+    // 最新音乐
+    this[TYPES.ACTIONS_GET_NEWSONG]();
   },
   methods: {
     handleSong(idx) {
+      // 最新音乐播放 
       const id = this.songList.map(item => item.id);
       this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ play: false, current: idx });
       this[TYPES.ACTIONS_GET_SONG_DETAIL]({ id }).then(res => {
@@ -158,8 +163,9 @@ export default {
         }, 200);
       });
     },
-    toDetailPage(id) {
-      this.$router.push(`/playlist/${id}`);
+    getSongName(name, alias) {
+      // 获取歌曲名
+      return name + alias.join("");
     },
     ...mapMutations([
       TYPES.MUTATIONS_SET_SONG_OPTIONS,
@@ -171,10 +177,7 @@ export default {
       TYPES.ACTIONS_GET_NEWSONG,
       TYPES.ACTIONS_GET_MV,
       TYPES.ACTIONS_GET_SONG_DETAIL
-    ]),
-    getSongName(name, alias) {
-      return name + alias.join("");
-    }
+    ])
   }
 };
 </script>

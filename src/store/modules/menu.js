@@ -1,3 +1,6 @@
+// import * as TYPES from "@/store/types";
+// import * as API from "@/api";
+
 const menu = {
   state: {
     recommend: {
@@ -52,7 +55,8 @@ const menu = {
     }
   },
   getters: {
-    menuList:state=>{
+    menuList(state){
+      // 菜单列表
       return [].concat(state.recommend, state.myMusic, state.songList);
     }
   },

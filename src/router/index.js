@@ -7,7 +7,7 @@ import Singer from "@/pages/Singer";
 import PlayList from "@/pages/PlayList";
 import PlayListDetail from "@/pages/PlayListDetail";
 import SingerDetail from "@/pages/SingerDetail";
-import Search from "@/pages/Search";
+import SearchDetail from "@/pages/SearchDetail";
 import MvDetail from "@/pages/MvDetail";
 
 Vue.use(Router);
@@ -55,13 +55,13 @@ export default new Router({
         },
         {
           path: "/mv/:id",
-          name: "Search",
+          name: "MvDetail",
           component: MvDetail
         },
         {
           path: "/search",
-          name: "Search",
-          component: Search
+          name: "SearchDetail",
+          component: SearchDetail
         },
         {
           path: "/fm",

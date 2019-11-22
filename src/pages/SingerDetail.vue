@@ -35,14 +35,14 @@
     </div>
     <!-- 歌曲列表 -->
     <div class="list">
-      <el-tabs v-model="activeName">
+      <el-tabs v-model="activeName" @tab-click="handleTabChange">
         <el-tab-pane :label="`热门歌曲(${singerDetail.hotSongs.length})`" name="songlist">
           <song-list :tableData="singerDetail.hotSongs" :showCell="showCell" />
         </el-tab-pane>
         <el-tab-pane :label="`热门专辑(${singerDetail.hotAlbums.length})`" name="albumlist">
           <album-list ref="albumlist" :data="singerDetail.hotAlbums" />
         </el-tab-pane>
-        <el-tab-pane label="歌手介绍  " name="singerdesc">
+        <el-tab-pane label="歌手介绍  " name="singerdesc" >
           <div class="desc">
             <h3 v-html=" singerDetail.artist.name+'简介'"></h3>
             <div v-html="singerDetail.artist.briefDesc" class="pre"></div>
@@ -64,7 +64,7 @@ import SongList from "@/components/SongList";
 import AlbumList from "@/components/AlbumList";
 
 export default {
-  name: "",
+  name: "singer-detail",
   components: { SongList, AlbumList },
   data() {
     return {
@@ -82,6 +82,12 @@ export default {
   },
   watch: {},
   methods: {
+    handleTabChange(){
+      // 切换tab
+      if(this.activeName == 'albumlist'){
+        this.$refs.albumlist.handleChangeImgH()
+      }
+    },
     handleSong(ids) {
       // 播放全部
       const id = ids.map(item => item.id);

@@ -84,6 +84,7 @@ export default {
   watch: {},
   methods: {
     handleChange(obj) {
+      // 改变评论页数
       this.$emit("handleChangePage", obj);
     }
   },

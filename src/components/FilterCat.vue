@@ -19,7 +19,7 @@
 
 <script>
 export default {
-  name: "FilterCat",
+  name: "filter-cat",
   props: {
     category: {
       type: Array
@@ -30,6 +30,7 @@ export default {
   },
   methods: {
     handleChange(e) {
+      // 改变筛选条件
       this.$emit("handleChange", e);
     }
   }

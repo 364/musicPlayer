@@ -14,8 +14,9 @@ export default {
     };
   },
   created() {
-    // 随机背景图
+    // 获取某个文件夹下所有图片
     const arr = require.context("@/assets/images/bg", false, /.(png|jpg|jpeg|gif|bmp|webp)$/).keys();
+    // 随机背景图
     const num = Math.floor(Math.random() * (arr.length - 1));
     this.bg = require("@/assets/images/bg" + arr[num].slice(1));
   }

@@ -10,7 +10,7 @@ const playCount = value => {
   return value;
 };
 // 搜索结果类型
-const searchCat = value => {
+const searchCat = (value, key = "name") => {
   const obj = {
     songs: { icon: "icon-music-note", name: "单曲" },
     mvs: { icon: "icon-video1", name: "视频" },
@@ -18,7 +18,7 @@ const searchCat = value => {
     playlists: { icon: "icon-play-list-line", name: "歌单" },
     artists: { icon: "icon-heart1", name: "歌手" }
   };
-  return obj[value]["name"];
+  return obj[value][key];
 };
 // 歌手
 const getArtists = (val, operator) => {
@@ -39,7 +39,7 @@ const getArtists = (val, operator) => {
 const formatTime = (time, format = "YYYY-MM-DD") => {
   return moment(time).format(format);
 };
-// 标签
+// 歌单标签
 const getTags = val => {
   const arr = val.map(item => "#" + item);
   return arr.join(" ");
@@ -48,7 +48,6 @@ const getTags = val => {
 const getAlias = val => {
   return val.join("");
 };
-
 // 获取歌词
 const getLyrics = val => {
   const parts = val.split("\n");
@@ -59,7 +58,7 @@ const getLyrics = val => {
   // console.log(parts);
   return parts;
 };
-// 根据一行歌词 转换为对象
+// 根据歌词 转换为对象
 function changeToObject(str) {
   const words = str.split("]")[1];
   // 这个正则返回时间信息
@@ -75,6 +74,7 @@ function changeToObject(str) {
     words
   };
 }
+// 返回顶部
 const scrollTop = (el, pos = 0, step = 30) => {
   setTimeout(function animation() {
     if (el.scrollTop > pos) {
