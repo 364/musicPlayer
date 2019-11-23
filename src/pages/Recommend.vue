@@ -301,7 +301,7 @@ export default {
           flex-direction: column;
           margin-left: 10px;
           flex: 1;
-          @media screen and (max-width: 1000px) {
+          @media screen and (max-width: 1500px) {
             > * {
               overflow: hidden;
               -webkit-line-clamp: 1;

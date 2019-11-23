@@ -11,7 +11,7 @@
         autocapitalize="off"
         @focus="handleFocus"
         @blur="handleBlur"
-        @keyup.enter="handleSearch($event,keywords,true)"
+        @keyup.enter="handleSearch"
         @input="handleQuery"
         ref="input"
       />
@@ -55,7 +55,7 @@
                 v-for="cItem in searchMatch[item]"
                 :key="cItem.id"
                 v-html="highLight(cItem)"
-                @click="handleSearchSuggest($event, {keywords:cItem.name,type:searchType[item]['type']})"
+                @click="handleSearchSuggest($event, cItem,searchType[item]['type'])"
               ></li>
             </ul>
           </div>
@@ -68,8 +68,9 @@
 
 <script>
 import * as TYPES from "@/store/types";
-import { mapState, mapActions } from "vuex";
+import { mapState, mapActions, mapMutations } from "vuex";
 import { searchType } from "@/utils/enum";
+import { songDetail, searchSuggest } from "@/api";
 
 export default {
   name: "searchbox",
@@ -79,14 +80,16 @@ export default {
       isFocus: false,
       isShow: false,
       keywords: "",
-      searchType
+      searchType,
+      searchMatch: {}
     };
   },
   computed: {
     ...mapState({
       searchHot: state => state.search.searchHot,
       searchDefKey: state => state.search.searchDefKey,
-      searchMatch: state => state.search.searchMatch
+      songList: state => state.detail.songList,
+      songOptions: state => state.detail.songOptions
     })
   },
   created() {
@@ -109,12 +112,13 @@ export default {
       if (this.timer) {
         clearTimeout(this.timer);
       }
-      this.timer = setTimeout(() => {
+      this.timer = setTimeout(async () => {
         if (this.keywords.length) {
-          this[TYPES.ACTIONS_GET_SEARCH_LIST]({
+          const res = await searchSuggest({
             keywords: this.keywords,
             isMatch: true
           });
+          this.searchMatch = res.result;
         }
       }, 100);
     },
@@ -143,33 +147,54 @@ export default {
       this.isFocus = false;
       this.isShow = false;
       this.$refs.input.blur();
-      if (Object.prototype.toString.call(key) == "[object Object]") {
-        this.keywords = key.keywords;
-        this[TYPES.ACTIONS_GET_SEARCH_LIST](
-          Object.assign({}, key, { isMatch: false })
-        );
-      } else {
-        const keywords = key
-          ? key
-          : this.keywords.length
-          ? this.keywords
-          : this.searchDefKey;
-        if (this.keywords !== keywords || enter) {
-          this.keywords = keywords;
-          this[TYPES.ACTIONS_GET_SEARCH_LIST]({ keywords, isMatch: false });
+      const keywords = key
+        ? key
+        : this.keywords.length
+        ? this.keywords
+        : this.searchDefKey;
+      this.keywords = keywords
+      this.$router.push("/search?key=" + keywords);
+    },
+    handleSearchSuggest(e, item, type) {
+      // 搜索建议点击
+      this.keywords = item.name
+      switch (type) {
+        case 1:
+          this.handleSong(item);
+          break;
+      }
+      console.log(item, type);
+    },
+    async handleSong(row) {
+      // 播放单曲
+      let num = -1;
+      for (let i = 0; i < this.songList.length; i++) {
+        if (this.songList[i].id == row.id) {
+          num = i;
+          break;
         }
       }
-      if (this.$route.path !== "/search") {
-        this.$router.push("/search");
+      this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ play: false });
+      if (num < 0) {
+        // 不在歌单内
+        const { songs } = await songDetail({ ids: row.id });
+        if (!songs && !songs.length) return;
+        let data = this.songList;
+        data.splice(this.songOptions.current + 1, 0, songs[0]);
+        this[TYPES.MUTATIONS_GET_SONG_DETAIL](data);
+        this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({
+          current: this.songOptions.current + 1
+        });
+      } else {
+        // 在歌单内 更改当前index
+        this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ current: num });
       }
     },
-    handleSearchSuggest(){
-      // 搜索建议点击
-    },
-    ...mapActions([
-      TYPES.ACTIONS_GET_SEARCH_LIST,
-      TYPES.ACTIONS_GET_SEARCH_DEFAULT
-    ])
+    ...mapMutations([
+      TYPES.MUTATIONS_SET_SONG_OPTIONS,
+      TYPES.MUTATIONS_GET_SONG_DETAIL
+    ]),
+    ...mapActions([TYPES.ACTIONS_GET_SEARCH_DEFAULT])
   },
   mounted() {},
   beforeCreate() {}, //生命周期 - 创建之前
@@ -229,6 +254,7 @@ export default {
     width: 30%;
     max-height: 400px;
     overflow-y: auto;
+    min-width: 260px;
     > h3 {
       margin-left: 20px;
     }

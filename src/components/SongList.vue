@@ -115,7 +115,7 @@ export default {
       TYPES.MUTATIONS_SET_SONG_ORDER
     ]),
     handleSong(row, column, cell, event) {
-      // 播放某一首
+      // 播放单曲
       let num = -1;
       for (let i = 0; i < this.songList.length; i++) {
         if (this.songList[i].id == row.id) {
@@ -137,9 +137,6 @@ export default {
         // 在歌单内 更改当前index
         this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ current: num });
       }
-      setTimeout(() => {
-        this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ play: true });
-      }, 200);
     },
     handleRowClass({ row, column, rowIndex, columnIndex }) {
       // 当前播放那一行样式

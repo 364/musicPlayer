@@ -37,7 +37,6 @@ export const MUTATIONS_GET_SEARCH_HOT = 'mutations_get_search_hot'
 export const MUTATIONS_GET_SEARCH_LIST = 'mutations_get_search_list'
 export const ACTIONS_GET_SEARCH_DEFAULT = 'actions_get_search_default'
 export const ACTIONS_GET_SEARCH_LIST = 'actions_get_search_list'
-export const MUTATIONS_GET_SEARCH_SUGGEST = 'mutations_get_search_suggest'
 // 歌单详情
 export const ACTIONS_GET_PLAYLIST_DETAIL = 'actions_get_playlist_detail'
 export const MUTATIONS_GET_PLAYLIST_DETAIL = 'mutations_get_playlist_detail'

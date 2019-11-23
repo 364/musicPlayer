@@ -176,6 +176,7 @@ export default {
     img {
       width: 35px;
       height: 35px;
+      object-fit: cover;
       position: absolute;
       border-radius: 3px;
       overflow: hidden;

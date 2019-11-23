@@ -306,6 +306,7 @@ export default {
       font-size: 25px;
       cursor: pointer;
       display: inline-block;
+      padding: 10px 20px 0;
     }
     .main {
       display: flex;

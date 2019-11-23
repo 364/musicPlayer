@@ -1,19 +1,12 @@
 import * as TYPES from "@/store/types";
 import * as API from "@/api";
 
-const navigation = {
-  page: 1,
-  pageSize: 30
-};
-
 const search = {
   state: {
     searchHot: [],
     searchDefKey: null,
     searchKey: "",
     searchList: {},
-    searchMatch: {},
-    navigation
   },
   getters: {},
   mutations: {
@@ -29,10 +22,6 @@ const search = {
     [TYPES.MUTATIONS_GET_SEARCH_LIST](state, { data, type }) {
       // 搜索列表
       state.searchList = Object.assign({}, data, { type });
-    },
-    [TYPES.MUTATIONS_GET_SEARCH_SUGGEST](state, data) {
-      // 搜索建议
-      state.searchMatch = data;
     },
     [TYPES.MUTATIONS_SET_SEARCH_KEY](state, data) {
       // 搜索词
@@ -50,24 +39,24 @@ const search = {
         }
       });
     },
-    [TYPES.ACTIONS_GET_SEARCH_LIST]({ commit }, param) {
-      if (param.isMatch) {
-        // 搜索建议
-        API.searchSuggest(param).then(res => {
-          commit(TYPES.MUTATIONS_GET_SEARCH_SUGGEST, res.result);
-        });
-      } else {
-        // 搜索结果
-        const { keywords } = param;
-        commit(TYPES.MUTATIONS_SET_SEARCH_KEY, keywords);
-        API.search(param).then(res => {
-          commit(TYPES.MUTATIONS_GET_SEARCH_LIST, {
-            data: res.result,
-            type: param.type || 1
-          });
-        });
-      }
-    }
+    // [TYPES.ACTIONS_GET_SEARCH_LIST]({ commit }, param) {
+    //   if (param.isMatch) {
+    //     // 搜索建议
+    //     API.searchSuggest(param).then(res => {
+    //       commit(TYPES.MUTATIONS_GET_SEARCH_SUGGEST, res.result);
+    //     });
+    //   } else {
+    //     // 搜索结果
+    //     const { keywords } = param;
+    //     commit(TYPES.MUTATIONS_SET_SEARCH_KEY, keywords);
+    //     API.search(param).then(res => {
+    //       commit(TYPES.MUTATIONS_GET_SEARCH_LIST, {
+    //         data: res.result,
+    //         type: param.type || 1
+    //       });
+    //     });
+    //   }
+    // }
   }
 };
 
