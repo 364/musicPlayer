@@ -19,7 +19,7 @@ const menu = {
         {
           text: "排行榜",
           icon: "icon-ranking",
-          route: "/video"
+          route: "/rank"
         }
       ]
     },

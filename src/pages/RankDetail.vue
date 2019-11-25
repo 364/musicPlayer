@@ -1,21 +1,21 @@
-<!-- 歌单详情页 -->
+<!-- 排行榜详情 -->
 <template>
-  <div class="playlist_detail" v-if="Object.keys(playDetail).length">
+  <div class="rank_detail" v-if="Object.keys(rankDetail).length">
     <!-- 歌单介绍 -->
     <div class="des">
-      <div class="coverImg" v-lazy:background-image="playDetail.coverImgUrl"></div>
+      <div class="coverImg" v-lazy:background-image="rankDetail.coverImgUrl"></div>
       <div class="info">
-        <h2>{{ playDetail.name }}</h2>
+        <h2>{{ rankDetail.name }}</h2>
         <h4>
-          <img :src="playDetail.creator.avatarUrl" class="avatar" />
-          <span>{{ playDetail.creator.nickname }}</span>
-          <span class="tags">{{ playDetail.tags | getTags }}</span>
+          <img :src="rankDetail.creator.avatarUrl" class="avatar" />
+          <span>{{ rankDetail.creator.nickname }}</span>
+          <span class="tags">{{ rankDetail.tags | getTags }}</span>
         </h4>
         <div
           class="count"
-        >播放量：{{ playDetail.playCount | playCount }} 创建时间：{{ playDetail.createTime | formatTime }}</div>
+        >播放量：{{ rankDetail.playCount | playCount(-1) }} 最新更新：{{ rankDetail.updateTime | formatTime('MM月DD日') }}</div>
         <div>
-          <el-button size="mini" type="primary" @click="handleSong(playDetail.trackIds)">
+          <el-button size="mini" type="primary" @click="handleSong(rankDetail.trackIds)">
             <i class="el-icon-plus"></i> 播放全部
           </el-button>
           <el-button size="mini">
@@ -30,10 +30,10 @@
     <!-- 歌曲列表 -->
     <div class="list">
       <el-tabs v-model="activeName" @tab-click="handleScrollTop">
-        <el-tab-pane :label="`歌曲(${playDetail.trackCount})`" name="songlist">
-          <song-list :tableData="playDetail.tracks" />
+        <el-tab-pane :label="`歌曲(${rankDetail.trackCount})`" name="songlist">
+          <song-list :tableData="rankDetail.tracks" />
         </el-tab-pane>
-        <el-tab-pane :label="`评论(${playDetail.commentCount})`" name="second">
+        <el-tab-pane :label="`评论(${rankDetail.commentCount})`" name="second">
           <comment :comment="comment" @handleChangePage="handleChangePage" />
         </el-tab-pane>
       </el-tabs>
@@ -42,6 +42,7 @@
 </template>
 
 <script>
+import { toplist } from "@/api";
 import { mapActions, mapState, mapMutations } from "vuex";
 import * as TYPES from "@/store/types";
 import SongList from "@/components/SongList";
@@ -49,7 +50,7 @@ import Comment from "@/components/Comment";
 import { playListComment } from "@/api";
 
 export default {
-  name: "playlist-detail",
+  name: "",
   components: { SongList, Comment },
   data() {
     return {
@@ -59,20 +60,24 @@ export default {
         pageSize: 20
       },
       activeName: "songlist",
+      rankDetail: {},
+      idx: this.$route.params.idx,
       id: this.$route.params.id
     };
   },
-  computed: {
-    ...mapState({
-      playDetail: state => state.detail.playDetail
-    })
-  },
+  computed: {},
   created() {
     this.handleGetData();
     this.handleGetComment();
   },
   watch: {},
   methods: {
+    async handleGetData() {
+      const res = await toplist({ idx: this.idx });
+      if (res.code == 200) {
+        this.rankDetail = res.playlist;
+      }
+    },
     handleChangePage(obj) {
       // 评论改变
       this.comment = Object.assign({}, this.comment, obj);
@@ -95,15 +100,6 @@ export default {
           pageSize
         });
       });
-    },
-    handleGetData() {
-      // 获取歌单数据
-      const id = this.id;
-      if (!id) {
-        this.$router.go(-1);
-        return;
-      }
-      this[TYPES.ACTIONS_GET_PLAYLIST_DETAIL]({ id });
     },
     handleScrollTop() {
       // 滚动到顶部
@@ -129,28 +125,22 @@ export default {
       TYPES.MUTATIONS_SET_SONG_OPTIONS,
       TYPES.MUTATIONS_SET_SONG_ORDER
     ]),
-    ...mapActions([
-      TYPES.ACTIONS_GET_PLAYLIST_DETAIL,
-      TYPES.ACTIONS_GET_SONG_DETAIL
-    ])
+    ...mapActions([TYPES.ACTIONS_GET_SONG_DETAIL])
   },
-  beforeRouteUpdate(to, from, next) {
-    this.id = to.params.id;
-    this.handleGetData();
-    this.handleGetComment();
-    next();
-  },
-  activated() {
-    this.activeName = "songlist";
-    this.id = this.$router.params.id;
-    this.handleGetData();
-    this.handleGetComment();
-  } //如果页面有keep-alive缓存功能，这个函数会触发
+  mounted() {},
+  beforeCreate() {}, //生命周期 - 创建之前
+  beforeMount() {}, //生命周期 - 挂载之前
+  beforeUpdate() {}, //生命周期 - 更新之前
+  updated() {}, //生命周期 - 更新之后
+  beforeDestroy() {}, //生命周期 - 销毁之前
+  destroyed() {}, //生命周期 - 销毁完成
+  activated() {} //如果页面有keep-alive缓存功能，这个函数会触发
 };
 </script>
 <style lang='less' scoped>
 @import "~@/assets/style/variable.less";
-.playlist_detail {
+
+.rank_detail {
   height: calc(100% - @footer-height);
   .des {
     display: flex;

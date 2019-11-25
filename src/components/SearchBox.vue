@@ -69,7 +69,7 @@
 <script>
 import * as TYPES from "@/store/types";
 import { mapState, mapActions, mapMutations } from "vuex";
-import { searchType } from "@/utils/enum";
+import { searchType, searchTypeLink } from "@/utils/enum";
 import { songDetail, searchSuggest } from "@/api";
 
 export default {
@@ -81,6 +81,7 @@ export default {
       isShow: false,
       keywords: "",
       searchType,
+      searchTypeLink,
       searchMatch: {}
     };
   },
@@ -152,18 +153,21 @@ export default {
         : this.keywords.length
         ? this.keywords
         : this.searchDefKey;
-      this.keywords = keywords
+      this.keywords = keywords;
       this.$router.push("/search?key=" + keywords);
     },
     handleSearchSuggest(e, item, type) {
       // 搜索建议点击
-      this.keywords = item.name
+      this.keywords = item.name;
       switch (type) {
         case 1:
           this.handleSong(item);
           break;
+        default:
+          const path = this.searchTypeLink[type] + item.id;
+          this.$router.push(path);
+          break;
       }
-      console.log(item, type);
     },
     async handleSong(row) {
       // 播放单曲
@@ -195,15 +199,7 @@ export default {
       TYPES.MUTATIONS_GET_SONG_DETAIL
     ]),
     ...mapActions([TYPES.ACTIONS_GET_SEARCH_DEFAULT])
-  },
-  mounted() {},
-  beforeCreate() {}, //生命周期 - 创建之前
-  beforeMount() {}, //生命周期 - 挂载之前
-  beforeUpdate() {}, //生命周期 - 更新之前
-  updated() {}, //生命周期 - 更新之后
-  beforeDestroy() {}, //生命周期 - 销毁之前
-  destroyed() {}, //生命周期 - 销毁完成
-  activated() {} //如果页面有keep-alive缓存功能，这个函数会触发
+  }
 };
 </script>
 <style lang='less' scoped>

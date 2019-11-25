@@ -53,3 +53,6 @@ export const MUTATIONS_SET_SONG_OPTIONS = 'mutations_set_song_options'
 export const MUTATIONS_INIT_SONG_LIST = 'mutations_init_song_list'
 export const GETTERS_GET_CURRENT_SONG = 'getters_get_current_song'
 export const MUTATIONS_SET_SONG_ORDER = 'mutations_set_song_order'
+// 专辑详情
+export const ACTIONS_GET_ALBUM_DETAIL = 'actions_get_album_detail'
+export const MUTATIONS_GET_ALBUM_DETAIL = 'mutations_get_album_detail'

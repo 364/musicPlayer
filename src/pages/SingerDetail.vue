@@ -42,7 +42,7 @@
         <el-tab-pane :label="`热门专辑(${singerDetail.hotAlbums.length})`" name="albumlist">
           <album-list ref="albumlist" :data="singerDetail.hotAlbums" />
         </el-tab-pane>
-        <el-tab-pane label="歌手介绍  " name="singerdesc" >
+        <el-tab-pane label="歌手介绍" name="singerdesc">
           <div class="desc">
             <h3 v-html=" singerDetail.artist.name+'简介'"></h3>
             <div v-html="singerDetail.artist.briefDesc" class="pre"></div>
@@ -69,7 +69,8 @@ export default {
   data() {
     return {
       showCell: ["song", "ablum", "time"],
-      activeName: "songlist"
+      activeName: "songlist",
+      id: this.$route.params.id
     };
   },
   computed: {
@@ -82,11 +83,17 @@ export default {
   },
   watch: {},
   methods: {
-    handleTabChange(){
+    handleTabChange() {
       // 切换tab
-      if(this.activeName == 'albumlist'){
-        this.$refs.albumlist.handleChangeImgH()
+      if (this.activeName == "albumlist") {
+        this.$refs.albumlist.handleChangeImgH();
       }
+      this.handleScrollTop();
+    },
+    handleScrollTop() {
+      // 滚动到顶部
+      const el = this.$el.querySelector(".el-tabs__content");
+      this.$root.scrollTop(el, 0, 20);
     },
     handleSong(ids) {
       // 播放全部
@@ -103,7 +110,7 @@ export default {
     },
     handleGetData() {
       // 获取歌手数据
-      const id = this.$route.params.id;
+      const id = this.id;
       if (!id) {
         this.$router.go(-1);
         return;
@@ -121,10 +128,16 @@ export default {
       TYPES.ACTIONS_GET_SONG_DETAIL
     ])
   },
+  beforeRouteUpdate(to, from, next) {
+    this.id = to.params.id;
+    this.handleGetData();
+    next();
+  },
   activated() {
     this.activeName = "songlist";
+    this.id = this.$route.params.id
     this.handleGetData();
-  } //如果页面有keep-alive缓存功能，这个函数会触发
+  } 
 };
 </script>
 <style lang='less' scoped>

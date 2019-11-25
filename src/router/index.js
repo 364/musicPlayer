@@ -9,6 +9,10 @@ import PlayListDetail from "@/pages/PlayListDetail";
 import SingerDetail from "@/pages/SingerDetail";
 import SearchDetail from "@/pages/SearchDetail";
 import MvDetail from "@/pages/MvDetail";
+import AlbumDetail from "@/pages/AlbumDetail";
+import Fm from "@/pages/Fm";
+import Rank from "@/pages/Rank";
+import RankDetail from "@/pages/RankDetail";
 
 Vue.use(Router);
 
@@ -65,14 +69,24 @@ export default new Router({
         },
         {
           path: "/fm",
-          name: "Layout",
-          component: MvDetail
+          name: "Fm",
+          component: Fm
         },
         {
-          path: "/video",
-          name: "Layout",
-          component: MvDetail
-        }
+          path: "/rank",
+          name: "Rank",
+          component: Rank
+        },
+        {
+          path: "/rank/:id/:idx",
+          name: "RankDetail",
+          component: RankDetail
+        },
+        {
+          path: "/album/:id",
+          name: "AlbumDetail",
+          component: AlbumDetail
+        },
       ]
     }
   ]

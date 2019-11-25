@@ -13,7 +13,12 @@
           <span>播放次数：{{mvDetail.playCount | playCount }}次</span>
         </div>
       </div>
-      <video-player ref="videoPlayer" class="vjs-custom-skin" :options="playerOptions" @play="handlePlay"/>
+      <video-player
+        ref="videoPlayer"
+        class="vjs-custom-skin"
+        :options="playerOptions"
+        @play="handlePlay"
+      />
       <!-- mv详情 -->
       <div v-show="mvDetail.desc">
         <h3>简介：</h3>
@@ -92,7 +97,8 @@ export default {
             volume: 0.7
           }
         }
-      }
+      },
+      id: this.$route.params.id
     };
   },
   computed: {
@@ -111,14 +117,16 @@ export default {
   watch: {
     mvDetail(newVal) {
       if (Object.keys(newVal).length) {
-        this.playerOptions.sources[0].src = newVal.brs["720"];
+        const keys = Object.keys(newVal.brs);
+        const len = keys[keys.length - 1];
+        this.playerOptions.sources[0].src = newVal.brs[len];
         this.playerOptions.poster = newVal.cover;
       }
     }
   },
   methods: {
-    handlePlay(e){
-      this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ play:false });
+    handlePlay(e) {
+      this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ play: false });
     },
     handleChangePage(obj) {
       // 评论改变
@@ -134,7 +142,7 @@ export default {
     },
     handleGetComment() {
       // 获取评论
-      const id = this.$route.params.id;
+      const id = this.id;
       const { type, page, pageSize } = this.comment;
       const params = {
         id,
@@ -151,7 +159,7 @@ export default {
     },
     handleGetData() {
       // 获取mv数据
-      const id = this.$route.params.id;
+      const id = this.id;
       if (!id) {
         this.$router.go(-1);
         return;
@@ -163,13 +171,14 @@ export default {
     ...mapMutations([TYPES.MUTATIONS_SET_SONG_OPTIONS]),
     ...mapActions([TYPES.ACTIONS_GET_MV_DETAIL])
   },
-  beforeCreate() {}, //生命周期 - 创建之前
-  beforeMount() {}, //生命周期 - 挂载之前
-  beforeUpdate() {}, //生命周期 - 更新之前
-  updated() {}, //生命周期 - 更新之后
-  beforeDestroy() {}, //生命周期 - 销毁之前
-  destroyed() {}, //生命周期 - 销毁完成
+  beforeRouteUpdate(to, from, next) {
+    this.id = to.params.id;
+    this.handleGetData();
+    this.handleGetComment();
+    next();
+  },
   activated() {
+    this.id = this.$route.params.id
     this.handleGetData();
     this.handleGetComment();
   } //如果页面有keep-alive缓存功能，这个函数会触发

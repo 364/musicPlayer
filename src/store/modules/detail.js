@@ -4,6 +4,7 @@ import * as API from "@/api";
 const detail = {
   state: {
     playDetail: {},
+    albumDetail: {},
     singerDetail: {},
     mvDetail: {},
     songList: [],
@@ -32,6 +33,10 @@ const detail = {
     [TYPES.MUTATIONS_GET_MV_DETAIL](state, data) {
       // mv详情
       state.mvDetail = data;
+    },
+    [TYPES.MUTATIONS_GET_ALBUM_DETAIL](state,data){
+      // 专辑详情
+      state.albumDetail = data;
     },
     [TYPES.MUTATIONS_GET_SONG_DETAIL](state, data) {
       // 播放列表
@@ -87,6 +92,12 @@ const detail = {
       // 歌单详情
       API.playListDetail(param).then(res => {
         commit(TYPES.MUTATIONS_GET_PLAYLIST_DETAIL, res.playlist);
+      });
+    },
+    [TYPES.ACTIONS_GET_ALBUM_DETAIL]({ commit }, param) {
+      // 专辑详情
+      API.albumDetail(param).then(res => {
+        commit(TYPES.MUTATIONS_GET_ALBUM_DETAIL, res);
       });
     },
     [TYPES.ACTIONS_GET_SINGER_DETAIL]({ commit }, param) {

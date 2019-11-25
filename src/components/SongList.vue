@@ -124,7 +124,6 @@ export default {
         }
       }
       this[TYPES.MUTATIONS_SET_SONG_OPTIONS]({ play: false });
-      // console.log(num);
       if (num < 0) {
         // 不在歌单内
         let res = this.songList;

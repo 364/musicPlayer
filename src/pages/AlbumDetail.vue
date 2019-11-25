@@ -1,21 +1,18 @@
-<!-- 歌单详情页 -->
+<!-- 专辑详情 -->
 <template>
-  <div class="playlist_detail" v-if="Object.keys(playDetail).length">
-    <!-- 歌单介绍 -->
+  <div class="album_detail" v-if="Object.keys(albumDetail).length">
+    <!-- 专辑介绍 -->
     <div class="des">
-      <div class="coverImg" v-lazy:background-image="playDetail.coverImgUrl"></div>
+      <div class="coverImg" v-lazy:background-image="albumDetail.album.picUrl"></div>
       <div class="info">
-        <h2>{{ playDetail.name }}</h2>
+        <h2>{{ albumDetail.album.name }}</h2>
         <h4>
-          <img :src="playDetail.creator.avatarUrl" class="avatar" />
-          <span>{{ playDetail.creator.nickname }}</span>
-          <span class="tags">{{ playDetail.tags | getTags }}</span>
+          <img :src="albumDetail.album.artist.picUrl" class="avatar" />
+          <span>{{ albumDetail.album.artist.name }}</span>
         </h4>
-        <div
-          class="count"
-        >播放量：{{ playDetail.playCount | playCount }} 创建时间：{{ playDetail.createTime | formatTime }}</div>
+        <div class="count">创建时间：{{ albumDetail.publishTime | formatTime }}</div>
         <div>
-          <el-button size="mini" type="primary" @click="handleSong(playDetail.trackIds)">
+          <el-button size="mini" type="primary" @click="handleSong(albumDetail.songs)">
             <i class="el-icon-plus"></i> 播放全部
           </el-button>
           <el-button size="mini">
@@ -30,11 +27,17 @@
     <!-- 歌曲列表 -->
     <div class="list">
       <el-tabs v-model="activeName" @tab-click="handleScrollTop">
-        <el-tab-pane :label="`歌曲(${playDetail.trackCount})`" name="songlist">
-          <song-list :tableData="playDetail.tracks" />
+        <el-tab-pane :label="`歌曲(${albumDetail.songs.length})`" name="songlist">
+          <song-list :tableData="albumDetail.songs" />
         </el-tab-pane>
-        <el-tab-pane :label="`评论(${playDetail.commentCount})`" name="second">
+        <el-tab-pane :label="`评论(${albumDetail.album.info.commentCount})`" name="comment">
           <comment :comment="comment" @handleChangePage="handleChangePage" />
+        </el-tab-pane>
+        <el-tab-pane label="专辑介绍" name="desc">
+          <div class="desc">
+            <h3 v-html="`专辑介绍 - ${ albumDetail.album.name}`"></h3>
+            <pre v-html="albumDetail.album.description"></pre>
+          </div>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -42,29 +45,29 @@
 </template>
 
 <script>
-import { mapActions, mapState, mapMutations } from "vuex";
 import * as TYPES from "@/store/types";
 import SongList from "@/components/SongList";
 import Comment from "@/components/Comment";
-import { playListComment } from "@/api";
+import { albumComment } from "@/api";
+import { mapState, mapActions, mapMutations } from "vuex";
 
 export default {
-  name: "playlist-detail",
-  components: { SongList, Comment },
+  name: "album_detail",
+  components: { Comment, SongList },
   data() {
     return {
       comment: {
-        type: 2,
+        type: 3,
         page: 1,
         pageSize: 20
       },
-      activeName: "songlist",
-      id: this.$route.params.id
+      id: this.$route.params.id,
+      activeName: "songlist"
     };
   },
   computed: {
     ...mapState({
-      playDetail: state => state.detail.playDetail
+      albumDetail: state => state.detail.albumDetail
     })
   },
   created() {
@@ -73,11 +76,14 @@ export default {
   },
   watch: {},
   methods: {
-    handleChangePage(obj) {
-      // 评论改变
-      this.comment = Object.assign({}, this.comment, obj);
-      this.handleGetComment();
-      this.handleScrollTop();
+    handleGetData() {
+      // 获取歌单数据
+      const id = this.id;
+      if (!id) {
+        this.$router.go(-1);
+        return;
+      }
+      this[TYPES.ACTIONS_GET_ALBUM_DETAIL]({ id });
     },
     handleGetComment() {
       // 获取评论
@@ -88,7 +94,7 @@ export default {
         limit: pageSize,
         offset: (page - 1) * pageSize
       };
-      playListComment(params).then(res => {
+      albumComment(params).then(res => {
         this.comment = Object.assign({}, res, {
           type,
           page,
@@ -96,14 +102,11 @@ export default {
         });
       });
     },
-    handleGetData() {
-      // 获取歌单数据
-      const id = this.id;
-      if (!id) {
-        this.$router.go(-1);
-        return;
-      }
-      this[TYPES.ACTIONS_GET_PLAYLIST_DETAIL]({ id });
+    handleChangePage(obj) {
+      // 评论改变
+      this.comment = Object.assign({}, this.comment, obj);
+      this.handleGetComment();
+      this.handleScrollTop();
     },
     handleScrollTop() {
       // 滚动到顶部
@@ -124,13 +127,13 @@ export default {
       });
     },
     ...mapMutations([
+      TYPES.MUTATIONS_SET_SONG_OPTIONS,
       TYPES.MUTATIONS_INIT_SONG_LIST,
       TYPES.MUTATIONS_GET_SONG_DETAIL,
-      TYPES.MUTATIONS_SET_SONG_OPTIONS,
       TYPES.MUTATIONS_SET_SONG_ORDER
     ]),
     ...mapActions([
-      TYPES.ACTIONS_GET_PLAYLIST_DETAIL,
+      TYPES.ACTIONS_GET_ALBUM_DETAIL,
       TYPES.ACTIONS_GET_SONG_DETAIL
     ])
   },
@@ -142,15 +145,15 @@ export default {
   },
   activated() {
     this.activeName = "songlist";
-    this.id = this.$router.params.id;
+    this.id = this.$route.params.id;
     this.handleGetData();
     this.handleGetComment();
-  } //如果页面有keep-alive缓存功能，这个函数会触发
+  }
 };
 </script>
 <style lang='less' scoped>
 @import "~@/assets/style/variable.less";
-.playlist_detail {
+.album_detail {
   height: calc(100% - @footer-height);
   .des {
     display: flex;
@@ -174,6 +177,8 @@ export default {
       }
       .avatar {
         width: 20px;
+        height: 20px;
+        object-fit: cover;
         border-radius: 50%;
         overflow: hidden;
       }
@@ -195,6 +200,12 @@ export default {
         overflow-y: auto;
         height: calc(100% - 100px);
       }
+    }
+    pre {
+      padding-left: 15px;
+      font-family: "Arial", "Microsoft YaHei", "黑体", "宋体", sans-serif;
+      word-wrap: break-word;
+      white-space: pre-wrap;
     }
   }
 }

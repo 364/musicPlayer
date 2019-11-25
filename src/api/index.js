@@ -63,6 +63,8 @@ export const albumComment = (params = {}) =>
   axios.get("/comment/album", { params });
 // 获取mv详情 mvid=xx
 export const mvDetail = (params = {}) => axios.get("/mv/detail", { params });
+// 专辑详情
+export const albumDetail = (params = {}) => axios.get("/album", { params });
 // 歌曲详情 ids=xx,xx
 export const songDetail = (params = {}) =>
   axios.get("/song/detail", { params });
@@ -74,3 +76,7 @@ export const checkUrl = (params = {}) => axios.get("/check/music", { params });
 export const songLyrics = (params = {}) => axios.get("/lyric", { params });
 // 专辑内容
 export const album = (params = {}) => axios.get("/album", { params });
+// 所有榜单
+export const allToplist = (params = {}) => axios.get("/toplist/detail", { params });
+// 排行榜
+export const toplist = (params = {}) => axios.get("/top/list", { params });

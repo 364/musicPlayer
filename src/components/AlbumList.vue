@@ -7,6 +7,7 @@
         :key="item.id"
         @mouseenter="isHover=index"
         @mouseleave="isHover=null"
+        @click="$router.push('/album/'+item.id)"
       >
         <div class="coverImg">
           <img v-lazy="item.picUrl" alt="album-img" ref="coverImg" />

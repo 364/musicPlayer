@@ -1,11 +1,11 @@
 import moment from "moment";
 
 // 播放数
-const playCount = value => {
+const playCount = (value, point = 2) => {
   if (value > 10 ** 4) {
     let numStr = (value / 10 ** 4).toString();
     let len = numStr.indexOf(".");
-    return (len > 0 ? numStr.slice(0, len + 3) : numStr) + "万";
+    return (len > 0 ? numStr.slice(0, len + point + 1) : numStr) + "万";
   }
   return value;
 };

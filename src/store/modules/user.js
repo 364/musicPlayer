@@ -1,6 +1,7 @@
 const user = {
   state: {
-    userInfo:{}
+    userInfo:{},
+    isLogin:false,
   },
   getters: {
   },

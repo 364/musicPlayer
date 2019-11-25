@@ -187,10 +187,10 @@ export default {
   position: absolute;
   width: 100%;
   height: 100%;
-  background: fade(#000, 40%);
+  background: fade(#000, 50%);
   top: 0;
   left: 0;
-  color: fade(#fff, 60%);
+  color: fade(#fff, 70%);
   display: flex;
   align-items: center;
   justify-content: center;
