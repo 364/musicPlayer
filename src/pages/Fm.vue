@@ -1,11 +1,21 @@
 <!-- 私人fm -->
 <template>
   <div class="fm">
-    <div v-if="!isLogin" class="empty">
-      <img v-lazy="require('@/assets/images/lock.gif')" alt />
+    <div
+      v-if="!isLogin"
+      class="empty"
+    >
+      <img
+        v-lazy="require('@/assets/images/lock.gif')"
+        alt
+      />
       <div>
         <h3>登录解锁更多功能</h3>
-        <el-button type="primary" plain>立即登录</el-button>
+        <el-button
+          type="primary"
+          plain
+          @click="handleShowLogin"
+        >立即登录</el-button>
       </div>
     </div>
     <div v-else>私人fm</div>
@@ -13,7 +23,9 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
+import * as TYPES from "@/store/types";
+
 export default {
   name: "fm",
   components: {},
@@ -27,7 +39,12 @@ export default {
   },
   created() {},
   watch: {},
-  methods: {},
+  methods: {
+    handleShowLogin() {
+      this[TYPES.MUTATIONS_SET_SHOW_LOGIN](true);
+    },
+    ...mapMutations([TYPES.MUTATIONS_SET_SHOW_LOGIN])
+  },
   mounted() {},
   beforeCreate() {}, //生命周期 - 创建之前
   beforeMount() {}, //生命周期 - 挂载之前

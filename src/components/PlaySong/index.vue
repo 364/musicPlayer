@@ -10,6 +10,7 @@
       :order="songOptions.order"
       :songList="songList"
       :orderInfo="orderInfo"
+      :lyric="getLyric"
       @handleChangeOption="handleChangeOption"
       @handleChangeSong="handleChangeSong"
       @handleChange="handleChange"
@@ -43,7 +44,8 @@
       @handleToggleShow="handleToggleShow"
     />
     <!-- @canplay="handlePlaying" -->
-    <audio :src="url" crossorigin="anonymous" preload="auto" ref="audio" @ended="handleEnded"></audio>
+    <audio :src="url" crossorigin="anonymous" preload="auto" ref="audio" @ended="handleEnded">
+    </audio>
   </div>
 </template>
 
@@ -123,6 +125,9 @@ export default {
         current: this.currentSong || {}
       };
     },
+    getLyric(){
+      return this.lyrics.list[this.lyrics.index] && this.lyrics.list[this.lyrics.index]['words']
+    },
     getName() {
       // 获取歌曲名
       return this.currentSong ? this.currentSong.name : this.default.name;
@@ -158,6 +163,7 @@ export default {
           // 检查歌曲
           this.comment.page = 1
           this.handleCheckSong(val.id);
+          document.title = val.name + ' - ' + this.$root.getArtists(val)
         }
       }
     },

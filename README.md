@@ -1,33 +1,51 @@
-# music-player
+# musicPlayer
 
-> A Vue.js project  
+## Introduction
 
-## Build Setup
+⭕这个项目是用 vue全家桶 制作，目前这版是边做边设计界面和功能，主要想先把界面和功能定下来，后续再重新架构改版
 
-#### start api
+API使用[Binaryify/NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)提供的网易云音乐API，感谢🌸
+
+## Install
+
 ``` bash
-# download api
 git clone git@github.com:Binaryify/NeteaseCloudMusicApi.git
-
-# install dependencies
+cd NeteaseCloudMusicApi
 npm install
+node app.js
 
-# start service at localhost:5000
-set PORT=5000 && node app.js
-```
 
-#### start project
-```bash
-# download project
 git clone https://github.com/364/musicPlayer.git
-
-# install dependencies
+cd musicPlayer
 npm install
-
-# serve with hot reload at localhost:8080
 npm run dev
 ```
 
-## Thanks
+## Functionality
 
-[Binaryify/NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)
+- [x] 🍀登录
+- [x] 🍁登出
+- [x] ▶️播放
+- [x] ⏹️暂停
+- [x] ⏪上一首
+- [x] ⏩下一首
+- [x] 🔀播放顺序
+- [x] 📘播放列表
+- [x] 🔥热搜榜
+- [x] ⭐搜索
+- [x] ⚡banner
+- [x] 🍋mv播放
+- [x] 🏆排行榜
+- [x] 🙍️歌手
+- [x] 🎨歌词
+- [x] 🌏查看评论
+- [x] 📝写评论
+- [ ] 🎉新建歌单
+- [ ] 💗我喜欢
+
+
+## Screenshot
+
+![TIM截图20191129091615.png](https://i.loli.net/2019/11/29/1LMEaZCfxdXgYiy.png)
+![TIM截图20191129091640.png](https://i.loli.net/2019/11/29/xlDXbwhQjqOzMP9.png)
+![TIM截图20191129091732.png](https://i.loli.net/2019/11/29/yqPKesMw1nW9Ogr.png)

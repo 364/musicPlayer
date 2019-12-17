@@ -11,6 +11,15 @@
 export default {
   name: "home",
   components: {
+  },
+  created(){
+    this.handleNotSelected()
+  },
+  methods:{
+    handleNotSelected(){
+      // 双击不选中文本
+      window.getSelection ? window.getSelection().removeAllRanges() : document.selection.empty();
+    }
   }
 };
 </script>

@@ -90,7 +90,7 @@
           <div class="img">
             <img v-lazy="item.song.album.picUrl" />
             <transition name="fade">
-              <div class="mask" v-show="isHover == 'music'+index">
+              <div class="mask" v-show="isHover == 'music'+index" @click="handleSong(index)">
                 <i class="el-icon-video-play"></i>
               </div>
             </transition>

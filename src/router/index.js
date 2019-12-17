@@ -87,6 +87,26 @@ export default new Router({
           name: "AlbumDetail",
           component: AlbumDetail
         },
+        {
+          path: "/local-list",
+          name: "/home",
+          component: Home
+        },
+        {
+          path: "/love-list",
+          name: "/home",
+          component: Home
+        },
+        {
+          path: "/listen-list",
+          name: "/home",
+          component: Home
+        },
+        {
+          path: "/song-list",
+          name: "/home",
+          component: Home
+        },
       ]
     }
   ]

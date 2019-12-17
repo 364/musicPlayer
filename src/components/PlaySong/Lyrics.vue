@@ -197,9 +197,14 @@ export default {
     }
   },
   created() {
-    this.handleScroll();
   },
-  watch: {},
+  watch: {
+    isShow(val){
+      if(val){
+        this.handleScroll()
+      }
+    }
+  },
   methods: {
     handleChangePage(obj) {
       // 评论改变
@@ -266,7 +271,6 @@ export default {
   beforeDestroy() {}, //生命周期 - 销毁之前
   destroyed() {}, //生命周期 - 销毁完成
   activated() {
-    this.handleScroll();
   } //如果页面有keep-alive缓存功能，这个函数会触发
 };
 </script>
@@ -285,14 +289,13 @@ export default {
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
-  }
-  .blur {
     position: absolute;
     top: -10%;
     left: -10%;
     width: 120%;
     height: 120%;
     filter: blur(30px);
+    background-color: #000;
   }
   .content {
     position: relative;

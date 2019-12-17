@@ -4,9 +4,11 @@
     <div class="user" @click="toLogin">
       <div class="avatar">
         <div></div>
-        <span>未登录</span>
+        <span class="nickName">{{ getName }}</span>
       </div>
-      <i class="iconfont icon-logout logout" v-show="isLogin"></i>
+      <el-tooltip class="item" v-show="isLogin" content="退出登录" placement="bottom">
+        <i class="iconfont icon-logout logout" @click="logout"></i>
+      </el-tooltip>
     </div>
     <!-- 导航 -->
     <ul class="menu">
@@ -27,7 +29,11 @@
 
 <script>
 import Login from "./Login";
-import { mapGetters } from "vuex";
+import { mapState,mapGetters, mapMutations } from "vuex";
+import * as TYPES from "@/store/types";
+import { logout } from '@/api'
+import { Message } from "element-ui";
+
 export default {
   name: "sidebar",
   components: {
@@ -35,14 +41,40 @@ export default {
   },
   data() {
     return {
-      isLogin: false
     };
   },
   computed: {
-    ...mapGetters(["menuList"])
+    getName(){
+      if(this.isLogin&&Object.keys(this.loginInfo).length){
+        return this.loginInfo.account.userName
+      }
+      return '未登录'
+    },
+    ...mapGetters(["menuList"]),
+    ...mapState({
+      isLogin: state => state.user.isLogin,
+      loginInfo: state => state.user.loginInfo,
+    })
   },
   methods: {
-    toLogin() {}
+    toLogin() {
+      // 显示登录框
+      if(!this.isLogin){
+        this[TYPES.MUTATIONS_SET_SHOW_LOGIN](true);
+      }
+    },
+    async logout(){
+      // 退出登录
+      let res = await logout()
+      console.log(res)
+      Message.success('已退出登录')
+      this[TYPES.MUTATIONS_SET_LOGIN_STATE]()
+      this[TYPES.MUTATIONS_SET_LOGIN_INFO]({})
+    },
+    ...mapMutations([
+      TYPES.MUTATIONS_SET_SHOW_LOGIN,
+      TYPES.MUTATIONS_SET_LOGIN_STATE,
+      TYPES.MUTATIONS_SET_LOGIN_INFO])
   }
 };
 </script>
@@ -64,11 +96,14 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    overflow: hidden;
     .avatar {
       display: flex;
       justify-content: center;
       align-items: center;
       font-weight: @base-weight;
+      width: 85%;
+      margin-right: 10px;
       &:hover {
         text-decoration: underline;
       }
@@ -82,9 +117,15 @@ export default {
         border-radius: 50%;
         margin-right: 15px;
       }
+      .nickName{
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        flex: 1;
+      }
     }
     .logout {
-      color: #ccc;
+      color: @theme-color;
     }
   }
   .menu {

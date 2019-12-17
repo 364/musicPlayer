@@ -10,7 +10,7 @@
         maxlength="50"
         show-word-limit
       ></el-input>
-      <el-button type="primary" size="mini" class="btn">提交</el-button>
+      <el-button type="primary" size="mini" class="btn" @click="handleComment">提交</el-button>
     </div>
     <!-- 精彩评论  -->
     <div v-if="comment.hotComments&&comment.hotComments.length">
@@ -23,7 +23,7 @@
             <div class="content">{{ item.content }}</div>
             <div class="time">
               <span>{{ item.time | formatTime('YYYY-MM-DD HH:mm') }}</span>
-              <span class="like">
+              <span class="like" @click="handleLike">
                 <i class="iconfont icon-good"></i>
                 ({{ item.likedCount }})
               </span>
@@ -58,6 +58,8 @@
 
 <script>
 import Pagination from "@/components/Pagination";
+import { mapState, mapMutations } from "vuex";
+import * as TYPES from "@/store/types";
 
 export default {
   name: "comment",
@@ -79,14 +81,39 @@ export default {
       content: ""
     };
   },
-  computed: {},
+  computed: {
+    ...mapState({
+      isLogin: state => state.user.isLogin
+    })
+  },
   created() {},
   watch: {},
   methods: {
+    handleIsLogin(callback){
+      // 是否登陆
+      if(this.isLogin){
+        callback()
+      }else{
+        this[TYPES.MUTATIONS_SET_SHOW_LOGIN](true);
+      }
+    },
+    handleComment(){
+      // 提交评论
+      this.handleIsLogin(()=>{
+
+      })
+    },
+    handleLike(){
+      // 点赞/取消
+      this.handleIsLogin(()=>{
+
+      })
+    },
     handleChange(obj) {
       // 改变评论页数
       this.$emit("handleChangePage", obj);
-    }
+    },
+    ...mapMutations([TYPES.MUTATIONS_SET_SHOW_LOGIN])
   },
   mounted() {},
   beforeCreate() {}, //生命周期 - 创建之前

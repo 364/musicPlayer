@@ -10,7 +10,10 @@
       :row-class-name="handleRowClass"
     >
       <!-- 歌曲 -->
-      <el-table-column label="歌曲" :show-overflow-tooltip="true">
+      <el-table-column
+        label="歌曲"
+        :show-overflow-tooltip="true"
+      >
         <template slot-scope="scope">
           <div class="song">
             <div class="left">
@@ -27,7 +30,11 @@
               <span v-if="currentSong&&currentSong.id==scope.row.id">
                 <i :class="['iconfont','play',playIcon]"></i>
               </span>
-              <i class="el-icon-video-play" v-else></i>
+              <i
+                class="el-icon-video-play"
+                v-else
+                @click="handleSong(scope.row)"
+              ></i>
               <i class="el-icon-circle-plus-outline"></i>
               <i class="el-icon-download"></i>
             </div>
@@ -57,7 +64,11 @@
         </template>
       </el-table-column>
       <!-- 时长 -->
-      <el-table-column label="时长" width="100" v-if="showCell.includes('time')">
+      <el-table-column
+        label="时长"
+        width="100"
+        v-if="showCell.includes('time')"
+      >
         <template slot-scope="scope">
           <span>{{ (scope.row.dt||scope.row.duration) | formatTime('mm:ss') }}</span>
         </template>

@@ -1,8 +1,17 @@
 import axios from "./axios";
 
-// 登录
-export const login = (params = {}) =>
-  axios.post("/login", params, { withCredentials: true });
+// 手机登录
+export const loginPhone = (params = {}) => axios.get("/login/cellphone", { params });
+// 邮箱登录
+export const loginEmail = (params = {}) => axios.get("/login", { params });
+// 登录状态
+export const loginStatus = (params = {}) => axios.get("/login/status", { params });
+// 登出
+export const logout = (params = {}) => axios.get("/logout", { params });
+// 用户详情
+export const userInfo = (params = {}) => axios.get("/user/detail", { params });
+// 用户歌单
+export const userPlayList = (params = {}) => axios.get("/user/playlist", { params });
 // banner
 export const banner = (params = {}) => axios.get("/banner", { params });
 // 推荐歌单

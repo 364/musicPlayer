@@ -56,3 +56,7 @@ export const MUTATIONS_SET_SONG_ORDER = 'mutations_set_song_order'
 // 专辑详情
 export const ACTIONS_GET_ALBUM_DETAIL = 'actions_get_album_detail'
 export const MUTATIONS_GET_ALBUM_DETAIL = 'mutations_get_album_detail'
+// 登陆
+export const MUTATIONS_SET_SHOW_LOGIN = 'MUTATIONS_SET_SHOW_LOGIN'
+export const MUTATIONS_SET_LOGIN_STATE = 'MUTATIONS_SET_LOGIN_STATE'
+export const MUTATIONS_SET_LOGIN_INFO = 'MUTATIONS_SET_LOGIN_INFO'

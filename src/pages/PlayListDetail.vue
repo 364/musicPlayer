@@ -39,6 +39,7 @@
       </el-tabs>
     </div>
   </div>
+  <Loading v-else />
 </template>
 
 <script>
@@ -46,11 +47,12 @@ import { mapActions, mapState, mapMutations } from "vuex";
 import * as TYPES from "@/store/types";
 import SongList from "@/components/SongList";
 import Comment from "@/components/Comment";
+import Loading from "@/components/Loading";
 import { playListComment } from "@/api";
 
 export default {
   name: "playlist-detail",
-  components: { SongList, Comment },
+  components: { SongList, Comment ,Loading},
   data() {
     return {
       comment: {

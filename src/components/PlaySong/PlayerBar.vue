@@ -3,10 +3,10 @@
   <div class="player-bar">
     <!-- 音乐名称 -->
     <div class="info" @click="$emit('handleToggleShow','showLyrics')">
-      <img :src="info.picUrl" alt="picUrl" />
+      <img :src="info.picUrl+'?param=50y50'" alt="picUrl" />
       <div class="name">
         <div>{{ info.name }}</div>
-        <div class="artists">{{ info.artists }}</div>
+        <div class="artists">{{ lyric ||info.artists }}</div>
       </div>
     </div>
     <div class="operation">
@@ -75,6 +75,9 @@ export default {
     },
     orderInfo: {
       type: Array
+    },
+    lyric:{
+      type:String
     }
   },
   data() {

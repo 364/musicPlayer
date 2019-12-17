@@ -251,6 +251,7 @@ export default {
     max-height: 400px;
     overflow-y: auto;
     min-width: 260px;
+    max-width: 370px;
     > h3 {
       margin-left: 20px;
     }

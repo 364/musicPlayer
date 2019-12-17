@@ -27,6 +27,7 @@
       <!-- mv评论 -->
       <comment :comment="comment" @handleChangePage="handleChangePage" ref="comment" />
     </div>
+    <Loading v-else />
   </div>
   <!--
       @play="onPlayerPlay($event)"
@@ -50,11 +51,12 @@ import "vue-video-player/src/custom-theme.css";
 import { mapActions, mapState, mapMutations } from "vuex";
 import * as TYPES from "@/store/types";
 import Comment from "@/components/Comment";
+import Loading from "@/components/Loading";
 import { mvComment } from "@/api";
 
 export default {
   name: "mv-detail",
-  components: { videoPlayer, Comment },
+  components: { videoPlayer, Comment,Loading },
   data() {
     return {
       activeName: "comment",

@@ -14,12 +14,15 @@
     </div>
     <!-- 播放条 -->
     <play-song />
+    <!-- 登陆 -->
+    <Login />
   </div>
 </template>
 
 <script>
 import Sidebar from "@/components/Sidebar";
 import NavBar from "@/components/NavBar";
+import Login from "@/components/Login";
 import PlaySong from "@/components/PlaySong/index";
 
 export default {
@@ -27,7 +30,8 @@ export default {
   components: {
     NavBar,
     Sidebar,
-    PlaySong
+    PlaySong,
+    Login
   },
   data() {
     return {};

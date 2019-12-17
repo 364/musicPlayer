@@ -55,6 +55,7 @@
       </el-tabs>
     </div>
   </div>
+  <Loading v-else />
 </template>
 
 <script>
@@ -62,10 +63,11 @@ import { mapActions, mapState, mapMutations } from "vuex";
 import * as TYPES from "@/store/types";
 import SongList from "@/components/SongList";
 import AlbumList from "@/components/AlbumList";
+import Loading from "@/components/Loading";
 
 export default {
   name: "singer-detail",
-  components: { SongList, AlbumList },
+  components: { SongList, AlbumList,Loading },
   data() {
     return {
       showCell: ["song", "ablum", "time"],

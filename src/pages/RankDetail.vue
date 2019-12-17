@@ -1,21 +1,32 @@
 <!-- 排行榜详情 -->
 <template>
-  <div class="rank_detail" v-if="Object.keys(rankDetail).length">
+  <div
+    class="rank_detail"
+    v-if="Object.keys(rankDetail).length"
+  >
     <!-- 歌单介绍 -->
     <div class="des">
-      <div class="coverImg" v-lazy:background-image="rankDetail.coverImgUrl"></div>
+      <div
+        class="coverImg"
+        v-lazy:background-image="rankDetail.coverImgUrl"
+      ></div>
       <div class="info">
         <h2>{{ rankDetail.name }}</h2>
         <h4>
-          <img :src="rankDetail.creator.avatarUrl" class="avatar" />
+          <img
+            :src="rankDetail.creator.avatarUrl"
+            class="avatar"
+          />
           <span>{{ rankDetail.creator.nickname }}</span>
           <span class="tags">{{ rankDetail.tags | getTags }}</span>
         </h4>
-        <div
-          class="count"
-        >播放量：{{ rankDetail.playCount | playCount(-1) }} 最新更新：{{ rankDetail.updateTime | formatTime('MM月DD日') }}</div>
+        <div class="count">播放量：{{ rankDetail.playCount | playCount(-1) }} 最新更新：{{ rankDetail.updateTime | formatTime('MM月DD日') }}</div>
         <div>
-          <el-button size="mini" type="primary" @click="handleSong(rankDetail.trackIds)">
+          <el-button
+            size="mini"
+            type="primary"
+            @click="handleSong(rankDetail.trackIds)"
+          >
             <i class="el-icon-plus"></i> 播放全部
           </el-button>
           <el-button size="mini">
@@ -29,16 +40,29 @@
     </div>
     <!-- 歌曲列表 -->
     <div class="list">
-      <el-tabs v-model="activeName" @tab-click="handleScrollTop">
-        <el-tab-pane :label="`歌曲(${rankDetail.trackCount})`" name="songlist">
+      <el-tabs
+        v-model="activeName"
+        @tab-click="handleScrollTop"
+      >
+        <el-tab-pane
+          :label="`歌曲(${rankDetail.trackCount})`"
+          name="songlist"
+        >
           <song-list :tableData="rankDetail.tracks" />
         </el-tab-pane>
-        <el-tab-pane :label="`评论(${rankDetail.commentCount})`" name="second">
-          <comment :comment="comment" @handleChangePage="handleChangePage" />
+        <el-tab-pane
+          :label="`评论(${rankDetail.commentCount})`"
+          name="second"
+        >
+          <comment
+            :comment="comment"
+            @handleChangePage="handleChangePage"
+          />
         </el-tab-pane>
       </el-tabs>
     </div>
   </div>
+  <Loading v-else />
 </template>
 
 <script>
@@ -46,12 +70,13 @@ import { toplist } from "@/api";
 import { mapActions, mapState, mapMutations } from "vuex";
 import * as TYPES from "@/store/types";
 import SongList from "@/components/SongList";
+import Loading from "@/components/Loading";
 import Comment from "@/components/Comment";
 import { playListComment } from "@/api";
 
 export default {
   name: "",
-  components: { SongList, Comment },
+  components: { SongList, Comment, Loading },
   data() {
     return {
       comment: {
@@ -134,7 +159,10 @@ export default {
   updated() {}, //生命周期 - 更新之后
   beforeDestroy() {}, //生命周期 - 销毁之前
   destroyed() {}, //生命周期 - 销毁完成
-  activated() {} //如果页面有keep-alive缓存功能，这个函数会触发
+  activated() {
+    this.idx = this.$route.params.idx;
+    this.handleGetData();
+  } //如果页面有keep-alive缓存功能，这个函数会触发
 };
 </script>
 <style lang='less' scoped>

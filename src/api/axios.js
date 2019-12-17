@@ -2,13 +2,14 @@ import Axios from "axios";
 // import store from "@/store";
 import { Message } from "element-ui";
 
-const baseURL = "http://localhost:5000";
+const baseURL = "http://localhost:3000";
 const config = {
   baseURL,
   timeout: 1000 * 6,
   headers: {
     "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
-  }
+  },
+  withCredentials: true
 };
 
 const axios = Axios.create(config);
@@ -25,7 +26,7 @@ const tip = (code, msg) => {
 // 请求拦截器 token
 axios.interceptors.request.use(
   config => {
-    // console.log('interceptors config',config);
+    console.log('interceptors config',config);
     return config;
   },
   error => Promise.error(error)
