@@ -14,6 +14,9 @@ const config = {
 
 const axios = Axios.create(config);
 const tip = (code, msg) => {
+  if (code >= 500) {
+    Message.error(msg || "服务器错误");
+  }
   if (code >= 400) {
     Message.error(msg);
   } else if (code >= 300) {
@@ -26,7 +29,7 @@ const tip = (code, msg) => {
 // 请求拦截器 token
 axios.interceptors.request.use(
   config => {
-    console.log('interceptors config',config);
+    console.log("interceptors config", config);
     return config;
   },
   error => Promise.error(error)

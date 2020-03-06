@@ -3,7 +3,7 @@
     <!-- 头像 -->
     <div class="user" @click="toLogin">
       <div class="avatar">
-        <div></div>
+        <div><img v-if="getAvatarImg" :src="getAvatarImg" /></div>
         <span class="nickName">{{ getName }}</span>
       </div>
       <el-tooltip class="item" v-show="isLogin" content="退出登录" placement="bottom">
@@ -29,9 +29,9 @@
 
 <script>
 import Login from "./Login";
-import { mapState,mapGetters, mapMutations } from "vuex";
+import { mapState, mapGetters, mapMutations } from "vuex";
 import * as TYPES from "@/store/types";
-import { logout } from '@/api'
+import { logout } from "@/api";
 import { Message } from "element-ui";
 
 export default {
@@ -40,41 +40,48 @@ export default {
     Login
   },
   data() {
-    return {
-    };
+    return {};
   },
   computed: {
-    getName(){
-      if(this.isLogin&&Object.keys(this.loginInfo).length){
-        return this.loginInfo.account.userName
+    getAvatarImg() {
+      if (this.isLogin && Object.keys(this.loginInfo).length) {
+        return this.loginInfo.profile.avatarUrl;
       }
-      return '未登录'
+    },
+    getName() {
+      if (this.isLogin && Object.keys(this.loginInfo).length) {
+        return (
+          this.loginInfo.profile.nickname || this.loginInfo.account.userName
+        );
+      }
+      return "未登录";
     },
     ...mapGetters(["menuList"]),
     ...mapState({
       isLogin: state => state.user.isLogin,
-      loginInfo: state => state.user.loginInfo,
+      loginInfo: state => state.user.loginInfo
     })
   },
   methods: {
     toLogin() {
       // 显示登录框
-      if(!this.isLogin){
+      if (!this.isLogin) {
         this[TYPES.MUTATIONS_SET_SHOW_LOGIN](true);
       }
     },
-    async logout(){
+    async logout() {
       // 退出登录
-      let res = await logout()
-      console.log(res)
-      Message.success('已退出登录')
-      this[TYPES.MUTATIONS_SET_LOGIN_STATE]()
-      this[TYPES.MUTATIONS_SET_LOGIN_INFO]({})
+      let res = await logout();
+      // console.log(res);
+      Message.success("已退出登录");
+      this[TYPES.MUTATIONS_SET_LOGIN_STATE]();
+      this[TYPES.MUTATIONS_SET_LOGIN_INFO]({});
     },
     ...mapMutations([
       TYPES.MUTATIONS_SET_SHOW_LOGIN,
       TYPES.MUTATIONS_SET_LOGIN_STATE,
-      TYPES.MUTATIONS_SET_LOGIN_INFO])
+      TYPES.MUTATIONS_SET_LOGIN_INFO
+    ])
   }
 };
 </script>
@@ -116,8 +123,12 @@ export default {
         height: @avator-size;
         border-radius: 50%;
         margin-right: 15px;
+        overflow: hidden;
+        img {
+          width: 100%;
+        }
       }
-      .nickName{
+      .nickName {
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
@@ -157,7 +168,8 @@ export default {
             width: 30px;
             margin-right: 20px;
           }
-          &::before,&::after {
+          &::before,
+          &::after {
             content: "";
             position: absolute;
             top: 0;
@@ -166,7 +178,7 @@ export default {
             transform-origin: left;
             transform: scaleX(0);
           }
-          &::before{
+          &::before {
             left: 0;
             bottom: 0;
             background: linear-gradient(
@@ -176,7 +188,7 @@ export default {
               @theme-color-5
             );
           }
-          &::after{
+          &::after {
             width: 3px;
             height: 100%;
             background: @theme-color;
@@ -186,7 +198,6 @@ export default {
               transform: scaleX(1);
             }
             &::after {
-              
               transform: scaleX(1);
             }
           }

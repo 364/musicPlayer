@@ -145,7 +145,7 @@ export default {
         : this.default.picUrl;
     },
     getAlbum() {
-      // 获取歌曲图片
+      // 获取专辑
       return this.currentSong ? this.currentSong.al.name : this.default.alName;
     }
   },

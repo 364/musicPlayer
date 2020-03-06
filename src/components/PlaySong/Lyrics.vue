@@ -28,19 +28,10 @@
             <!-- 歌词 -->
             <div class="text">
               <div class="center" v-if="lyrics.noLyric">{{ lyrics.noLyricText }}</div>
-              <ul
-                ref="list"
-                v-if="lyrics.list.length"
-                @mousedown="handleStart"
-                @mouseup="handleEnd"
-                @mousemove="handleMove"
-              >
-                <li
-                  v-for="(item,index) in lyrics.list"
-                  :key="index"
-                  :class="{ 'active': index === lyrics.index }"
-                  :ref="`current${index}`"
-                >{{ item.words }}</li>
+              <ul ref="list" v-if="lyrics.list.length" @mousedown="handleStart" @mouseup="handleEnd" @mousemove="handleMove">
+                <li v-for="(item,index) in lyrics.list" :key="index" :class="{ 'active': index === lyrics.index }" :ref="`current${index}`">
+                  {{ item.words }}
+                </li>
               </ul>
             </div>
           </div>
@@ -49,12 +40,7 @@
           <!-- 进度条/时间 -->
           <div class="progress">
             <span>{{ songTime.currentTime }}</span>
-            <slider
-              @handleChange="handleChange"
-              :width="songTime.width"
-              height="1px"
-              tag="songTime"
-            />
+            <slider @handleChange="handleChange" :width="songTime.width" height="1px" tag="songTime" />
             <span>{{ songTime.totalTime }}</span>
           </div>
           <div class="operation">
@@ -69,19 +55,13 @@
             <!-- 播放按钮 -->
             <div class="play-btn">
               <i class="iconfont icon-jiantou_shangyiye_o" @click="$emit('handleChangeSong',-1)"></i>
-              <i
-                :class="['iconfont','play',playIcon]"
-                @click="$emit('handleChangeOption',{ 'play':!playState })"
-              ></i>
+              <i :class="['iconfont','play',playIcon]" @click="$emit('handleChangeOption',{ 'play':!playState })"></i>
               <i class="iconfont icon-jiantou_xiayiye_o" @click="$emit('handleChangeSong',1)"></i>
             </div>
             <!-- 随机/音量/列表 -->
             <div class="list">
               <el-tooltip :content="getOrderTip" placement="bottom">
-                <i
-                  :class="['iconfont','order',orderInfo[order]['class']]"
-                  @click="$emit('handleChangeOption',{ 'order': getNextOrder })"
-                ></i>
+                <i :class="['iconfont','order',orderInfo[order]['class']]" @click="$emit('handleChangeOption',{ 'order': getNextOrder })"></i>
               </el-tooltip>
               <el-tooltip :content="volume.width" placement="bottom">
                 <i :class="['iconfont', 'volume', volumeIcon]" @click="handleToggleVol"></i>
@@ -111,12 +91,7 @@
             {{ info.album }}
           </div>
         </div>
-        <Comment
-          :comment="comment"
-          @handleChangePage="handleChangePage"
-          method="dark"
-          ref="comment"
-        />
+        <Comment :comment="comment" @handleChangePage="handleChangePage" method="dark" ref="comment" />
       </div>
     </div>
   </transition>
@@ -196,12 +171,11 @@ export default {
       return this.orderInfo[this.order]["name"];
     }
   },
-  created() {
-  },
+  created() {},
   watch: {
-    isShow(val){
-      if(val){
-        this.handleScroll()
+    isShow(val) {
+      if (val) {
+        this.handleScroll();
       }
     }
   },
@@ -270,8 +244,7 @@ export default {
   updated() {}, //生命周期 - 更新之后
   beforeDestroy() {}, //生命周期 - 销毁之前
   destroyed() {}, //生命周期 - 销毁完成
-  activated() {
-  } //如果页面有keep-alive缓存功能，这个函数会触发
+  activated() {} //如果页面有keep-alive缓存功能，这个函数会触发
 };
 </script>
 <style lang='less' scoped>
